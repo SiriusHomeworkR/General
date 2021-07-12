@@ -1,0 +1,192 @@
+---
+title: " WDS, HW 1"
+author:
+- Group Member 1
+- Group Member 2
+- Group Member 3
+- Group Member 4
+- Group Member 5
+date: 'Due: 10:00PM,  July 13, 2021'
+output:
+  html_document:
+    code_folding: show
+    highlight: haddock
+    number_sections: yes
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: '4'
+  word_document:
+    toc: yes
+    toc_depth: '4'
+urlcolor: blue
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = "hide", fig.width=8, fig.height=4)
+options(scipen = 0, digits = 3)  # controls base R output
+# check if you have ISLR package, if not, install it
+if(!require('pacman')) {install.packages('pacman')}
+pacman::p_load(ISLR, readxl, tidyverse, magrittr, dplyr, ggplot2, data.table)
+```
+
+
+\pagebreak
+
+# Overview
+
+This is a fast-paced course that covers a lot of material. There will be a large amount of references.  It is impossible to learn data science without getting your hands dirty. Please budget your time evenly. Last-minute work ethic will not work here. 
+
+Homework in this program is different from your usual homework assignment as a typical student. Most of the time, they are built over real case studies.  While you will be applying methods covered in lectures, we often do not ask very specific questions.   The focus will be always  on the goals of the study, the usefulness of the data gathered, and the limitations in any conclusions you may draw. Always try to challenge your data analysis in a critical way. Frequently, there are no unique solutions. 
+
+
+
+
+## Objectives 
+
+- Get familiar with `R-studio` and `RMarkdown`
+- Hands-on R 
+- Learn data science essentials 
+    - gather data
+    - clean data
+    - summarize data 
+    - display data
+    - conclusion
+- Packages
+    - `dplyr`
+    - `ggplot`
+
+##  Instructions
+
+- **Homework assignments are done in a group consisting of 5 members**. 
+
+- **All work submitted should be completed in the R Markdown format.** You can find a cheat sheet for R Markdown [here](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf). 
+
+- **Submit the following files, one submission for each group:**  (1) Rmd file, (2) a compiled HTML (or a pdf which might require extra work) version, and (3) all necessary data files if different from our source data. You may directly edit this .rmd file to add your answers. We encourage that you at least attempt each problem by yourself before working with your teammates. Additionally, ensure that you can 'knit' or compile your Rmd file. It is also likely that you need to configure Rstudio to properly convert files to PDF. [**These instructions**](http://kbroman.org/knitr_knutshell/pages/latex.html#converting-knitrlatex-to-pdf) might be helpful.
+
+- In general, be as concise as possible while giving a fully complete answer to each question. All necessary datasets are available in this homework folder on Canvas. Make sure to document your code with comments (written on separate lines in a code chunk using a hashtag `#` before the comment) so the teaching fellows can follow along. R Markdown is particularly useful because it follows a 'stream of consciousness' approach: as you write code in a code chunk, make sure to explain what you are doing outside of the chunk. 
+
+- A few good or solicited submissions will be used as sample solutions. When those are released, make sure to compare your answers and understand the solutions.
+
+
+# Review materials
+
+
+- Study Module 1: DataPreparationEDA_WDS
+- Be able to comple DataPreparationEDA_WDS.rmd
+
+
+
+
+
+# Case study: Audience Size
+
+How successful is the Wharton Talk Show [Business Radio Powered by the Wharton School](https://businessradio.wharton.upenn.edu/)  
+
+
+**Background:** Have you ever listened to [SiriusXM](https://www.siriusxm.com/)? Do you know there is a **Talk Show** run by Wharton professors in Sirius Radio?  Wharton launched a talk show called [Business Radio Powered by the Wharton School](https://businessradio.wharton.upenn.edu/) through the Sirius Radio station in January of 2014. Within a short period of time the general reaction seemed to be overwhelmingly positive. To find out the audience size for the show, we designed a survey and collected a data set via MTURK in May of 2014. Our goal was to **estimate the audience size**. There were 51.6 million Sirius Radio listeners then. One approach is to estimate the proportion of the Wharton listeners to that of the Sirius listeners, $p$, so that we will come up with an audience size estimate of approximately 51.6 million times $p$. 
+
+To do so, we launched a survey via Amazon Mechanical Turk ([MTurk](https://www.mturk.com/)) on May 24, 2014 at an offered price of \$0.10 for each answered survey.  We set it to be run for 6 days with a target maximum sample size of 2000 as our goal. Most of the observations came in within the first two days. The main questions of interest are "Have you ever listened to Sirius Radio" and "Have you ever listened to Sirius Business Radio by Wharton?". A few demographic features used as control variables were also collected; these include Gender, Age and Household Income.  
+
+We requested that only people in United States answer the questions. Each person can only fill in the questionnaire once to avoid duplicates. Aside from these restrictions, we opened the survey to everyone in MTurk with a hope that the sample would be more randomly chosen. 
+
+The raw data is stored as `Survey_results_final.csv` on Canvas.
+
+## Data preparation
+
+i. We need to clean and select only the variables of interest. 
+
+Select only the variables Age, Gender, Education Level, Household Income in 2013, Sirius Listener?, Wharton Listener? and Time used to finish the survey.
+
+Change the variable names to be "age", "gender", "education", "income", "sirius", "wharton", "worktime".
+
+ii. Handle missing/wrongly filled values of the selected variables
+
+As in real world data with user input, the data is incomplete, with missing values, and has incorrect responses. There is no general rule for dealing with these problems beyond “use common sense.” In whatever case, explain what the problems were and how you addressed them. Be sure to explain your rationale for your chosen methods of handling issues with the data. Do not use Excel for this, however tempting it might be.
+
+iii. Brief summary 
+
+Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
+
+## Sample properties
+
+The population from which the sample is drawn determines where the results of our analysis can be applied or generalized. We include some basic demographic information for the purpose of identifying sample bias, if any exists. Combine our data and the general population distribution in age, gender and income to try to characterize our sample on hand.
+
+i. Does this sample appear to be a random sample from the general population of the USA?
+
+
+Note: You can not provide evidence by simply looking at our data here. For example, you need to find distribution of education in our age group in US to see if the two groups match in distribution.  Please do not spend too much time gathering evidence. 
+
+## Final estimate
+
+Give a final estimate of the Wharton audience size in January 2014. Assume that the sample is a random sample of the MTURK population, and that the proportion of Wharton listeners vs. Sirius listeners in the general population is the same as that in the MTURK population. Write a brief executive summary to summarize your findings and how you came to that conclusion.
+
+To be specific, you should include:
+
+1. Goal of the study
+2. Method used: data gathering, estimation methods
+3. Findings
+4. Limitations of the study. 
+
+```{r main, include=TRUE, results = "asis", echo=TRUE}
+# Read in the data with correct cols
+# We need to set the encoding to get ' to render properly
+# We will later remove rows with null cols, so fill = TRUE will be dealt with
+sirius_data <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
+
+
+# Rename Columns
+sirius_data <- sirius_data %>%
+  rename(
+    "age" = "Answer.Age",
+    "education" = "Answer.Education",
+    "gender" = "Answer.Gender",
+    "income" = "Answer.HouseHoldIncome",
+    "sirius" = "Answer.Sirius Radio",
+    "wharton" = "Answer.Wharton Radio",
+    "worktime" = "WorkTimeInSeconds"
+  )
+
+# Data Cleanup
+# Age Cleanup: Remove any ages that are not between 1 and 122 (the oldest anyone has ever been) as well as null values and badly formatted data
+# NB: There is one oddly formatted input for 18 that could be reformatted here
+sirius_data <- sirius_data[sirius_data$age %in% 1:122]
+
+# Education Cleanup: Remove things that are not one of several choices
+sirius_data[sirius_data == ""] <- "Other"
+sirius_data <- sirius_data[sirius_data$education %in% c("Some college, no diploma; or Associate’s degree",
+                                                        "Graduate or professional degree",
+                                                        "Bachelor’s degree or other 4-year degree",
+                                                        "High school graduate (or equivalent)",
+                                                        "Less than 12 years; no high school diploma",
+                                                        "Other")]
+
+# Data Cleanup: Remove nulls from the data
+sirius_data <- sirius_data[sirius_data$gender != ""]
+sirius_data <- sirius_data[sirius_data$income != ""]
+sirius_data <- sirius_data[sirius_data$sirius != ""]
+sirius_data <- sirius_data[sirius_data$wharton != ""]
+
+# Work time is collected by the polling site, removing the ability for user error.
+
+# Final Answer
+# Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
+temp_wharton <- (sirius_data %>% count(wharton))
+temp_sirius <- (sirius_data %>% count(sirius))
+
+percent_wharton <- (temp_wharton[3,2]/temp_sirius[3,2])
+
+total_listeners <- percent_wharton*25800000
+
+
+```
+
+Fin.
+
+
+
