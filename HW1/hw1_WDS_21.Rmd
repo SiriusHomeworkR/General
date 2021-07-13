@@ -154,7 +154,8 @@ sirius_data <- sirius_data %>%
 
 # Data Cleanup
 # Age Cleanup: Remove any ages that are not between 1 and 122 (the oldest anyone has ever been) as well as null values and badly formatted data
-# NB: There is one oddly formatted input for 18 that could be reformatted here
+
+sirius_data$age <- as.numeric(sirius_data$age)
 sirius_data <- sirius_data[sirius_data$age %in% 1:122]
 
 # Education Cleanup: Remove things that are not one of several choices
