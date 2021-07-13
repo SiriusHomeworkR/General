@@ -113,6 +113,8 @@ iii. Brief summary
 
 Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
 
+
+
 ## Sample properties
 
 The population from which the sample is drawn determines where the results of our analysis can be applied or generalized. We include some basic demographic information for the purpose of identifying sample bias, if any exists. Combine our data and the general population distribution in age, gender and income to try to characterize our sample on hand.
@@ -184,6 +186,13 @@ percent_wharton <- (temp_wharton[3,2]/temp_sirius[3,2])
 
 total_listeners <- percent_wharton*25800000
 
+
+```
+
+``` {r summary_plot, echo=TRUE, results="asis"}
+age_hist <- ggplot(sirius_data) + 
+  geom_histogram(aes(x = age), bins = 10, fill = "blue") +
+  labs( title = "Ages", x = "Age" , y = "Frequency")
 
 ```
 
