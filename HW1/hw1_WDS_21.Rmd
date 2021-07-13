@@ -159,7 +159,7 @@ sirius_data <- sirius_data_read %>%
 sirius_data$age[sirius_data$age == "Eighteen (18)"] <- 18
 sirius_data$age[sirius_data$age == "27`"] <- 27
 
-sirius_data$age <- as.numeric(sirius_data$age)
+sirius_data$age <- as.integer(sirius_data$age)
 sirius_data <- sirius_data[sirius_data$age %in% 7:122]
 
 # Education Cleanup: Remove things that are not one of several choices
