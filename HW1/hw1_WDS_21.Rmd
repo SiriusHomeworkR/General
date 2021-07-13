@@ -263,7 +263,38 @@ labs( y="Income",
 p <- ggpubr::ggarrange(sirius_plot, wharton_plot, common.legend = T, legend = "bottom", ncol = 2)
  p
 ```
+SiriusAge_plot = ggplot(sirius_data, aes(x=sirius_data$age, fill = sirius)) +
+ geom_bar(position = position_dodge(preserve = "single"))+
+  
+labs( y="count",
+       fill = "sirius",
+       x = "Age",
+      
+       title = "Age by Sirius")
+WhartonAge_plot = ggplot(sirius_data, aes(x= age, fill = wharton)) +
+ geom_bar(position = position_dodge(preserve = "single"))+
+labs(x="Age",
+       fill = "wharton",
+       y = " Count",
+      
+       title = "Age by Wharton")
+a <- ggpubr::ggarrange(SiriusAge_plot, WhartonAge_plot, common.legend = T, legend = "bottom", ncol = 2)
+ a
 
+count(sirius_data, education) %>%
+      ggplot(aes(x = reorder(education, n), y = n, fill=education)) +
+      geom_col() + 
+      theme_minimal() +
+      theme(axis.text.x=element_blank(),
+            axis.ticks.x=element_blank()) +
+      labs(y = "Count", x="Education")
+ggplot(sirius_data) +
+  geom_bar(aes(x = gender), fill = "blue") +
+  theme_minimal()
+sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000", "$15,000 - $30,000", "$30,000 - $50,000", "$50,000 - $75,000", "$75,000 - $150,000", "Above $150,000", "Other"))
+ggplot(sirius_data) + 
+  geom_bar(aes(x = income), fill = "blue", width = 0.8) +
+  labs( title = "Ages", x = "Age" , y = "Frequency")
 Fin.
 
 
