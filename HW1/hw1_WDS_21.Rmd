@@ -211,7 +211,7 @@ ggplot(sirius_data) +
 sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000", "$15,000 - $30,000", "$30,000 - $50,000", "$50,000 - $75,000", "$75,000 - $150,000", "Above $150,000", "Other"))
 ggplot(sirius_data) + 
   geom_bar(aes(x = income), fill = "blue", width = 0.8) +
-  labs( title = "Ages", x = "Age" , y = "Frequency")
+  labs( title = "Incomess", x = "Income" , y = "Frequency")
 
 ggplot(sirius_data, aes(y=income, fill=gender)) + 
   geom_bar(position = position_dodge(preserve = "single"))+
