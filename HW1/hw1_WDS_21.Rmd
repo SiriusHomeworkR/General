@@ -213,7 +213,55 @@ ggplot(sirius_data) +
   geom_bar(aes(x = income), fill = "blue", width = 0.8) +
   labs( title = "Ages", x = "Age" , y = "Frequency")
 
+ggplot(sirius_data, aes(y=income, fill=gender)) + 
+  geom_bar(position = position_dodge(preserve = "single"))+
+labs( 
+       fill = "Gender",
+       x = "count",
+       title = "Income by Gender")
 
+ggplot(sirius_data, aes(y=income, fill=worktime)) + 
+  geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+       fill = "Income",
+       x = "WorkTime",
+         
+       title = "Income by Worktime")
+ 
+ggplot(sirius_data, aes(y=income, fill=age)) + 
+  geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+       fill = "Age",
+       x = " Count",
+             # change limits of x-axis
+        
+       title = "Income by Age")
+
+ggplot(sirius_data, aes(y= income, fill = education)) +
+ geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+       fill = "Education",
+       x = " Count",
+      
+       title = "Income by Education")
+
+
+sirius_plot = ggplot(sirius_data, aes(y= income, fill = sirius)) +
+ geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+       fill = "sirius",
+       x = " Count",
+      
+       title = "Income by Sirius")
+wharton_plot = ggplot(sirius_data, aes(y= income, fill = wharton)) +
+ geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+       fill = "wharton",
+       x = " Count",
+      
+       title = "Income by Wharton")
+p <- ggpubr::ggarrange(sirius_plot, wharton_plot, common.legend = T, legend = "bottom", ncol = 2)
+ p
 ```
 
 Fin.
