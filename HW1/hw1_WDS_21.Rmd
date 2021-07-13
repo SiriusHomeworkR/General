@@ -139,11 +139,11 @@ To be specific, you should include:
 # Read in the data with correct cols
 # We need to set the encoding to get ' to render properly
 # We will later remove rows with null cols, so fill = TRUE will be dealt with
-sirius_data <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
+sirius_data_read <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=TRUE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
 
 
 # Rename Columns
-sirius_data <- sirius_data %>%
+sirius_data <- sirius_data_read %>%
   rename(
     "age" = "Answer.Age",
     "education" = "Answer.Education",
@@ -156,9 +156,11 @@ sirius_data <- sirius_data %>%
 
 # Data Cleanup
 # Age Cleanup: Remove any ages that are not between 1 and 122 (the oldest anyone has ever been) as well as null values and badly formatted data
+sirius_data$age[sirius_data$age == "Eighteen (18)"] <- 18
+sirius_data$age[sirius_data$age == "27`"] <- 27
 
 sirius_data$age <- as.numeric(sirius_data$age)
-sirius_data <- sirius_data[sirius_data$age %in% 1:122]
+sirius_data <- sirius_data[sirius_data$age %in% 7:122]
 
 # Education Cleanup: Remove things that are not one of several choices
 sirius_data[sirius_data == ""] <- "Other"
@@ -182,7 +184,7 @@ sirius_data <- sirius_data[sirius_data$wharton != ""]
 temp_wharton <- (sirius_data %>% count(wharton))
 temp_sirius <- (sirius_data %>% count(sirius))
 
-percent_wharton <- (temp_wharton[3,2]/temp_sirius[3,2])
+percent_wharton <- (temp_wharton[2,2]/temp_sirius[2,2])
 
 total_listeners <- percent_wharton*25800000
 
