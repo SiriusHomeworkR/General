@@ -294,8 +294,8 @@ head(dd)
   #Female (50.8%) to Male Ratio is almost 1:1 in the years 2015- 2019
 #Our data
  #Female to Male ratio is 750:1000 which is 3:4 
- #High School graduate or higher 1550/1750  which is 88.5%
- #Bachelors degree is 600/1750 which is 34%
+ #High School graduate or higher 1550/1741  which is 89%
+ #Bachelors degree is 600/1741 which is 34%
 
 # Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
 
