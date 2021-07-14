@@ -1,0 +1,149 @@
+---
+title: "WDS, HW 2"
+author:
+- Group Member 1
+- Group Member 2
+- Group Member 3
+- Group Member 4
+- Group Member 5
+date: 'Due: 10:00PM, Friday, July 14, 2021'
+output:
+  html_document:
+    code_folding: show
+    highlight: haddock
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+urlcolor: blue
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results = "hide", fig.width=8, fig.height=4)
+options(scipen = 0, digits = 3)  # controls base R output
+# check if you have ISLR package, if not, install it
+if(!require('pacman')) {install.packages('pacman')}
+pacman::p_load(ISLR, readxl, tidyverse, magrittr, dplyr, ggplot2)
+```
+
+
+\pagebreak
+
+
+# Objectives 
+
+*The main purpose for this homework is to tell the difference between probability and statistics.* Using the Roulette game as illustration, we go through the main elements of probability and statstics. We then learn how to estimate unknown parameters in a population with precision, i.e., a confidence interval. Simulations help us to understand the interpretation of a confidence interval. 
+
+- Continue to get used to `RStudio` and `RMarkdown`
+- Probability
+  - Random variables and their distributions
+  - Population parameters: expected values and variances
+  - Normal variables
+  - Central limit theorem (CLT)
+
+- Statistics
+  - Sample means and sample variances
+  - Use sample mean to estimate the population mean
+  - Confidence intervals/hypothesis tests
+  
+- Packages/functions
+    - `dplyr`
+    - `ggplot`
+    - `pnorm()`, `qnorm()`, `dnorm()`
+
+
+# Review materials
+
+
+- Study Module 2: Probability_Statistics_101
+
+
+# Question 1: Probability
+
+The following questions refer to the Red-Black Roulette game. After the ball is spun it will land in one of the slots.
+
+a.	What is the probability that the ball will land in any one slot?
+
+
+b.	A player will bet \$1 each time. Let $X$ be the payoff.
+
+    (i)	If the player bets on a single number, write down the distribution of $X$, i.e. the possible values of $X$ and the corresponding probabilities. Calculate the expected value of winning and the standard deviation.
+    
+    (ii)	Repeat number (i) if the player bets on two numbers.
+    
+    (iii)	If one plays the game by betting on a single number 1000 times, how much do you expect the person to win?
+    
+    (iv)	Explain now why the casinos always make money on the roulette game.
+
+c. Let's "play" the game using code. 
+
+    (i) We bet 30 times each round. Put 30 payoffs into a vector and store into a variable.
+
+    (ii) Plot the histogram of the 30 payoffs. What is the total payoffs for this round?
+
+    (iii) Let's play another 100 rounds. Plot the histogram of total payoffs. What is the average payoff from these 100 rounds? Is this as expected? 
+
+
+# Question 2: Statistics 
+    
+This exercise is designed to help you understand the notion of confidence interval and understand confidence interval through simulations.
+
+Let $Y$ be the average winning amount among 100 games of betting \$1 each time in the  Red-Black Roulette game. We know that $Y$ follows approximately a normal distribution with mean $\mu = -.0526$ and standard deviation $\sigma = .1$. We will start to record the game payoff each time but pretend that we do not know the true mean is -.0526. 
+
+a. Generate 50 $Y's$ from $N(\mu = -.0526, \sigma =.1)$ with `set.seed(1)`. Construct a $95\%$ confidence interval for the unknown mean. State the confidence interval. Is the true value -.0526 inside the confidence interval?
+
+
+b. Repeat question 2a. 100 times to generate 100 samples (each has sample size 50 and follows $N(\mu = -.0526, \sigma =.1)$) and produce 100 95\% confidence intervals. How many of the confidence intervals capture the true mean -.0526? Display your 100 confidence intervals in a meaningful way. 
+
+c. Summarize the interpretation of a 95\% confidence interval based on the simulation in question 2b.  
+
+```{r, eval = F, echo = T}
+n_rounds <- 30
+n_bets_p_round <- 1
+
+wins1 <- rbinom(n_rounds, n_bets_p_round, 18/38)
+losses1 <- 1 - wins1
+gains1 <- wins1 - losses1
+
+hist(gains1, breaks = 18)
+
+n_rounds2 <- 100
+n_bets_p_round2 <- 30
+
+wins2 <- rbinom(n_rounds2, n_bets_p_round2, 18/38)
+losses2 <- 30 - wins2
+gains2 <- wins2 - losses2
+
+hist(gains2, breaks = 18)
+
+
+
+```
+
+
+# Appendix: simulation code for confidence interval
+
+To help out we provide the following R-chunk that provides 10 confidence intervals from 10 random samples. Modify it for your purpose accordingly.
+
+```{r, eval = F, echo = T}
+n_sim <- 10 # number of simulations
+mu_hat <- numeric(n_sim)   # estimate
+upper_ci <- numeric(n_sim)  # lower bound
+lower_ci <- numeric(n_sim)  # upper bound
+
+# Carry out the simulation
+for (i in 1:n_sim){
+  y <- rnorm(50, mean= -.0526, sd = .1)
+  mu_hat <- mean(y)
+  mu_sd < sd(y)
+  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50)
+  lower_ci[i] <- mu_hat - 1.96 * mu_sd/sqrt(50)
+}
+
+results <- cbind(lower_ci, upper_ci)
+```
+
