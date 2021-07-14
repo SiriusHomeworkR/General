@@ -298,8 +298,9 @@ dd=data.frame(WhartonPercent =percent_wharton, TotalWhartonListeners = total_lis
 names(dd)[names(dd)=="n"] <- "Wharton Percentage"
 names(dd)[names(dd)=="n.1"] <- "Total Listeners"
 head(dd)
-
+ 
 #Write a brief executive summary to summarize your findings and how you came to that conclusion.
+#We noticed that there were not much differences between the sample auidence and the US population with respect to Education and gender. We arrived at this conclusion by comparing our data demographics and by using ggplot to verify our findings against the US population demographics.(https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2019/)
 ```
 
 
