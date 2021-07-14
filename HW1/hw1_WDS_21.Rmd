@@ -270,21 +270,7 @@ ggplot(sirius_data) +
   labs( title = "Ages", x = "Age" , y = "Frequency")
 
 #i. Does this sample appear to be a random sample from the general population of the USA?
-#distribution of Education over age Evidence
-siriusAge_Education =ggplot(sirius_data, aes(y = education, fill=sirius )) + 
-  theme_bw() +
-  geom_bar() +
-  labs(x = "Age group ",
-       title = "Distribution of Education over age group Sirius"
-       )
-whartonAge_Education =ggplot(sirius_data, aes(y = education, fill=wharton )) + 
-  theme_bw() +
-  geom_bar() +
-  labs(x = "Age group ",
-       title = "Distribution of Education over age group Wharton"
-       )
-e <- ggpubr::ggarrange(siriusAge_Education,whartonAge_Education, common.legend = T, legend = "bottom", ncol = 2)
-e
+ 
 # Final Answer
 # Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
 temp_wharton <- (sirius_data %>% count(wharton))
