@@ -141,7 +141,7 @@ How successful is the Wharton Talk Show
 # We need to set the encoding to get ' to render properly
 # We will later remove rows with null cols, so fill = TRUE will be dealt with
  
-sirius_data <- fread("/Users/adiay/Downloads/Wharton/HW1/data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
+sirius_data <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
 
 
 # Rename Columns
