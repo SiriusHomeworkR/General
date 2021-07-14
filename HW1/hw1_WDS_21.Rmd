@@ -268,21 +268,6 @@ sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000",
 ggplot(sirius_data) + 
   geom_bar(aes(x = income), fill = "blue", width = 0.8) +
   labs( title = "Ages", x = "Age" , y = "Frequency")
-
- 
- #i. Does this sample appear to be a random sample from the general population of the USA?
-
-#When we compare the US population demographics with our data  the US data has the following percentages related to Education, age, gender
- # high school graduate or higher over 25 yrs is 88% 
-  #Bachelors Degree , percent of person's age over 25yrs is 32.1%
-  #Female (50.8%) to Male Ratio is almost 1:1 in the years 2015- 2019
-#Our data
- #Female to Male ratio is 750:1000 which is 3:4 
- #High School graduate or higher 1550/1750  which is 88.5%
- #Bachelors degree is 600/1750 which is 34%
-
-# Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
-
 # Final Answer
 # Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
 temp_wharton <- (sirius_data %>% count(wharton))
@@ -298,6 +283,27 @@ dd=data.frame(WhartonPercent =percent_wharton, TotalWhartonListeners = total_lis
 names(dd)[names(dd)=="n"] <- "Wharton Percentage"
 names(dd)[names(dd)=="n.1"] <- "Total Listeners"
 head(dd)
+ 
+ 
+ #Conclusions
+ #i. Does this sample appear to be a random sample from the general population of the USA?
+
+#When we compare the US population demographics with our data  the US data has the following percentages related to Education, age, gender
+ # high school graduate or higher over 25 yrs is 88% 
+  #Bachelors Degree , percent of person's age over 25yrs is 32.1%
+  #Female (50.8%) to Male Ratio is almost 1:1 in the years 2015- 2019
+#Our data
+ #Female to Male ratio is 750:1000 which is 3:4 
+ #High School graduate or higher 1550/1750  which is 88.5%
+ #Bachelors degree is 600/1750 which is 34%
+
+# Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
+
+#iii. Brief summary 
+
+Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
+   We found 1741 obs of 7 variables such as age, education, gender, income, sirius, wharton, worktime. 
+
  
 #Write a brief executive summary to summarize your findings and how you came to that conclusion.
 #We noticed that there were not much differences between the sample auidence and the US population with respect to Education and gender. We arrived at this conclusion by comparing our data demographics and by using ggplot to verify our findings against the US population demographics.(https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2019/)
