@@ -8,6 +8,10 @@ author:
 - Group Member Kamron
 date: 'Due: 10:00PM,  July 13, 2021'
 output:
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: '4'
   html_document:
     code_folding: show
     highlight: haddock
@@ -16,10 +20,6 @@ output:
     toc: yes
     toc_depth: 4
     toc_float: yes
-  pdf_document:
-    number_sections: yes
-    toc: yes
-    toc_depth: '4'
   word_document:
     toc: yes
     toc_depth: '4'
@@ -28,7 +28,7 @@ urlcolor: blue
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, results = "hide", fig.width=8, fig.height=4)
+knitr::opts_chunk$set(echo = TRUE, results = "hide", fig.width=8, fig.height=4)
 options(scipen = 0, digits = 3)  # controls base R output
 # check if you have ISLR package, if not, install it
 if(!require('pacman')) {install.packages('pacman')}
@@ -112,7 +112,7 @@ As in real world data with user input, the data is incomplete, with missing valu
 iii. Brief summary 
 
 Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
-
+ 
 
 ## Sample properties
 
@@ -136,12 +136,12 @@ How successful is the Wharton Talk Show
 3. Findings
 
 4. Limitations of the study. 
-```{r main}
+```{r}
 # Read in the data with correct cols
 # We need to set the encoding to get ' to render properly
 # We will later remove rows with null cols, so fill = TRUE will be dealt with
  
-sirius_data <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
+sirius_data <- fread("/Users/adiay/Downloads/Wharton/HW1/data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
 
 
 # Rename Columns
@@ -175,31 +175,40 @@ sirius_data.gender <- sirius_data[sirius_data$gender != ""]
 sirius_data.income <- sirius_data[sirius_data$income != ""]
 sirius_data.sirius <- sirius_data[sirius_data$sirius != ""]
 sirius_data.wharton <- sirius_data[sirius_data$wharton != ""]
- 
- 
-# Work time is collected by the polling site, removing the ability for user error.
-str(sirius_data)
-summary(sirius_data)
- 
 
+str(sirius_data)
+ 
+summary(sirius_data)
+```
+
+#The summary shows sample size of 1741 objects of 7 variables
 # Plotting using gglot income vs Gender
+
+```{r}
 ggplot(sirius_data, aes(y=income, fill=gender)) + 
   geom_bar(position = position_dodge(preserve = "single"))+
 labs( 
        fill = "Gender",
        x = "count",
        title = "Income by Gender")
+```
+# From the income by gender graph, we know that men earn more than women. 
 
 # Plotting using gglot income vs Worktime
+```{r}
 ggplot(sirius_data, aes(y=income, fill=worktime)) + 
   geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
        fill = "Income",
        x = "WorkTime",
-         
        title = "Income by Worktime")
 
+```
+# In this income by work time graph, the worktime increases initially, when income increases but at a certain point, in this case #50,000, the worktime will decrease. 
+
 # Plotting using gglot income vs age
+``` {r}
+
 ggplot(sirius_data, aes(y=income, fill=age)) + 
 geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
@@ -207,15 +216,22 @@ labs( y="Income",
       x = " Count",
       title = "Income by Age")
 
+``` 
+# Because there are more young people in the workforce, they are overrepresented in all of the income categories in contrast to the #older age groups. 
+
 # Plotting using gglot income vs education
+``` {r}
 ggplot(sirius_data, aes(y= income, fill = education)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
        fill = "Education",
        x = " Count",
        title = "Income by Education")
+``` 
+# People with some college education and more are more likely to earn more and are overrepresented in all the income categories. 
 
-#Bivariate Relationships comparing Income in Sirius vs Wharton
+# Bivariate Relationships comparing Income in Sirius vs Wharton
+``` {r}
 sirius_plot = ggplot(sirius_data, aes(y= income, fill = sirius)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
@@ -234,25 +250,15 @@ labs( y="Income",
 p <- ggpubr::ggarrange(sirius_plot, wharton_plot, common.legend = T, legend = "bottom", ncol = 2)
 p
  
-#Bivariate Relationships  comparing Age group in Sirius / age group in Wharton
+``` 
+# People who listen to Sirius and Wharton make roughly the same amount of money. 
+
+
  
-SiriusAge_plot = ggplot(sirius_data, aes(x=sirius_data$age, fill = sirius)) +
-geom_bar(position = position_dodge(preserve = "single"))+
-labs(  
-       fill = "sirius",
-       x = "Age",
-      
-       title = "Age by Sirius")
 
-WhartonAge_plot = ggplot(sirius_data, aes(x= age, fill = wharton)) +
- geom_bar(position = position_dodge(preserve = "single"))+
-labs(x="Age",
-       fill = "wharton",
-       title = "Age by Wharton")
-a <- ggpubr::ggarrange(SiriusAge_plot, WhartonAge_plot, common.legend = T, legend = "bottom", ncol = 2)
-a
 
-#Education 
+# Education 
+``` {r }
 count(sirius_data, education) %>%
       ggplot(aes(x = reorder(education, n), y = n, fill=education)) +
       geom_col() + 
@@ -260,16 +266,31 @@ count(sirius_data, education) %>%
       theme(axis.text.x=element_blank(),
             axis.ticks.x=element_blank()) +
       labs(y = "Count", x="Education")
-#Income
+```
+# People are more likely to have some college and no diploma or associate degree or bachelor's degree than other qualifications.
+
+
+# Income
+``` {r}
 ggplot(sirius_data) +
   geom_bar(aes(x = gender), fill = "blue") +
   theme_minimal()
+
+``` 
+
+#This graph shows that there are more men listeners than women. 
+```{r}
 sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000", "$15,000 - $30,000", "$30,000 - $50,000", "$50,000 - $75,000", "$75,000 - $150,000", "Above $150,000", "Other"))
 ggplot(sirius_data) + 
   geom_bar(aes(x = income), fill = "blue", width = 0.8) +
-  labs( title = "Ages", x = "Age" , y = "Frequency")
+  labs( title = "Incomes", x = "income" , y = "Frequency")
+```
+#The graph is unimodal and the median is around 30000-50000 and people are most likely to have incomes from 30000 to 50000. 
+
+
 # Final Answer
-# Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
+ Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
+``` {r}
 temp_wharton <- (sirius_data %>% count(wharton))
 temp_sirius <- (sirius_data %>% count(sirius))
 
@@ -278,35 +299,63 @@ percent_wharton
 
 total_listeners <- percent_wharton*25800000
 
-#format the result into a table by renaming the columns
+``` 
+
+
+# Formatted Output
+``` {r}
 dd=data.frame(WhartonPercent =percent_wharton, TotalWhartonListeners = total_listeners)
 names(dd)[names(dd)=="n"] <- "Wharton Percentage"
 names(dd)[names(dd)=="n.1"] <- "Total Listeners"
-head(dd)
- ```
+knitr::kable(head(dd))
+
+
+``` 
+
+
+# Conclusion Summary and Inferences
+```{r}
+
+```
+
+ii# Handle missing/wrongly filled values of the selected variables
+  
+ # Age Cleanup: Remove any ages that are not between 1 and 122 (the oldest anyone has ever been) as well as null values and badly formatted data
+# NB: There is one oddly formatted input for 18 that could be reformatted here
+# Work time is collected by the polling site, removing the ability for user error.
+# Education Cleanup: Remove things that are not one of several choices
+# Data Cleanup: Remove nulls from the data
  
- #Conclusions
- #i. Does this sample appear to be a random sample from the general population of the USA?
+iii. Brief summary 
+
+Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.
+
+ 
+ We found 1741 obs of 7 variables such as age, education, gender, income, sirius, wharton, worktime.  Many of them are part time workers who have done some college and are doing a job to gain experience. 
+
+#i. Does this sample appear to be a random sample from the general population of the USA?
 
 #When we compare the US population demographics with our data  the US data has the following percentages related to Education, age, gender
- # high school graduate or higher over 25 yrs is 88% 
-  #Bachelors Degree , percent of person's age over 25yrs is 32.1%
-  #Female (50.8%) to Male Ratio is almost 1:1 in the years 2015- 2019
+ 1. High school graduate or higher over 25 yrs is 88%. 
+ 2. Bachelors Degree , percent of person's age over 25yrs is 32.1%.
+ 3. Female (50.8%) to Male Ratio is almost 1:1 in the years 2015- 2019.
 #Our data
- #Female to Male ratio is 750:1000 which is 3:4 
- #High School graduate or higher 1550/1741  which is 89%
- #Bachelors degree is 600/1741 which is 34%
+ 1.Female to Male ratio is 750:1000 which is 3:4. 
+ 2.High School graduate or higher 1550/1741  which is 89%.
+ 3.Bachelors degree is 610/1741 which is 35%.
 
-# Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
-
-#iii. Brief summary 
-
+#Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
 #Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
-   We found 1741 obs of 7 variables such as age, education, gender, income, sirius, wharton, worktime. 
 
- 
+
+#Final Answer
+Wharton Percentage:0.051
+Total Listeners:1322585
+
 #Write a brief executive summary to summarize your findings and how you came to that conclusion.
-#We noticed that there were not much differences between the sample auidence and the US population with respect to Education and gender. We arrived at this conclusion by comparing our data demographics and by using ggplot to verify our findings against the US population demographics.(https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2019/)
+#We noticed that there were not much differences between the sample auidence and the US population with respect to Education and #gender. 
+#We arrived at this conclusion by comparing our data demographics and by using ggplot to verify our findings against the #US population demographics.(https://www.census.gov/acs/www/data/data-tables-and-tools/data-profiles/2019/)
+
 
 
 
