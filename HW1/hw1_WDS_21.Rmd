@@ -345,7 +345,6 @@ Write a brief report to summarize all the variables collected. Include both summ
  3.Bachelors degree is 610/1741 which is 35%.
 
 #Since both are similar we conclude that this sample appears to be a random sample from the general population of the USA.
-#Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
 
 
 #Final Answer
