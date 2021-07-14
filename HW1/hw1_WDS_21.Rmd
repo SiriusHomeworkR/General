@@ -1,11 +1,11 @@
 ---
 title: " WDS, HW 1"
 author:
-- Group Member 1
-- Group Member 2
-- Group Member 3
-- Group Member 4
-- Group Member 5
+- Group Member Andrew
+- Group Member Sahej
+- Group Member Adithya
+- Group Member Raymond
+- Group Member Kamron
 date: 'Due: 10:00PM,  July 13, 2021'
 output:
   html_document:
@@ -114,7 +114,6 @@ iii. Brief summary
 Write a brief report to summarize all the variables collected. Include both summary statistics (including sample size) and graphical displays such as histograms or bar charts where appropriate. Comment on what you have found from this sample. (For example - it's very interesting to think about why would one work for a job that pays only 10cents/each survey? Who are those survey workers? The answer may be interesting even if it may not directly relate to our goal.)
 
 
-
 ## Sample properties
 
 The population from which the sample is drawn determines where the results of our analysis can be applied or generalized. We include some basic demographic information for the purpose of identifying sample bias, if any exists. Combine our data and the general population distribution in age, gender and income to try to characterize our sample on hand.
@@ -131,36 +130,36 @@ Give a final estimate of the Wharton audience size in January 2014. Assume that 
 To be specific, you should include:
 
 1. Goal of the study
+How successful is the Wharton Talk Show
 2. Method used: data gathering, estimation methods
-3. Findings
-4. Limitations of the study. 
 
-```{r main, include=TRUE, results = "asis", echo=TRUE}
+3. Findings
+
+4. Limitations of the study. 
+```{r main}
 # Read in the data with correct cols
 # We need to set the encoding to get ' to render properly
 # We will later remove rows with null cols, so fill = TRUE will be dealt with
-sirius_data_read <- fread("data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=TRUE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
+ 
+sirius_data <- fread("/Users/adiay/Downloads/Wharton/HW1/data/Survey_results_final.csv", select = c("Answer.Age", "Answer.Education", "Answer.Gender", "Answer.HouseHoldIncome", "Answer.Sirius Radio", "Answer.Wharton Radio", "WorkTimeInSeconds"), stringsAsFactors=FALSE, encoding = 'UTF-8', fill = TRUE, header = TRUE)
 
 
 # Rename Columns
-sirius_data <- sirius_data_read %>%
+sirius_data <- sirius_data %>%
   rename(
-    "age" = "Answer.Age",
-    "education" = "Answer.Education",
-    "gender" = "Answer.Gender",
-    "income" = "Answer.HouseHoldIncome",
-    "sirius" = "Answer.Sirius Radio",
-    "wharton" = "Answer.Wharton Radio",
-    "worktime" = "WorkTimeInSeconds"
+    age = "Answer.Age",
+    education = "Answer.Education",
+    gender = "Answer.Gender",
+    income = "Answer.HouseHoldIncome",
+    sirius = "Answer.Sirius Radio",
+    wharton = "Answer.Wharton Radio",
+    worktime = "WorkTimeInSeconds"
   )
 
 # Data Cleanup
 # Age Cleanup: Remove any ages that are not between 1 and 122 (the oldest anyone has ever been) as well as null values and badly formatted data
-sirius_data$age[sirius_data$age == "Eighteen (18)"] <- 18
-sirius_data$age[sirius_data$age == "27`"] <- 27
-
-sirius_data$age <- as.integer(sirius_data$age)
-sirius_data <- sirius_data[sirius_data$age %in% 7:122]
+# NB: There is one oddly formatted input for 18 that could be reformatted here
+sirius_data <- sirius_data[sirius_data$age %in% 1:122]
 
 # Education Cleanup: Remove things that are not one of several choices
 sirius_data[sirius_data == ""] <- "Other"
@@ -172,47 +171,18 @@ sirius_data <- sirius_data[sirius_data$education %in% c("Some college, no diplom
                                                         "Other")]
 
 # Data Cleanup: Remove nulls from the data
-sirius_data <- sirius_data[sirius_data$gender != ""]
-sirius_data <- sirius_data[sirius_data$income != ""]
-sirius_data <- sirius_data[sirius_data$sirius != ""]
-sirius_data <- sirius_data[sirius_data$wharton != ""]
-
+sirius_data.gender <- sirius_data[sirius_data$gender != ""]
+sirius_data.income <- sirius_data[sirius_data$income != ""]
+sirius_data.sirius <- sirius_data[sirius_data$sirius != ""]
+sirius_data.wharton <- sirius_data[sirius_data$wharton != ""]
+ 
+ 
 # Work time is collected by the polling site, removing the ability for user error.
+str(sirius_data)
+summary(sirius_data)
+ 
 
-# Final Answer
-# Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
-temp_wharton <- (sirius_data %>% count(wharton))
-temp_sirius <- (sirius_data %>% count(sirius))
-
-percent_wharton <- (temp_wharton[2,2]/temp_sirius[2,2])
-
-total_listeners <- percent_wharton*25800000
-
-
-```
-
-``` {r summary_plots, echo=TRUE, results="asis", fig.width=10}
-ggplot(sirius_data) + 
-  geom_histogram(aes(x = age), bins = 25, fill = "blue") +
-  labs( title = "Ages", x = "Age" , y = "Frequency")
-
-count(sirius_data, education) %>%
-      ggplot(aes(x = reorder(education, n), y = n, fill=education)) +
-      geom_col() + 
-      theme_minimal() +
-      theme(axis.text.x=element_blank(),
-            axis.ticks.x=element_blank()) +
-      labs(y = "Count", x="Education")
-
-ggplot(sirius_data) +
-  geom_bar(aes(x = gender), fill = "blue") +
-  theme_minimal()
-
-sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000", "$15,000 - $30,000", "$30,000 - $50,000", "$50,000 - $75,000", "$75,000 - $150,000", "Above $150,000", "Other"))
-ggplot(sirius_data) + 
-  geom_bar(aes(x = income), fill = "blue", width = 0.8) +
-  labs( title = "Incomess", x = "Income" , y = "Frequency")
-
+# Plotting using gglot income vs Gender
 ggplot(sirius_data, aes(y=income, fill=gender)) + 
   geom_bar(position = position_dodge(preserve = "single"))+
 labs( 
@@ -220,6 +190,7 @@ labs(
        x = "count",
        title = "Income by Gender")
 
+# Plotting using gglot income vs Worktime
 ggplot(sirius_data, aes(y=income, fill=worktime)) + 
   geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
@@ -227,25 +198,24 @@ labs( y="Income",
        x = "WorkTime",
          
        title = "Income by Worktime")
- 
-ggplot(sirius_data, aes(y=income, fill=age)) + 
-  geom_bar(position = position_dodge(preserve = "single"))+
-labs( y="Income",
-       fill = "Age",
-       x = " Count",
-             # change limits of x-axis
-        
-       title = "Income by Age")
 
+# Plotting using gglot income vs age
+ggplot(sirius_data, aes(y=income, fill=age)) + 
+geom_bar(position = position_dodge(preserve = "single"))+
+labs( y="Income",
+      fill = "Age",
+      x = " Count",
+      title = "Income by Age")
+
+# Plotting using gglot income vs education
 ggplot(sirius_data, aes(y= income, fill = education)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
        fill = "Education",
        x = " Count",
-      
        title = "Income by Education")
 
-
+#Bivariate Relationships comparing Income in Sirius vs Wharton
 sirius_plot = ggplot(sirius_data, aes(y= income, fill = sirius)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
@@ -253,6 +223,7 @@ labs( y="Income",
        x = " Count",
       
        title = "Income by Sirius")
+
 wharton_plot = ggplot(sirius_data, aes(y= income, fill = wharton)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs( y="Income",
@@ -261,26 +232,27 @@ labs( y="Income",
       
        title = "Income by Wharton")
 p <- ggpubr::ggarrange(sirius_plot, wharton_plot, common.legend = T, legend = "bottom", ncol = 2)
- p
-```
+p
+ 
+#Bivariate Relationships  comparing Age group in Sirius / age group in Wharton
+ 
 SiriusAge_plot = ggplot(sirius_data, aes(x=sirius_data$age, fill = sirius)) +
- geom_bar(position = position_dodge(preserve = "single"))+
-  
-labs( y="count",
+geom_bar(position = position_dodge(preserve = "single"))+
+labs(  
        fill = "sirius",
        x = "Age",
       
        title = "Age by Sirius")
+
 WhartonAge_plot = ggplot(sirius_data, aes(x= age, fill = wharton)) +
  geom_bar(position = position_dodge(preserve = "single"))+
 labs(x="Age",
        fill = "wharton",
-       y = " Count",
-      
        title = "Age by Wharton")
 a <- ggpubr::ggarrange(SiriusAge_plot, WhartonAge_plot, common.legend = T, legend = "bottom", ncol = 2)
- a
+a
 
+#Education 
 count(sirius_data, education) %>%
       ggplot(aes(x = reorder(education, n), y = n, fill=education)) +
       geom_col() + 
@@ -288,6 +260,7 @@ count(sirius_data, education) %>%
       theme(axis.text.x=element_blank(),
             axis.ticks.x=element_blank()) +
       labs(y = "Count", x="Education")
+#Income
 ggplot(sirius_data) +
   geom_bar(aes(x = gender), fill = "blue") +
   theme_minimal()
@@ -295,7 +268,38 @@ sirius_data$income <- factor(sirius_data$income, levels = c("Less than $15,000",
 ggplot(sirius_data) + 
   geom_bar(aes(x = income), fill = "blue", width = 0.8) +
   labs( title = "Ages", x = "Age" , y = "Frequency")
-Fin.
 
+#i. Does this sample appear to be a random sample from the general population of the USA?
+#distribution of Education over age Evidence
+siriusAge_Education =ggplot(sirius_data, aes(y = education, fill=sirius )) + 
+  theme_bw() +
+  geom_bar() +
+  labs(x = "Age group ",
+       title = "Distribution of Education over age group Sirius"
+       )
+whartonAge_Education =ggplot(sirius_data, aes(y = education, fill=wharton )) + 
+  theme_bw() +
+  geom_bar() +
+  labs(x = "Age group ",
+       title = "Distribution of Education over age group Wharton"
+       )
+e <- ggpubr::ggarrange(siriusAge_Education,whartonAge_Education, common.legend = T, legend = "bottom", ncol = 2)
+e
+# Final Answer
+# Set tables to get the amt of people who listen to Wharton relative to the num of people who listen to sirius
+temp_wharton <- (sirius_data %>% count(wharton))
+temp_sirius <- (sirius_data %>% count(sirius))
+
+percent_wharton <- (temp_wharton[3,2]/temp_sirius[3,2])
+percent_wharton
+
+total_listeners <- percent_wharton*25800000
+
+#format the result into a table by renaming the columns
+dd=data.frame(WhartonPercent =percent_wharton, TotalWhartonListeners = total_listeners)
+names(dd)[names(dd)=="n"] <- "Wharton Percentage"
+names(dd)[names(dd)=="n.1"] <- "Total Listeners"
+head(dd)
+```
 
 
