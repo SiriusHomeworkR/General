@@ -202,9 +202,10 @@ for (i in 1:n_sim){
     results[i, 4] <- "FALSE"
   }
 }
-ggplot(results, aes(y=id)) +
-  geom_point(mapping = aes(x=lower_ci, color = is_good, alpha = is_good)) +
-  geom_point(mapping = aes(x=upper_ci, color = is_good, alpha = is_good)) +
+ggplot(results, aes(y=id, color = is_good, alpha = is_good)) +
+  geom_point(mapping = aes(x=lower_ci)) +
+  geom_point(mapping = aes(x=upper_ci)) +
+  geom_errorbar(aes(xmin = lower_ci, xmax = upper_ci)) +
   geom_vline(xintercept = -0.0526) +
   labs(title = "Confidence intervals", x="Upper and lower bounds", y="Run") +
   scale_alpha_manual(values = c(1, 0.2))
