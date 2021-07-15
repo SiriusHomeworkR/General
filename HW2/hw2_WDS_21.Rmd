@@ -145,74 +145,57 @@ hist(gains2, breaks = 18)
 ```
 
 
-# Appendix: simulation code for confidence interval
+This exercise is designed to help you understand the notion of confidence interval and understand confidence interval through simulations.
 
-To help out we provide the following R-chunk that provides 10 confidence intervals from 10 random samples. Modify it for your purpose accordingly.
+Let $Y$ be the average winning amount among 100 games of betting \$1 each time in the  Red-Black Roulette game. We know that $Y$ follows approximately a normal distribution with mean $\mu = -.0526$ and standard deviation $\sigma = .1$. We will start to record the game payoff each time but pretend that we do not know the true mean is -.0526. 
 
 ```{r, eval = F, echo = T}
-n_sim <- 10 # number of simulations
+n_sim <- 101 # number of simulations + 1 for question 2a
 mu_hat <- numeric(n_sim)   # estimate
 upper_ci <- numeric(n_sim)  # lower bound
 lower_ci <- numeric(n_sim)  # upper bound
 
-# Carry out the simulation
-for (i in 1:n_sim){
-  y <- rnorm(50, mean= -.0526, sd = .1)
-  mu_hat <- mean(y)
-  mu_sd <- sd(y)
-  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50)
-  lower_ci[i] <- mu_hat - 1.96 * mu_sd/sqrt(50)
-}
-
-results <- cbind(lower_ci, upper_ci)
-```
-
-```{r Question2}
-
-# 2a
 set.seed(1)
-sim_a <- rnorm(50, mean= -.0526, sd = .1)
-mean_a <- mean(sim_a)
-sd_a <- sd(sim_a)
-lower_a <- mean_a - 2*sd_a/sqrt(50)
-upper_a <- mean_a + 2*sd_a/sqrt(50)
-
-# 2b
-n_sim <- 100 # number of simulations
-mu_hat <- numeric(n_sim)   # estimate
-upper_ci <- numeric(n_sim)  # lower bound
-lower_ci <- numeric(n_sim)  # upper bound
-
 # Carry out the simulation
 for (i in 1:n_sim){
   y <- rnorm(50, mean= -.0526, sd = .1)
   mu_hat <- mean(y)
   mu_sd <- sd(y)
-  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50)
+  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50) #1.96 means 95%
   lower_ci[i] <- mu_hat - 1.96 * mu_sd/sqrt(50)
 }
+ci_df <- data.frame(
+  id = 1:n_sim,
+  lower_ci = lower_ci, 
+  upper_ci = upper_ci)
 
-id <- 1:n_sim
-results <- data.frame(lower_ci = lower_ci, upper_ci = upper_ci, id = id, is_good = "TRUE", stringsAsFactors = TRUE)
-results$is_good <- factor(results$is_good, levels = c("TRUE", "FALSE"))
-count <- 0
-for (i in 1:n_sim){
-  if (results[i, 1] < -0.0526 & results[i, 2] > -0.0526){
-    count <- count + 1
-    results[i, 4] <- "FALSE"
-  }
-}
-ggplot(results, aes(y=id, color = is_good, alpha = is_good)) +
-  geom_point(mapping = aes(x=lower_ci)) +
-  geom_point(mapping = aes(x=upper_ci)) +
-  geom_errorbar(aes(xmin = lower_ci, xmax = upper_ci)) +
-  geom_vline(xintercept = -0.0526) +
-  labs(title = "Confidence intervals", x="Upper and lower bounds", y="Run") +
-  scale_alpha_manual(values = c(1, 0.2))
-
-
-
-
+ci_a <- subset(ci_df, id %in% 1)
+ci_b <- subset(ci_df, id %in% c(2:101))
+ci_b$id <- ci_b$id - 1
+row.names(ci_b) <- 1:100
 ```
 
+a. Generate 50 $Y's$ from $N(\mu = -.0526, \sigma =.1)$ with `set.seed(1)`. Construct a $95\%$ confidence interval for the unknown mean. State the confidence interval. Is the true value -.0526 inside the confidence interval?
 
+From the first 50 generated Y's, the confidence interval comes out to (-0.0656, -0.0195) which does contain -0.0526.
+```{r, eval = F, echo = T}
+ci_a
+```
+
+b. Repeat question 2a. 100 times to generate 100 samples (each has sample size 50 and follows $N(\mu = -.0526, \sigma =.1)$) and produce 100 95\% confidence intervals. How many of the confidence intervals capture the true mean -.0526? Display your 100 confidence intervals in a meaningful way. (Hints: using `geom_errobar()`)
+
+```{r, eval = F, echo = T}
+ci_b
+
+answer <- (lower_ci < -0.0526) & (upper_ci > -0.0526)
+sum(answer)
+ci_df$answer <- answer
+
+ggplot(ci_df, aes(x = id, y = (lower_ci + upper_ci)/2)) + geom_point() + geom_errorbar(aes(ymax = upper_ci, ymin = lower_ci, color = answer)) + xlab("Trial") + ylab("Mean") + geom_hline(yintercept = -0.0526, color = "blue")
+```
+
+From these trials, 99 of the 100 intervals contained the true mean, -0.0526, with the 50th trial being the only one missing the true mean.
+
+c. Summarize the interpretation of a 95\% confidence interval based on the simulation in question 2b.  
+
+Based on the simulation, it can be interpreted that the true mean will be contained within the confidence interval approximately 95% of the time.
