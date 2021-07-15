@@ -100,7 +100,27 @@ a. Generate 50 $Y's$ from $N(\mu = -.0526, \sigma =.1)$ with `set.seed(1)`. Cons
 b. Repeat question 2a. 100 times to generate 100 samples (each has sample size 50 and follows $N(\mu = -.0526, \sigma =.1)$) and produce 100 95\% confidence intervals. How many of the confidence intervals capture the true mean -.0526? Display your 100 confidence intervals in a meaningful way. 
 
 c. Summarize the interpretation of a 95\% confidence interval based on the simulation in question 2b.  
-
+a.	What is the probability that the ball will land in any one slot?
+          The probability that ball will land is 1/38
+b.	A player will bet \$1 each time. Let $X$ be the payoff.
+# Answer 1: Probability
+    (i)	If the player bets on a single number, write down the distribution of $X$, i.e. the possible values of $X$ and the corresponding probabilities. Calculate the expected value of winning and the standard deviation.
+              
+              Expected value of winning = -37/38*(1)+1/38*(35) = -2/38
+              Standard Deviation = SQRT (E(X-Mu)^2) = SQRT ((35-2/38)^2 * 1/38)+(-1-2/38)^2 * 37/38) = SQRT(33.21) = 5.76
+    
+    (ii)	Repeat number (i) if the player bets on two different numbers.
+    
+            -36/38(1)+2/38(17) = -2/38
+            
+    (iii)	If one plays the game by betting on a single number 1000 times, how much do you expect the person to win?
+                If a player bets the same number a 1000 times, the odds of getting that number is 1000/38 = 26. 
+                Total winning = 26*35 - 974 = -64
+                
+    (iv)	Explain now why the casinos always make money on the roulette game.
+    
+            Casinos always make money because the odds of winning are always stacked against the player, for example, if you bet red, due to the two zeroes, the probability is 18/38 rather than 18/36. Also they benefit from the betting impusles of the players. Though individual players can beat the odds at times, repeatedly over many plays, the expected value of winning will hold good.
+            
 ```{r, eval = F, echo = T}
 n_rounds <- 30
 n_bets_p_round <- 1
