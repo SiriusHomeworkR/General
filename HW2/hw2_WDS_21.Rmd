@@ -1,11 +1,12 @@
 ---
 title: "WDS, HW 2"
 author:
-- Group Member 1
-- Group Member 2
-- Group Member 3
-- Group Member 4
-- Group Member 5
+- Adithya 
+- Kamron
+- Alexander
+- Andrew
+- Sahej
+- Raymond
 date: 'Due: 10:00PM, Friday, July 14, 2021'
 output:
   html_document:
@@ -144,7 +145,7 @@ hist(gains2, breaks = 18)
 
 ```
 
-
+# Question 2
 This exercise is designed to help you understand the notion of confidence interval and understand confidence interval through simulations.
 
 Let $Y$ be the average winning amount among 100 games of betting \$1 each time in the  Red-Black Roulette game. We know that $Y$ follows approximately a normal distribution with mean $\mu = -.0526$ and standard deviation $\sigma = .1$. We will start to record the game payoff each time but pretend that we do not know the true mean is -.0526. 
