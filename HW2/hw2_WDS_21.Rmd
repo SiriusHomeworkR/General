@@ -122,12 +122,14 @@ b.	A player will bet \$1 each time. Let $X$ be the payoff.
             Casinos always make money because the odds of winning are always stacked against the player, for example, if you bet red, due to the two zeroes, the probability is 18/38 rather than 18/36. Also they benefit from the betting impusles of the players. Though individual players can beat the odds at times, repeatedly over many plays, the expected value of winning will hold good.
             
 ```{r, eval = F, echo = T}
+set.seed(1)
 n_rounds <- 30
 n_bets_p_round <- 1
 
 wins1 <- rbinom(n_rounds, n_bets_p_round, 18/38)
 losses1 <- 1 - wins1
 gains1 <- wins1 - losses1
+mean1 <- mean(gains1)
 
 hist(gains1, breaks = 18)
 
@@ -137,6 +139,7 @@ n_bets_p_round2 <- 30
 wins2 <- rbinom(n_rounds2, n_bets_p_round2, 18/38)
 losses2 <- 30 - wins2
 gains2 <- wins2 - losses2
+mean2 <- mean(gains2)/30
 
 hist(gains2, breaks = 18)
 
