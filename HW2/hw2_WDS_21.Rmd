@@ -1,11 +1,12 @@
 ---
 title: "WDS, HW 2"
 author:
-- Group Member 1
-- Group Member 2
-- Group Member 3
-- Group Member 4
-- Group Member 5
+- Adithya 
+- Kamron
+- Alexander
+- Andrew
+- Sahej
+- Raymond
 date: 'Due: 10:00PM, Friday, July 14, 2021'
 output:
   html_document:
@@ -100,14 +101,36 @@ a. Generate 50 $Y's$ from $N(\mu = -.0526, \sigma =.1)$ with `set.seed(1)`. Cons
 b. Repeat question 2a. 100 times to generate 100 samples (each has sample size 50 and follows $N(\mu = -.0526, \sigma =.1)$) and produce 100 95\% confidence intervals. How many of the confidence intervals capture the true mean -.0526? Display your 100 confidence intervals in a meaningful way. 
 
 c. Summarize the interpretation of a 95\% confidence interval based on the simulation in question 2b.  
-
+a.	What is the probability that the ball will land in any one slot?
+          The probability that ball will land is 1/38
+b.	A player will bet \$1 each time. Let $X$ be the payoff.
+# Answer 1: Probability
+    (i)	If the player bets on a single number, write down the distribution of $X$, i.e. the possible values of $X$ and the corresponding probabilities. Calculate the expected value of winning and the standard deviation.
+              
+              Expected value of winning = -37/38*(1)+1/38*(35) = -2/38
+              Standard Deviation = SQRT (E(X-Mu)^2) = SQRT ((35-2/38)^2 * 1/38)+(-1-2/38)^2 * 37/38) = SQRT(33.21) = 5.76
+    
+    (ii)	Repeat number (i) if the player bets on two different numbers.
+    
+            -36/38(1)+2/38(17) = -2/38
+            
+    (iii)	If one plays the game by betting on a single number 1000 times, how much do you expect the person to win?
+                If a player bets the same number a 1000 times, the odds of getting that number is 1000/38 = 26. 
+                Total winning = 26*35 - 974 = -64
+                
+    (iv)	Explain now why the casinos always make money on the roulette game.
+    
+            Casinos always make money because the odds of winning are always stacked against the player, for example, if you bet red, due to the two zeroes, the probability is 18/38 rather than 18/36. Also they benefit from the betting impusles of the players. Though individual players can beat the odds at times, repeatedly over many plays, the expected value of winning will hold good.
+            
 ```{r, eval = F, echo = T}
+set.seed(1)
 n_rounds <- 30
 n_bets_p_round <- 1
 
 wins1 <- rbinom(n_rounds, n_bets_p_round, 18/38)
 losses1 <- 1 - wins1
 gains1 <- wins1 - losses1
+mean1 <- mean(gains1)
 
 hist(gains1, breaks = 18)
 
@@ -117,6 +140,7 @@ n_bets_p_round2 <- 30
 wins2 <- rbinom(n_rounds2, n_bets_p_round2, 18/38)
 losses2 <- 30 - wins2
 gains2 <- wins2 - losses2
+mean2 <- mean(gains2)/30
 
 hist(gains2, breaks = 18)
 
@@ -124,26 +148,58 @@ hist(gains2, breaks = 18)
 
 ```
 
+# Question 2
+This exercise is designed to help you understand the notion of confidence interval and understand confidence interval through simulations.
 
-# Appendix: simulation code for confidence interval
-
-To help out we provide the following R-chunk that provides 10 confidence intervals from 10 random samples. Modify it for your purpose accordingly.
+Let $Y$ be the average winning amount among 100 games of betting \$1 each time in the  Red-Black Roulette game. We know that $Y$ follows approximately a normal distribution with mean $\mu = -.0526$ and standard deviation $\sigma = .1$. We will start to record the game payoff each time but pretend that we do not know the true mean is -.0526. 
 
 ```{r, eval = F, echo = T}
-n_sim <- 10 # number of simulations
+n_sim <- 101 # number of simulations + 1 for question 2a
 mu_hat <- numeric(n_sim)   # estimate
 upper_ci <- numeric(n_sim)  # lower bound
 lower_ci <- numeric(n_sim)  # upper bound
 
+set.seed(1)
 # Carry out the simulation
 for (i in 1:n_sim){
   y <- rnorm(50, mean= -.0526, sd = .1)
   mu_hat <- mean(y)
-  mu_sd < sd(y)
-  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50)
+  mu_sd <- sd(y)
+  upper_ci[i] <- mu_hat + 1.96 * mu_sd/sqrt(50) #1.96 means 95%
   lower_ci[i] <- mu_hat - 1.96 * mu_sd/sqrt(50)
 }
+ci_df <- data.frame(
+  id = 1:n_sim,
+  lower_ci = lower_ci, 
+  upper_ci = upper_ci)
 
-results <- cbind(lower_ci, upper_ci)
+ci_a <- subset(ci_df, id %in% 1)
+ci_b <- subset(ci_df, id %in% c(2:101))
+ci_b$id <- ci_b$id - 1
+row.names(ci_b) <- 1:100
 ```
 
+a. Generate 50 $Y's$ from $N(\mu = -.0526, \sigma =.1)$ with `set.seed(1)`. Construct a $95\%$ confidence interval for the unknown mean. State the confidence interval. Is the true value -.0526 inside the confidence interval?
+
+From the first 50 generated Y's, the confidence interval comes out to (-0.0656, -0.0195) which does contain -0.0526.
+```{r, eval = F, echo = T}
+ci_a
+```
+
+b. Repeat question 2a. 100 times to generate 100 samples (each has sample size 50 and follows $N(\mu = -.0526, \sigma =.1)$) and produce 100 95\% confidence intervals. How many of the confidence intervals capture the true mean -.0526? Display your 100 confidence intervals in a meaningful way. (Hints: using `geom_errobar()`)
+
+```{r, eval = F, echo = T}
+ci_b
+
+answer <- (lower_ci < -0.0526) & (upper_ci > -0.0526)
+sum(answer)
+ci_df$answer <- answer
+
+ggplot(ci_df, aes(x = id, y = (lower_ci + upper_ci)/2)) + geom_point() + geom_errorbar(aes(ymax = upper_ci, ymin = lower_ci, color = answer)) + xlab("Trial") + ylab("Mean") + geom_hline(yintercept = -0.0526, color = "blue")
+```
+
+From these trials, 99 of the 100 intervals contained the true mean, -0.0526, with the 50th trial being the only one missing the true mean.
+
+c. Summarize the interpretation of a 95\% confidence interval based on the simulation in question 2b.  
+
+Based on the simulation, it can be interpreted that the true mean will be contained within the confidence interval approximately 95% of the time.
