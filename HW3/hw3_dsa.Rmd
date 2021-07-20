@@ -72,7 +72,7 @@ data1[data1$origin == 1, c("origin")] <- "American"
 data1[data1$origin == 2, c("origin")] <- "European"
 data1[data1$origin == 3, c("origin")] <- "Japanese"
 data1$origin <- as.factor(data1$origin)
-
+data1$cylinders <- as.factor(data1$cylinders)
 ```
 
 iii. Do you see any peculiarity in the data?  
@@ -156,17 +156,47 @@ summary(lm(mpg ~ origin, data = data1))
 ```
 
 ii. Try to build a final model which includes `year` and `origin`. 
+``` {r build_model}
+# Using alpha = 1%
+Anova(lm(mpg ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, data = data1))
+# Remove accel as it is least relevant
+Anova(lm(mpg ~ cylinders + displacement + horsepower + weight + year + origin, data = data1))
+# Remove displacement
+Anova(lm(mpg ~ cylinders + horsepower + weight + year + origin, data = data1))
+# Everything else is relevant at this point
+model_final <- lm(mpg ~ cylinders + horsepower + weight + year + origin, data = data1)
+
+```
 
 a) Describe the final model. Include diagnostic plots with particular focus on the model residuals and diagnoses.
 
+``` {r diag_plots}
+
+summary(model_final)
+
+par(mfrow=c(1,2), mar=c(5,2,4,2), mgp=c(3,0.5,0))
+plot(model_final, 1, pch=16) # residual plot. try pch=1 to 25
+abline(h=0, col="blue", lwd=3)
+# Do some confindence interval bars
+abline(h=2*3.12, col="red", lwd=1)
+abline(h=-2*3.12, col="red", lwd=1)
+plot(model_final, 2) # qqplot
+```
+
 b) Describe the year effect and origin effect in this final model.
 Are cars being built more efficiently over time? Are Asian cars more efficient than cars built in America or Europe?
+
+
 
 ## Prediction
 
 Use the final model to predict the `mpg` of the following car: A red car built in the US in 1983 that is 180 inches long, has eight cylinders, displaces 350 cu. inches, weighs 4000 pounds, and has a horsepower of 260. Also give a 95% CI for your prediction.
 
+``` {r final}
 
+predict(model_final,  )
+
+```
 
 
 
