@@ -203,7 +203,15 @@ Use the final model to predict the `mpg` of the following car: A red car built i
 
 ``` {r final}
 
-predict(model_final,  )
+length <- c(180)
+origin <- c("American")
+year <- c(83)
+cylinders <- as.factor(c(8))
+displacement <- 350
+weight <- 4000
+horsepower <- 260
+
+predict(model_final, newdata = data.frame(cylinders, horsepower, weight, year, origin), interval = "prediction")
 
 ```
 
