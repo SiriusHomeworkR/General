@@ -68,7 +68,11 @@ It should be categorical as they denote places of origin (American, European, Ja
 
 ``` {r make_categorical}
 # Make the origin col categorical
-Auto$origin <- as.factor(Auto$origin)
+data1[data1$origin == 1, c("origin")] <- "American"
+data1[data1$origin == 2, c("origin")] <- "European"
+data1[data1$origin == 3, c("origin")] <- "Japanese"
+data1$origin <- as.factor(data1$origin)
+
 ```
 
 iii. Do you see any peculiarity in the data?  
@@ -80,13 +84,42 @@ The number of American cars far outweighs the number of European or Japanese car
 
 i. Show a scatter plot of `mpg` vs. `year` with the LS line imposed. Does the plot show a positive trend? 
 
+``` {r mpg_year_plot}
+
+ggplot(data = data1, aes(x = year, y = mpg)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = "y ~ x")
+
+```
+
 ii. Now run a simple regression of `mpg` vs. `year` and report R's `summary` output. Is `year` a significant variable at the .05 level? State what effect `year` has on `mpg`, if any, according to this model. 
 
+``` {r mpg_year_fit}
+
+fit <- lm(mpg ~ year, data = data1)
+summary(fit)
+
+```
+
 iii. Add `horsepower` on top of the variable `year` to your linear model. Is `year` still a significant variable at the .05 level? Give a precise interpretation of the `year`'s effect found here. 
+
+``` {r hp_mpg_yr_fit}
+
+fit2 <- lm(mpg ~ year + horsepower, data = data1)
+summary(fit2)
+
+```
 
 iv. The two 95% CI's for the coefficient of year differ among ii. and iii. How would you explain the difference to a non-statistician?
 
 v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is the interaction effect significant at .05 level? Explain the year effect (if any). 
+
+``` {r}
+
+fit3 = lm(mpg ~ year * horsepower, data = data1)
+summary(fit3)
+
+```
 
 <!-- ## Categorical predictors -->
 
@@ -103,11 +136,24 @@ v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is 
 
 i. Do mpg's differ on average among different origin? Fit a linear model with mpg vs. origin. Report the output. 
 
+``` {r}
+
+fit_origin = lm(mpg ~ origin, data = data1)
+summary(fit_origin)
+
+```
+
 a) Are mpg's on average different among three regions? Perform a test at .01 level. When you reject the null hypothesis, what have you proved? 
 
 b) Describe on average which origin has the highest mpg and what it is. Which origin has the smallest mpg on average and what is it?
 
 c) Are Asian cars more efficient than American cars? Produce a 95% CI's for the difference. 
+
+``` {r}
+data1$origin <- factor(data1$origin, levels = c("Japanese", "American", "European"))
+summary(lm(mpg ~ origin, data = data1))
+
+```
 
 ii. Try to build a final model which includes `year` and `origin`. 
 

@@ -6,7 +6,6 @@ author:
 - Group Member Adithya
 - Group Member Raymond
 - Group Member Kamron
-- Group Member Alex
 date: 'Due: 10:00PM,  July 13, 2021'
 output:
   pdf_document:
