@@ -88,7 +88,7 @@ i. Show a scatter plot of `mpg` vs. `year` with the LS line imposed. Does the pl
 
 ggplot(data = data1, aes(x = year, y = mpg)) +
   geom_point() +
-  geom_smooth(method = "lm", formula = "y ~ x")
+  geom_smooth(method = "lm", formula = "y ~ x", se = F)
 
 ```
 
