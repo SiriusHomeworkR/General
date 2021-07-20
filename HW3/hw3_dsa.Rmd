@@ -194,7 +194,7 @@ Use the final model to predict the `mpg` of the following car: A red car built i
 
 ``` {r final}
 
-predict(model_final,  )
+
 
 ```
 
