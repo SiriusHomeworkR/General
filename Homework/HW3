@@ -91,11 +91,7 @@ reg1 <- lm(year~mpg,data=data1)
 
 iii. Add `horsepower` on top of the variable `year` to your linear model. Is `year` still a significant variable at the .05 level? Give a precise interpretation of the `year`'s effect found here. 
 ```{r}
-reg1 <- lm(horsepower~mpg,data=data1) 
-	summary(reg1)
-	with(data1,plot(horsepower, mpg))
-	abline(reg1)
-	abline(lm(horsepower ~ mpg))
+
 ```
 
 
@@ -103,11 +99,13 @@ iv. The two 95% CI's for the coefficient of year differ among ii. and iii. How w
 
 v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is the interaction effect significant at .05 level? Explain the year effect (if any). 
 ```{r}
-reg1 <- lm(year~mpg,data=data1) 
+fit3<-lm(mpg~year * horsepower,data =data1)
+summary(fit3)
+reg1 <- lm(mpg~year * horsepower,data=data1) 
 	summary(reg1)
 	with(data1,plot(year, mpg))
 	abline(reg1)
-	abline(lm(year ~ mpg))
+ 
 ```
 
 <!-- ## Categorical predictors -->
