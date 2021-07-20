@@ -81,19 +81,34 @@ ggplot(data1, aes(x = mpg, y = year)) +geom_point()+geom_smooth(method = "lm", f
 ii. Now run a simple regression of `mpg` vs. `year` and report R's `summary` output. Is `year` a significant variable at the .05 level? State what effect `year` has on `mpg`, if any, according to this model. 
 ```{r}
 
-reg1 <- lm(horsepoweryear~mpg,data=data1) 
+reg1 <- lm(year~mpg,data=data1) 
 	summary(reg1)
-	with(data1,plot(horsepoweryear, mpg))
+	with(data1,plot(year, mpg))
 	abline(reg1)
-	abline(lm(horsepoweryear ~ mpg))
+	abline(lm(year ~ mpg))
 ```
 
 
 iii. Add `horsepower` on top of the variable `year` to your linear model. Is `year` still a significant variable at the .05 level? Give a precise interpretation of the `year`'s effect found here. 
+```{r}
+reg1 <- lm(horsepower~mpg,data=data1) 
+	summary(reg1)
+	with(data1,plot(horsepower, mpg))
+	abline(reg1)
+	abline(lm(horsepower ~ mpg))
+```
+
 
 iv. The two 95% CI's for the coefficient of year differ among ii. and iii. How would you explain the difference to a non-statistician?
 
 v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is the interaction effect significant at .05 level? Explain the year effect (if any). 
+```{r}
+reg1 <- lm(year~mpg,data=data1) 
+	summary(reg1)
+	with(data1,plot(year, mpg))
+	abline(reg1)
+	abline(lm(year ~ mpg))
+```
 
 <!-- ## Categorical predictors -->
 
@@ -109,24 +124,55 @@ v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is 
 ## Bring origin into the model
 
 i. Do mpg's differ on average among different origin? Fit a linear model with mpg vs. origin. Report the output. 
+```{r}
+fit1 <- lm(mpg~origin , data = data1)
+summary(fit1)
+```
+
 
 a) Are mpg's on average different among three regions? Perform a test at .01 level. When you reject the null hypothesis, what have you proved? 
+```{r}
+data1 %>%group_by(origin) %>%summarise(mean = mean(mpg),sd  = sd(mpg),n = n())
+fit1 <- lm(mpg~origin , data = data1)
+summary(fit1)
+fit2 <- lm(mpg~origin , data = data1)
+summary(fit2)
+```
+
 
 b) Describe on average which origin has the highest mpg and what it is. Which origin has the smallest mpg on average and what is it?
+```{r}
+
+```
+
 
 c) Are Asian cars more efficient than American cars? Produce a 95% CI's for the difference. 
 
 ii. Try to build a final model which includes `year` and `origin`. 
+```{r}
+fit1 <- lm(year~origin , data = data1)
+summary(fit1)
+```
+
 
 a) Describe the final model. Include diagnostic plots with particular focus on the model residuals and diagnoses.
+
+It has a margin of error of .228 with a slope of .83 and a y int of 74.671 with a t value of 3.65.
+```{r}
+
+```
+
 
 b) Describe the year effect and origin effect in this final model.
 Are cars being built more efficiently over time? Are Asian cars more efficient than cars built in America or Europe?
 
+```{r}
+
+```
+
 ## Prediction
 
 Use the final model to predict the `mpg` of the following car: A red car built in the US in 1983 that is 180 inches long, has eight cylinders, displaces 350 cu. inches, weighs 4000 pounds, and has a horsepower of 260. Also give a 95% CI for your prediction.
-
 
 
 
