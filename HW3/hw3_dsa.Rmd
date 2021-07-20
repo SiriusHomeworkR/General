@@ -72,7 +72,7 @@ data1[data1$origin == 1, c("origin")] <- "American"
 data1[data1$origin == 2, c("origin")] <- "European"
 data1[data1$origin == 3, c("origin")] <- "Japanese"
 data1$origin <- as.factor(data1$origin)
-data1$cylinders <- as.factor(data1$cylinders)
+data1$cylinders <- as.factor(data1$cylinders) # Cylinders is more of a classifier than a number
 ```
 
 iii. Do you see any peculiarity in the data?  
