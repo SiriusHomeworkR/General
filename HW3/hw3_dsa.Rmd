@@ -58,9 +58,22 @@ summary(data1)
 
 Explore the data first. 
 
-i. What is the range of `year`? Why is this important to know?
-ii. Should `origin` be a continuous variable? Why or why not. In any case make `origin` a categorical variable.
-iii. Do you see any peculiarity in the data? 
+i. What is the range of `year`? Why is this important to know?  
+
+From the summary above, we can see that year ranges from 1970 to 1982. (actually 70-82 in the dataset)
+
+ii. Should `origin` be a continuous variable? Why or why not. In any case make `origin` a categorical variable. 
+
+It should be categorical as they denote places of origin (American, European, Japanese respectively). 
+
+``` {r make_categorical}
+# Make the origin col categorical
+Auto$origin <- as.factor(Auto$origin)
+```
+
+iii. Do you see any peculiarity in the data?  
+
+The number of American cars far outweighs the number of European or Japanese cars.
 
 
 ## What effect does `time` have on `MPG`?
