@@ -72,7 +72,7 @@ data1[data1$origin == 1, c("origin")] <- "American"
 data1[data1$origin == 2, c("origin")] <- "European"
 data1[data1$origin == 3, c("origin")] <- "Japanese"
 data1$origin <- as.factor(data1$origin)
-data1$cylinders <- as.factor(data1$cylinders) # Cylinders is more of a classifier than a number
+data1$cylinders <- as.factor(data1$cylinders)
 ```
 
 iii. Do you see any peculiarity in the data?  
@@ -86,9 +86,8 @@ i. Show a scatter plot of `mpg` vs. `year` with the LS line imposed. Does the pl
 
 ``` {r mpg_year_plot}
 
-ggplot(data = data1, aes(x = year, y = mpg)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = "y ~ x", se = F)
+fit1 <- lm(mpg~year, data = data1)
+ggplot(data1, aes(x = year, y = mpg)) +geom_point()+geom_smooth(method = "lm", formula = 'y~x', se=F)
 
 ```
 
@@ -96,8 +95,8 @@ ii. Now run a simple regression of `mpg` vs. `year` and report R's `summary` out
 
 ``` {r mpg_year_fit}
 
-fit <- lm(mpg ~ year, data = data1)
-summary(fit)
+fit1 <- lm(mpg ~ year, data = data1)
+summary(fit1)
 
 ```
 
@@ -118,7 +117,10 @@ v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is 
 
 fit3 = lm(mpg ~ year * horsepower, data = data1)
 summary(fit3)
-
+reg1 <- lm(mpg~year * horsepower,data=data1) 
+	summary(reg1)
+	with(data1,plot(year, mpg))
+	abline(reg1)
 ```
 
 <!-- ## Categorical predictors -->
@@ -144,7 +146,14 @@ summary(fit_origin)
 ```
 
 a) Are mpg's on average different among three regions? Perform a test at .01 level. When you reject the null hypothesis, what have you proved? 
+```{r}
+data1 %>%group_by(origin) %>%summarise(mean = mean(mpg),sd  = sd(mpg),n = n())
+fit1 <- lm(mpg~origin , data = data1)
+summary(fit1)
+fit2 <- lm(mpg~origin , data = data1)
+summary(fit2)
 
+```
 b) Describe on average which origin has the highest mpg and what it is. Which origin has the smallest mpg on average and what is it?
 
 c) Are Asian cars more efficient than American cars? Produce a 95% CI's for the difference. 
@@ -185,7 +194,7 @@ plot(model_final, 2) # qqplot
 
 b) Describe the year effect and origin effect in this final model.
 Are cars being built more efficiently over time? Are Asian cars more efficient than cars built in America or Europe?
-
+Cars are being built more efficiently over time. Asian cars are 
 
 
 ## Prediction
@@ -194,7 +203,7 @@ Use the final model to predict the `mpg` of the following car: A red car built i
 
 ``` {r final}
 
-
+predict(model_final,  )
 
 ```
 
