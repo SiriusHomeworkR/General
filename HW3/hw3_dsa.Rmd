@@ -231,7 +231,6 @@ Use the final model to predict the `mpg` of the following car: A red car built i
 
 The predicted value is 19.5 with a Ci of (12.9, 26.1)
 
-
 ``` {r final}
 
 length <- c(180)
