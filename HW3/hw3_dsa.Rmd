@@ -60,7 +60,7 @@ Explore the data first.
 
 i. What is the range of `year`? Why is this important to know?  
 
-From the summary above, we can see that year ranges from 1970 to 1982. (actually 70-82 in the dataset)
+From the summary above, we can see that year ranges from 1970 to 1982. (actually 70-82 in the dataset). This lets us know the extent to which our data carries over into modern data.
 
 ii. Should `origin` be a continuous variable? Why or why not. In any case make `origin` a categorical variable. 
 
@@ -84,6 +84,8 @@ The number of American cars far outweighs the number of European or Japanese car
 
 i. Show a scatter plot of `mpg` vs. `year` with the LS line imposed. Does the plot show a positive trend? 
 
+Yes the plot shows that mpg increases over time on average.
+
 ``` {r mpg_year_plot}
 
 fit1 <- lm(mpg~year, data = data1)
@@ -92,6 +94,8 @@ ggplot(data1, aes(x = year, y = mpg)) +geom_point()+geom_smooth(method = "lm", f
 ```
 
 ii. Now run a simple regression of `mpg` vs. `year` and report R's `summary` output. Is `year` a significant variable at the .05 level? State what effect `year` has on `mpg`, if any, according to this model. 
+
+Year is significant at the .05 level. On average, the MPG increases by 1.23 per year.
 
 ``` {r mpg_year_fit}
 
@@ -102,6 +106,8 @@ summary(fit1)
 
 iii. Add `horsepower` on top of the variable `year` to your linear model. Is `year` still a significant variable at the .05 level? Give a precise interpretation of the `year`'s effect found here. 
 
+Year is still significant. On average, cars with the same horsepower see an average increase of 0.657 MPG per year.
+
 ``` {r hp_mpg_yr_fit}
 
 fit2 <- lm(mpg ~ year + horsepower, data = data1)
@@ -111,7 +117,11 @@ summary(fit2)
 
 iv. The two 95% CI's for the coefficient of year differ among ii. and iii. How would you explain the difference to a non-statistician?
 
+The two differ because holding horsepower constant changes the effect of year.
+
 v. Create a model with interaction by fitting `lm(mpg ~ year * horsepower)`. Is the interaction effect significant at .05 level? Explain the year effect (if any). 
+
+The interaction is significant at .05 level. Here the mpg for a given horsepower H increases by 2.19 - 0.016H per year.
 
 ``` {r}
 
@@ -138,6 +148,8 @@ reg1 <- lm(mpg~year * horsepower,data=data1)
 
 i. Do mpg's differ on average among different origin? Fit a linear model with mpg vs. origin. Report the output. 
 
+MPGs do differ on average. From the model we see that on average European cars have 7.57 more mpg than American cars and Japanese cars have an average of 10.42 more MPG than American cars. Japanese cars have on average 2.85 more MPG than European cars. (For full summaries, see code for next section)
+
 ``` {r}
 
 fit_origin = lm(mpg ~ origin, data = data1)
@@ -146,17 +158,30 @@ summary(fit_origin)
 ```
 
 a) Are mpg's on average different among three regions? Perform a test at .01 level. When you reject the null hypothesis, what have you proved? 
+
+There are notable differences between American and European cars as well as American and Japanese cars and a smaller but still significant difference between European and Japanese cars.
+
 ```{r}
-data1 %>%group_by(origin) %>%summarise(mean = mean(mpg),sd  = sd(mpg),n = n())
+
+data1$origin <- factor(data1$origin, levels = c("American", "Japanese", "European"))
 fit1 <- lm(mpg~origin , data = data1)
 summary(fit1)
+data1$origin <- factor(data1$origin, levels = c("Japanese", "American", "European"))
 fit2 <- lm(mpg~origin , data = data1)
 summary(fit2)
 
 ```
 b) Describe on average which origin has the highest mpg and what it is. Which origin has the smallest mpg on average and what is it?
 
+On average, cars of Japanese origin have the highest MPG with 30.5 and American cars have the lowest average MPG with 20.0.
+
+``` {r group_summ}
+data1 %>%group_by(origin) %>%summarise(mean_mpg = mean(mpg),sd  = sd(mpg),n = n())
+```
+
 c) Are Asian cars more efficient than American cars? Produce a 95% CI's for the difference. 
+
+The difference is -10.417 with a confidence interval ranging from -12.073 to -8.761. Thus Asian cars are more efficient than American cars as 0 is not in the confidence interval.
 
 ``` {r}
 data1$origin <- factor(data1$origin, levels = c("Japanese", "American", "European"))
@@ -179,6 +204,8 @@ model_final <- lm(mpg ~ cylinders + horsepower + weight + year + origin, data = 
 
 a) Describe the final model. Include diagnostic plots with particular focus on the model residuals and diagnoses.
 
+The final model is as such. Given the base cylinder count is 2, we know that 4 cylinder cars have 7.67 MPG more on average, 5 cylinder cars have 8.39 more MPG on average, 6 cylinder cars have 5.24 more MPG on average, and 8 cylinder cars have 8.03 more MPG on average. Increasing horsepower while holding all else constant decreases MPG by -0.0254 per horsepower. Increasing the weight by one pound while holding all other parameters constant decreases the MPG by -0.00510. Cars made one year later with all else being held constant have 0.0722 more MPG on average. American cars have 2.21 less MPG on average than Japanese cars, but there is no significant difference between Japanese cars and European cars.
+
 ``` {r diag_plots}
 
 summary(model_final)
@@ -194,12 +221,16 @@ plot(model_final, 2) # qqplot
 
 b) Describe the year effect and origin effect in this final model.
 Are cars being built more efficiently over time? Are Asian cars more efficient than cars built in America or Europe?
-Cars are being built more efficiently over time. Asian cars are 
+
+Cars are being built more efficiently over time. Asian cars are more efficient than American cars but not European cars.
 
 
 ## Prediction
 
 Use the final model to predict the `mpg` of the following car: A red car built in the US in 1983 that is 180 inches long, has eight cylinders, displaces 350 cu. inches, weighs 4000 pounds, and has a horsepower of 260. Also give a 95% CI for your prediction.
+
+The predicted value is 19.5 with a Ci of (12.9, 26.1)
+
 
 ``` {r final}
 
