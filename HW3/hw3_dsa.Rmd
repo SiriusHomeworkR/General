@@ -163,10 +163,18 @@ There are notable differences between the different continents at the 0.1 level.
 
 ```{r}
 
+# data1$origin <- factor(data1$origin, levels = c("American", "Japanese", "European"))
+# fit1 <- lm(mpg~origin , data = data1)
+# summary(fit1)
+# data1$origin <- factor(data1$origin, levels = c("Japanese", "American", "European"))
+# fit2 <- lm(mpg~origin , data = data1)
+# summary(fit2)
+
+# There are notable differences between American and European cars as well as American and Japanese cars and a smaller but still significant difference between European and Japanese cars.# 
+
 data1$origin <- factor(data1$origin, levels = c("American", "Japanese", "European"))
 fit1 <- lm(mpg~origin , data = data1)
 Anova(fit1)
-
 
 ```
 b) Describe on average which origin has the highest mpg and what it is. Which origin has the smallest mpg on average and what is it?
