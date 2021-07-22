@@ -129,7 +129,7 @@ covid_monthly <- covid_monthly %>%
   mutate(new_death_per100k = daily_death / population * 1e5)
 
 ## change State to state so that usmap recognizes
-covid_monthly <- covid_monthly %>% rename
+covid_monthly <- covid_monthly %>% rename(state = State)
 
 # Filling in with NA
 covid_monthly <- covid_monthly %>% tidyr::complete(state, month, fill = list(new_case_per100k = NA))
@@ -141,7 +141,7 @@ library(usmap)
 
 covid_monthly.plot <- plot_usmap(regions = "state",                   
                               #regions = "counties", for county level summary
-    data = covid_monthly, 
+    data = covid_monthly,
     values = "new_death_per100k", exclude = c("Hawaii", "Alaska"), color = "black") + 
     scale_fill_gradient(
       low = "white", high = "red", 
@@ -161,7 +161,32 @@ We now try to build a good parsimonious model to find possible factors related t
 
 ii) Create the response variable `total_death_per100k` as the total of number of COVID deaths per 100k by *Feb 1, 2021*. We suggest to take log transformation as `log_total_death_per100k = log(total_death_per100k + 1)`. Merge `total_death_per100k` to `county_data` for the following analysis. (Hint: check the R function `dplyr::join()` or `data.table::merge()`)
 
+``` {r country_dp100k}
+
+total_death_per100k_country <- sum(covid_monthly$new_death_per100k, na.rm = TRUE)
+
+date_specified_data <- covid_rate[covid_rate$date == "2021-02-01"]
+date_specified_data <- date_specified_data %>% mutate(total_death_per100k = cum_deaths/TotalPopEst2019*100000)
+
+```
+
 iii) Select possible variables in `county_data` as covariates. We provide `county_data_sub`, a subset variables from `county_data`, for you to get started. Please add any potential variables as you wish. 
+
+``` {r add_county_data}
+
+# We do it all - no data left behind! (at least not until LASSO)
+merged_data <- left_join(date_specified_data, county_data, by = "FIPS")
+# Remove duped columns
+merged_data <- merged_data %>% 
+  rename_at(
+    vars(ends_with(".x")),
+    ~str_replace(., "\\..$","")
+  ) %>% 
+  select_at(
+    vars(-ends_with(".y"))
+  )
+
+```
 
 Report missing values in your final subset of variables. In the following analysis, you may ignore the missing values.
     
@@ -175,6 +200,11 @@ county_data_sub <- county_data %>%
 iv) Use LASSO to choose a parsimonious model with all available sensible county-level information. Use `set.seed(15)`. **Force in State** in the process. Why we need to force in State?
 
 **answer: **
+``` {r}
+
+merged_data$State <- as.factor(merged_data$State)
+
+```
 
 v) If necessary, reduce the model from iii) to a final model with all variables being significant at 0.05 level. Again **force in State** in the process. Are the linear model assumptions all reasonably met?
 
