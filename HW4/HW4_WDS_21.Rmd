@@ -135,7 +135,7 @@ covid_monthly <- covid_monthly %>% rename(state = State)
 covid_monthly <- covid_monthly %>% tidyr::complete(state, month, fill = list(new_case_per100k = NA))
 ```
 
-``` {r heatmanp}
+``` {r heatmap}
 
 library(usmap)
 
@@ -222,8 +222,9 @@ set.seed(15)
 fit <- cv.glmnet(X, Y, alpha=1, nfolds=10, penalty.factor = penalty) 
 coef.min <- coef(fit, s="lambda.min")
 var.min <- coef.min@Dimnames[[1]][coef.min@i + 1][-1] 
-data.fl.sub <-  data.fl[,c("violentcrimes.perpop", var.min)]
-Anova(fit)
+cols_select <- c("total_death_per100k", "State", var.min[-(1:49)])
+data_glmnet <- select(merged_data, cols_select)
+fit.lm <- lm(total_death_per100k~., data=data_glmnet) 
 
 
 ```
