@@ -211,7 +211,7 @@ merged_data$State <- as.factor(merged_data$State)
 
 merged_data <- drop_na(merged_data)
 
-merged_data_drop <- merged_data[,-c("County", "FIPS")]
+merged_data_drop <- merged_data[,-c("County", "FIPS", "cum_deaths")]
 
 X <- model.matrix(total_death_per100k~., merged_data_drop, na.action = na.pass)[, -1]
 Y <- merged_data_drop$total_death_per100k
@@ -225,6 +225,7 @@ var.min <- coef.min@Dimnames[[1]][coef.min@i + 1][-1]
 cols_select <- c("total_death_per100k", "State", var.min[-(1:49)])
 data_glmnet <- select(merged_data, cols_select)
 fit.lm <- lm(total_death_per100k~., data=data_glmnet) 
+Anova(fit.lm)
 
 
 ```
