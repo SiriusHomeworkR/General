@@ -1,0 +1,468 @@
+---
+title: "Homework 4 - COVID-19 Study and Framingham Study"
+author:
+- Group Member 1
+- Group Member 2
+- Group Member 3
+- Group Member 4
+- Group Member 5
+date: 'Due: July 26 10pm'
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    number_sections: yes
+  pdf_document:
+    toc_depth: '4'
+    number_sections: yes
+urlcolor: blue
+---
+
+```{r Setup, include=FALSE, results='hide', warning=FALSE}
+knitr::opts_chunk$set(echo = T, cache = T, fig.width=8, fig.height=4,
+                      warning = F)
+options(scipen = 0, digits = 3)  ## controls base R output
+
+## Package setup
+if(!require("pacman")) install.packages("pacman")
+
+pacman::p_load(tidyverse, dplyr, ggplot2, data.table, lubridate,
+               plotROC, usmap, glmnet)
+```
+
+
+# Case Study 1: COVID-19 Case Study
+
+## Background
+
+The outbreak of the novel Corona virus disease 2019 (COVID-19) [was declared a public health emergency of international concern by the World Health Organization (WHO) on January 30, 2020](https://www.who.int/dg/speeches/detail/who-director-general-s-statement-on-ihr-emergency-committee-on-novel-coronavirus-(2019-ncov)). Upwards of [112 million cases have been confirmed worldwide, with nearly 2.5 million associated deaths](https://covid19.who.int/). Within the US alone, there have been [over 500,000 deaths and upwards of 28 million cases reported](https://covid.cdc.gov/covid-data-tracker/#trends_dailytrendscases). Governments around the world have implemented and suggested a number of policies to lessen the spread of the pandemic, including mask-wearing requirements, travel restrictions, business and school closures, and even stay-at-home orders. The global pandemic has impacted the lives of individuals in countless ways, and though many countries have begun vaccinating individuals, the long-term impact of the virus remains unclear.
+
+The impact of COVID-19 on a given segment of the population appears to vary drastically based on the socioeconomic characteristics of the segment. In particular, differing rates of infection and fatalities have been reported among different [racial groups](https://www.cdc.gov/coronavirus/2019-ncov/covid-data/investigations-discovery/hospitalization-death-by-race-ethnicity.html), [age groups](https://www.cdc.gov/coronavirus/2019-ncov/covid-data/investigations-discovery/hospitalization-death-by-age.html), and [socioeconomic groups](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7221360/). One of the most important metrics for determining the impact of the pandemic is the death rate, which is the proportion of people within the total population that die due to the the disease. 
+
+We assemble this dataset for our research with the goal to investigate the effectiveness of lockdown on flattening the COVID curve. We provide a portion of the cleaned dataset for this case study. 
+
+There are two main goals for this case study. 
+
+1. We show the development of COVID cases and COVID-related death at state level.
+2. We try to figure out what county-level demographic and policy interventions are associated with mortality rate in the US. We try to construct models to find possible factors related to county-level COVID-19 mortality rates.
+
+Remark: please keep track with the most updated version of this write-up.
+
+
+## Data Summary
+
+The data comes from several different sources: 
+
+1. [County-level infection and fatality data](https://github.com/nytimes/covid-19-data) - This dataset gives daily cumulative numbers on infection and fatality for each county. 
+    * [NYC data](https://github.com/nychealth/coronavirus-data)
+2. [County-level socioeconomic data](https://www.ers.usda.gov/data-products/atlas-of-rural-and-small-town-america/download-the-data/) - The following are the four relevant datasets from this site.   
+    i. Income - Poverty level and household income. 
+    ii. Jobs - Employment type, rate, and change.
+    iii. People - Population size, density, education level, race, age, household size, and migration rates.
+    iv. County Classifications - Type of county (rural or urban on a rural-urban continuum scale).
+3. [Intervention Policy Data](https://github.com/JieYingWu/COVID-19_US_County-level_Summaries/blob/master/data/interventions.csv) - This dataset is a manually compiled list of the dates that interventions/lockdown policies were implemented and lifted at the county level. 
+
+## Two Main Datasets
+
+In this case study, we use the following two cleaned data:
+
+* **covid_county.csv**: County-level socioeconomic information that combines the above-mentioned 4 datasets: Income (Poverty level and household income), Jobs (Employment type, rate, and change), People (Population size, density, education level, race, age, household size, and migration rates), County Classifications
+* **covid_rates.csv**: Daily cumulative numbers on infection and fatality for each county
+
+Among all data, the unique identifier of county is `FIPS`.
+
+First read in the data.
+
+The detailed description of variables is in `Appendix: Data description`. Please get familiar with the variables.
+
+```{r}
+## county-level socioeconomic information
+county_data <- fread("data/covid_county.csv") 
+## county-level COVID case and death
+covid_rate <- fread("data/covid_rates.csv")
+```
+
+
+
+## COVID death trend (Homework: question **i-vi**)
+
+i) For each month in 2020, plot the monthly deaths per 100k heatmap by state on US map. Use the same color range across months. (Hints: Set `limits` argument in `scale_fill_gradient()` to fix the color scale. Use `facet_wrap()` to plot by month.)
+
+**Important Remark**: 
+
+1. Using the following R chunk, we processed the data into the right format `covid_monthly` for you :) Specifically, we use `lubridate::month()` and `lubridate::year()` to extract month and year from date, use `tidyr::complete(state, month, fill = list(new_case_per100k = NA))` to complete the missing months with no cases.
+
+2. Use the data `covid_monthly` after running the R chunk below to create the heatmap
+
+```{r}
+## get daily new death
+daily_death <- covid_rate %>%
+  group_by(FIPS) %>%
+  arrange(date) %>%
+  mutate(daily_new_death = cum_deaths - lag(cum_deaths, default = 0))
+
+## get monthly new death by state
+covid_monthly <- daily_death %>%
+  mutate(month = month(date), 
+         year = year(date)) %>%
+  filter(year == 2020) %>%
+  group_by(month, State) %>%
+  summarize(daily_death = sum(daily_new_death))
+
+## get state population
+pop_state <- covid_rate %>% 
+  distinct(FIPS, State, TotalPopEst2019) %>%
+  group_by(State) %>%
+  summarize(population = sum(TotalPopEst2019, na.rm = T))
+
+## join state monthly death with state population
+covid_monthly <- merge(covid_monthly,
+                       pop_state,
+                       by = "State")
+
+## get monthly new_death_per100k by state
+covid_monthly <- covid_monthly %>% 
+  mutate(new_death_per100k = daily_death / population * 1e5)
+
+## change State to state so that usmap recognizes
+covid_monthly <- covid_monthly %>% rename(state = State)
+```
+
+
+## COVID factor
+
+We now try to build a good parsimonious model to find possible factors related to death rate on county level. Let us not take time series into account for the moment and use the total number as of *Feb 1, 2021*. (Hint: use `dplyr::filter()`.)
+
+ii) Create the response variable `total_death_per100k` as the total of number of COVID deaths per 100k by *Feb 1, 2021*. We suggest to take log transformation as `log_total_death_per100k = log(total_death_per100k + 1)`. Merge `total_death_per100k` to `county_data` for the following analysis. (Hint: check the R function `dplyr::join()` or `data.table::merge()`)
+
+iii) Select possible variables in `county_data` as covariates. We provide `county_data_sub`, a subset variables from `county_data`, for you to get started. Please add any potential variables as you wish. 
+
+Report missing values in your final subset of variables. In the following analysis, you may ignore the missing values.
+    
+**answer: **
+
+```{r}
+county_data_sub <- county_data %>%
+  select(County, State, FIPS, Deep_Pov_All, PovertyAllAgesPct, PerCapitaInc, UnempRate2019, PctEmpFIRE, PctEmpConstruction, PctEmpTrans, PctEmpMining, PctEmpTrade, PctEmpInformation, PctEmpAgriculture, PctEmpManufacturing, PctEmpServices, PopDensity2010, OwnHomePct, Age65AndOlderPct2010, TotalPop25Plus, Under18Pct2010, Ed2HSDiplomaOnlyPct, Ed3SomeCollegePct, Ed4AssocDegreePct, Ed5CollegePlusPct, ForeignBornPct, Net_International_Migration_Rate_2010_2019, NetMigrationRate1019, NaturalChangeRate1019, TotalPopEst2019, WhiteNonHispanicPct2010, NativeAmericanNonHispanicPct2010, BlackNonHispanicPct2010, AsianNonHispanicPct2010, HispanicPct2010, Type_2015_Update, RuralUrbanContinuumCode2013, UrbanInfluenceCode2013, Perpov_1980_0711, HiCreativeClass2000, HiAmenity, Retirement_Destination_2015_Update)
+```
+
+iv) Use LASSO to choose a parsimonious model with all available sensible county-level information. Use `set.seed(15)`. **Force in State** in the process. Why we need to force in State?
+
+**answer: **
+
+v) If necessary, reduce the model from iii) to a final model with all variables being significant at 0.05 level. Again **force in State** in the process. Are the linear model assumptions all reasonably met?
+
+**answer: **
+
+vi) Based on your final model, summarize your findings. In particular, summarize the state effect controlling for others. Provide recommendations to policy makers to reduce COVID death rate.
+
+**answer: **
+
+
+
+
+# Case Study 2: Framingham heart disease study
+
+## Background
+
+We will continue to use the Framingham Data (`Framingham.dat`) so that you are already familiar with the data and the variables. All the results are obtained through training data. 
+
+Liz is a patient with the following readings: `AGE=50, GENDER=FEMALE, SBP=110, DBP=80, CHOL=180, FRW=105, CIG=0`. We would be interested to predict Liz's outcome in heart disease. 
+
+To keep our answers consistent, use a subset of the data, and exclude anyone with a missing entry. For your convenience, we've loaded it here together with a brief summary about the data.
+
+```{r data preparation, include=F}
+## Notice that we hide the code and the results here
+## Using `include=F` in the chunk declaration.
+hd_data <- read.csv("data/Framingham.dat")
+str(hd_data) 
+
+#### Renames, setting the variables with correct natures...
+names(hd_data)[1] <- "HD"
+hd_data$HD <- as.factor(hd_data$HD)
+hd_data$SEX <- as.factor(hd_data$SEX)
+str(hd_data)
+#tail(hd_data, 1)    ## The last row is for prediction
+hd_data.new <- hd_data[1407,] ## The female whose HD will be predicted.
+hd_data <- hd_data[-1407,]  ## take out the last row 
+hd_data.f <- na.omit(hd_data)
+```
+
+We note that this dataset contains 311 people diagnosed with heart disease and 1095 without heart disease.
+```{r table heart disease, echo = F, comment = " "}
+## we use echo = F to avoid showing this R code
+## notice the usage of comment = " " here in the header
+table(hd_data$HD) ## HD: 311 of "0" and 1095 "1" 
+```
+
+After a quick cleaning up here is a summary about the data:
+```{r data summary, comment="     "}
+## using the comment="     ", we get rid of the ### in the output.
+summary(hd_data.f)
+```
+
+## Identify risk factors (Homework: question **vii-xii**)
+
+### Understand the likelihood function
+
+Conceptual questions to understand the building blocks of logistic regression. All the codes in this part should be hidden. We will use a small subset to run a logistic regression of `HD` vs. `SBP`. 
+
+vii. Take a random subsample of size 5 from `hd_data_f` which only includes `HD` and `SBP`. Set `set.seed(50)`. List the five observations neatly below. No code should be shown here.
+
+viii. Write down the likelihood function using the five observations above.
+
+**answer: **
+
+ix. Find the MLE based on this subset using `glm()`. Report the estimated logit function of `SBP` and the probability of `HD`=1. Briefly explain how the MLE are obtained based on viii. above.
+
+**answer: **
+
+x. Evaluate the probability of Liz having heart disease. 
+
+**answer: **
+
+
+### Identify important risk factors for `Heart.Disease.`
+
+We focus on understanding the elements of basic inference method in this part. Let us start a fit with just one factor, `SBP`, and call it `fit1`. We then add one variable to this at a time from among the rest of the variables. For example
+```{r, results='hide'}
+fit1 <- glm(HD~SBP, hd_data.f, family=binomial)
+summary(fit1)
+fit1.1 <- glm(HD~SBP + AGE, hd_data.f, family=binomial)
+summary(fit1.1)
+## you will need to finish by adding each other variable 
+## fit1.2...
+```
+
+xi. Which single variable would be the most important to add?  Add it to your model, and call the new fit `fit2`.  
+
+We will pick up the variable either with highest $|z|$ value, or smallest $p$ value. Report the summary of your `fit2` Note: One way to keep your output neat, we will suggest you using `xtable`. And here is the summary report looks like.
+```{r the most important addition, results='asis', comment="   "}
+### How to control the summary(fit2) output to cut some junk?
+### We could use packages: xtable or broom. 
+### Assume the fit2 is obtained by SBP + AGE
+library(xtable)
+options(xtable.comment = FALSE)
+fit2 <- glm(HD~SBP + AGE, hd_data.f, family=binomial)
+xtable(fit2)
+```
+  
+xii. Perform a test to see if the added variable is significant at the .01 level.
+
+**answer: **
+
+
+
+
+**END**
+
+
+
+
+# Appendix: COVID data description {-}
+
+A detailed summary of the variables in each data set follows:
+
+**Infection and fatality data**
+
+* date: Date
+* county: County name
+* state: State name
+* fips: County code that uniquely identifies a county
+* cases: Number of cumulative COVID-19 infections
+* deaths: Number of cumulative COVID-19 deaths
+
+**Socioeconomic demographics**
+
+*Income*: Poverty level and household income 
+
+* PovertyUnder18Pct: Poverty rate for children age 0-17, 2018  
+* Deep_Pov_All: Deep poverty, 2014-18  
+* Deep_Pov_Children: Deep poverty for children, 2014-18  
+* PovertyAllAgesPct: Poverty rate, 2018  
+* MedHHInc: Median household income, 2018 (In 2018 dollars)  
+* PerCapitaInc: Per capita income in the past 12 months (In 2018 inflation adjusted dollars), 2014-18  
+* PovertyAllAgesNum: Number of people of all ages in poverty, 2018  
+* PovertyUnder18Num: Number of people age 0-17 in poverty, 2018   
+
+*Jobs*: Employment type, rate, and change 
+
+* UnempRate2007-2019: Unemployment rate, 2007-2019 
+* NumEmployed2007-2019: Employed, 2007-2019
+* NumUnemployed2007-2019: Unemployed, 2007-2019
+
+* PctEmpChange1019: Percent employment change, 2010-19  
+* PctEmpChange1819: Percent employment change, 2018-19  
+* PctEmpChange0719: Percent employment change, 2007-19  
+* PctEmpChange0710: Percent employment change, 2007-10  
+
+* NumCivEmployed: Civilian employed population 16 years and over, 2014-18  
+* NumCivLaborforce2007-2019: Civilian labor force, 2007-2019  
+
+
+* PctEmpFIRE: Percent of the civilian labor force 16 and over  employed in finance and insurance, and real estate and rental and leasing, 2014-18    
+* PctEmpConstruction: Percent of the civilian labor force 16 and over employed in construction, 2014-18  
+* PctEmpTrans: Percent of the civilian labor force 16 and over employed in transportation, warehousing and utilities, 2014-18 
+* PctEmpMining: Percent of the civilian labor force 16 and over employed in mining, quarrying, oil and gas extraction, 2014-18  
+* PctEmpTrade: Percent of the civilian labor force 16 and over employed in wholesale and retail trade, 2014-18  
+* PctEmpInformation: Percent of the civilian labor force 16 and over employed in information services, 2014-18   
+* PctEmpAgriculture: Percent of the civilian labor force 16 and over employed in agriculture, forestry, fishing, and hunting, 2014-18   
+* PctEmpManufacturing: Percent of the civilian labor force 16 and over employed in manufacturing, 2014-18    
+* PctEmpServices: Percent of the civilian labor force 16 and over employed in services, 2014-18    
+* PctEmpGovt: Percent of the civilian labor force 16 and over employed in public administration, 2014-18 
+
+*People*: Population size, density, education level, race, age, household size, and migration rates
+
+* PopDensity2010: Population density, 2010  
+* LandAreaSQMiles2010: Land area in square miles, 2010 
+
+* TotalHH: Total number of households, 2014-18  
+* TotalOccHU: Total number of occupied housing units, 2014-18  
+* AvgHHSize: Average household size, 2014-18   
+* OwnHomeNum: Number of owner occupied housing units, 2014-18  
+* OwnHomePct: Percent of owner occupied housing units, 2014-18
+* NonEnglishHHPct: Percent of non-English speaking households of total households, 2014-18     
+* HH65PlusAlonePct: Percent of persons 65 or older living alone, 2014-18  
+* FemaleHHPct: Percent of female headed family households of total households, 2014-18  
+* FemaleHHNum: Number of female headed family households, 2014-18  
+* NonEnglishHHNum: Number of non-English speaking households, 2014-18  
+* HH65PlusAloneNum: Number of persons 65 years or older living alone, 2014-18
+
+* Age65AndOlderPct2010: Percent of population 65 or older, 2010
+* Age65AndOlderNum2010: Population 65 years or older, 2010  
+* TotalPop25Plus: Total population 25 and older, 2014-18 - 5-year average  
+* Under18Pct2010: Percent of population under age 18, 2010  
+* Under18Num2010: Population under age 18, 2010
+
+*  Ed1LessThanHSPct: Percent of persons with no high school diploma or GED, adults 25 and over, 2014-18  
+* Ed2HSDiplomaOnlyPct: Percent of persons with a high school diploma or GED only, adults 25 and over, 2014-18    
+* Ed3SomeCollegePct: Percent of persons with some college experience, adults 25 and over, 2014-18    
+* Ed4AssocDegreePct: Percent of persons with an associate's degree, adults 25 and over, 2014-18    
+* Ed5CollegePlusPct: Percent of persons with a 4-year college degree or more, adults 25 and over, 2014-18    
+* Ed1LessThanHSNum: No high school, adults 25 and over, 2014-18
+* Ed2HSDiplomaOnlyNum: High school only, adults 25 and over, 2014-18  
+* Ed3SomeCollegeNum: Some college experience, adults 25 and over, 2014-18   
+* Ed4AssocDegreeNum: Number of persons with an associate's degree, adults 25 and over, 2014-18   
+* Ed5CollegePlusNum: College degree 4-years or more, adults 25 and over, 2014-18   
+
+* ForeignBornPct: Percent of total population foreign born, 2014-18  
+* ForeignBornEuropePct: Percent of persons born in Europe, 2014-18  
+* ForeignBornMexPct: Percent of persons born in Mexico, 2014-18
+* ForeignBornCentralSouthAmPct: Percent of persons born in Central or South America, 2014-18  
+* ForeignBornAsiaPct: Percent of persons born in Asia, 2014-18
+* ForeignBornCaribPct: Percent of persons born in the Caribbean, 2014-18  
+* ForeignBornAfricaPct: Percent of persons born in Africa, 2014-18   
+* ForeignBornNum: Number of people foreign born, 2014-18  
+* ForeignBornCentralSouthAmNum: Number of persons born in Central or South America, 2014-18   
+* ForeignBornEuropeNum: Number of persons born in Europe, 2014-18  
+* ForeignBornMexNum: Number of persons born in Mexico, 2014-18
+* ForeignBornAfricaNum: Number of persons born in Africa, 2014-18  
+* ForeignBornAsiaNum: Number of persons born in Asia, 2014-18 
+* ForeignBornCaribNum: Number of persons born in the Caribbean, 2014-18   
+
+* Net_International_Migration_Rate_2010_2019: Net international migration rate, 2010-19  
+* Net_International_Migration_2010_2019: Net international migration, 2010-19   
+* Net_International_Migration_2000_2010: Net international migration, 2000-10  
+* Immigration_Rate_2000_2010: Net international migration rate, 2000-10   
+* NetMigrationRate0010: Net migration rate, 2000-10   
+* NetMigrationRate1019: Net migration rate, 2010-19  
+* NetMigrationNum0010: Net migration, 2000-10  
+* NetMigration1019: Net Migration, 2010-19  
+
+* NaturalChangeRate1019: Natural population change rate, 2010-19   
+* NaturalChangeRate0010: Natural population change rate, 2000-10    
+* NaturalChangeNum0010: Natural change, 2000-10  
+* NaturalChange1019: Natural population change, 2010-19
+
+* TotalPop2010: Population size 4/1/2010 Census 
+* TotalPopEst2010: Population size 7/1/2010
+* TotalPopEst2011: Population size 7/1/2011
+* TotalPopEst2012: Population size 7/1/2012
+* TotalPopEst2013: Population size 7/1/2013
+* TotalPopEst2014: Population size 7/1/2014
+* TotalPopEst2015: Population size 7/1/2015
+* TotalPopEst2016: Population size 7/1/2016
+* TotalPopEst2017: Population size 7/1/2017
+* TotalPopEst2018: Population size 7/1/2018
+* TotalPopEst2019: Population size 7/1/2019
+* TotalPopACS: Total population, 2014-18 - 5-year average   
+* TotalPopEstBase2010: County Population estimate base 4/1/2010
+
+* NonHispanicAsianPopChangeRate0010: Population change rate Non-Hispanic Asian, 2000-10  
+* PopChangeRate1819: Population change rate, 2018-19    
+* PopChangeRate1019: Population change rate, 2010-19    
+* PopChangeRate0010: Population change rate, 2000-10   
+* NonHispanicNativeAmericanPopChangeRate0010: Population change rate Non-Hispanic Native American, 2000-10    
+* HispanicPopChangeRate0010: Population change rate Hispanic, 2000-10  
+* MultipleRacePopChangeRate0010: Population change rate multiple race, 2000-10    
+* NonHispanicWhitePopChangeRate0010: Population change rate Non-Hispanic White, 2000-10  
+* NonHispanicBlackPopChangeRate0010: Population change rate Non-Hispanic African American, 2000-10  
+
+* MultipleRacePct2010: Percent multiple race, 2010  
+* WhiteNonHispanicPct2010: Percent Non-Hispanic White, 2010    
+* NativeAmericanNonHispanicPct2010: Percent Non-Hispanic Native American, 2010  
+* BlackNonHispanicPct2010: Percent Non-Hispanic African American, 2010    
+* AsianNonHispanicPct2010: Percent Non-Hispanic Asian, 2010   
+* HispanicPct2010: Percent Hispanic, 2010  
+* MultipleRaceNum2010: Population size multiple race, 2010   
+* WhiteNonHispanicNum2010: Population size Non-Hispanic White, 2010    
+* BlackNonHispanicNum2010: Population size Non-Hispanic African American, 2010  
+* NativeAmericanNonHispanicNum2010: Population size Non-Hispanic Native American, 2010   
+* AsianNonHispanicNum2010: Population size Non-Hispanic Asian, 2010    
+* HispanicNum2010: Population size Hispanic, 2010
+
+*County classifications*: Type of county (rural or urban on a rural-urban continuum scale)
+
+* Type_2015_Recreation_NO: Recreation counties, 2015 edition  
+* Type_2015_Farming_NO: Farming-dependent counties, 2015 edition  
+* Type_2015_Mining_NO: Mining-dependent counties, 2015 edition
+* Type_2015_Government_NO: Federal/State government-dependent counties, 2015 edition  
+* Type_2015_Update: County typology economic types, 2015 edition   
+* Type_2015_Manufacturing_NO: Manufacturing-dependent counties, 2015 edition  
+* Type_2015_Nonspecialized_NO: Nonspecialized counties, 2015 edition    
+* RecreationDependent2000: Nonmetro recreation-dependent, 1997-00  
+* ManufacturingDependent2000: Manufacturing-dependent, 1998-00
+* FarmDependent2003: Farm-dependent, 1998-00  
+* EconomicDependence2000: Economic dependence, 1998-00  
+
+* RuralUrbanContinuumCode2003: Rural-urban continuum code, 2003
+* UrbanInfluenceCode2003: Urban influence code, 2003  
+* RuralUrbanContinuumCode2013: Rural-urban continuum code, 2013
+* UrbanInfluenceCode2013: Urban influence code, 2013  
+* Noncore2013: Nonmetro noncore, outside Micropolitan and Metropolitan, 2013  
+* Micropolitan2013: Micropolitan, 2013
+* Nonmetro2013: Nonmetro, 2013
+* Metro2013: Metro, 2013  
+* Metro_Adjacent2013: Nonmetro, adjacent to metro area, 2013  
+* Noncore2003: Nonmetro noncore, outside Micropolitan and Metropolitan, 2003  
+* Micropolitan2003: Micropolitan, 2003  
+* Metro2003: Metro, 2003  
+* Nonmetro2003: Nonmetro, 2003  
+* NonmetroNotAdj2003: Nonmetro, nonadjacent to metro area, 2003
+* NonmetroAdj2003: Nonmetro, adjacent to metro area, 2003  
+
+* Oil_Gas_Change: Change in the value of onshore oil and natural gas production, 2000-11  
+* Gas_Change: Change in the value of onshore natural gas production, 2000-11    
+* Oil_Change: Change in the value of onshore oil production, 2000-11  
+
+* Hipov: High poverty counties, 2014-18  
+* Perpov_1980_0711: Persistent poverty counties, 2015 edition  
+* PersistentChildPoverty_1980_2011: Persistent child poverty counties, 2015 edition  
+* PersistentChildPoverty2004: Persistent child poverty counties, 2004  
+* PersistentPoverty2000: Persistent poverty counties, 2004
+
+* Low_Education_2015_update: Low education counties, 2015 edition
+* LowEducation2000: Low education, 2000  
+
+* HiCreativeClass2000: Creative class, 2000  
+* HiAmenity: High natural amenities  
+* RetirementDestination2000: Retirement destination, 1990-00  
+* Low_Employment_2015_update: Low employment counties, 2015 edition
+* Population_loss_2015_update: Population loss counties, 2015 edition
+* Retirement_Destination_2015_Update: Retirement destination counties, 2015 edition
+
+
