@@ -129,9 +129,31 @@ covid_monthly <- covid_monthly %>%
   mutate(new_death_per100k = daily_death / population * 1e5)
 
 ## change State to state so that usmap recognizes
-covid_monthly <- covid_monthly %>% rename(state = State)
+covid_monthly <- covid_monthly %>% rename
+
+# Filling in with NA
+covid_monthly <- covid_monthly %>% tidyr::complete(state, month, fill = list(new_case_per100k = NA))
 ```
 
+``` {r heatmanp}
+
+library(usmap)
+
+covid_monthly.plot <- plot_usmap(regions = "state",                   
+                              #regions = "counties", for county level summary
+    data = covid_monthly, 
+    values = "new_death_per100k", exclude = c("Hawaii", "Alaska"), color = "black") + 
+    scale_fill_gradient(
+      low = "white", high = "red", 
+      name = "Number of New Deaths per 100,000 People", 
+      label = scales::comma) + 
+    labs(title = "State Covid Death Rate", subtitle = "Continental US States") +
+    theme(legend.position = "right") +
+    facet_wrap(~ month)
+
+covid_monthly.plot
+
+```
 
 ## COVID factor
 
