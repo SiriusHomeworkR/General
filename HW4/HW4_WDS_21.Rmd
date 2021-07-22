@@ -174,8 +174,8 @@ iii) Select possible variables in `county_data` as covariates. We provide `count
 
 ``` {r add_county_data}
 
-# We do it all - no data left behind! (at least not until LASSO)
-merged_data <- left_join(date_specified_data, county_data, by = "FIPS")
+# We do it all except for cols with NA - no data left behind! (at least not until LASSO)
+merged_data <- left_join(date_specified_data, county_data_sub, by = "FIPS")
 # Remove duped columns
 merged_data <- merged_data %>% 
   rename_at(
@@ -203,6 +203,16 @@ iv) Use LASSO to choose a parsimonious model with all available sensible county-
 ``` {r}
 
 merged_data$State <- as.factor(merged_data$State)
+
+merged_data <- drop_na(merged_data)
+
+X <- model.matrix(total_death_per100k~., merged_data, na.action = na.pass)[, -1]
+Y <- merged_data$total_death_per100k
+
+set.seed(15)
+cv.glmnet(X, Y, alpha=1, nfolds=10) 
+
+
 
 ```
 
