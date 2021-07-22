@@ -147,7 +147,7 @@ covid_monthly.plot <- plot_usmap(regions = "state",
       low = "white", high = "red", 
       name = "Number of New Deaths per 100,000 People", 
       label = scales::comma) + 
-    labs(title = "State Covid Death Rate", subtitle = "Continental US States") +
+    labs(title = "State Covid Death Rate", subtitle = "Continental US States, Monthly in 2020") +
     theme(legend.position = "right") +
     facet_wrap(~ month)
 
