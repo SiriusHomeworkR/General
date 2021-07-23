@@ -290,14 +290,17 @@ Conceptual questions to understand the building blocks of logistic regression. A
 vii. Take a random subsample of size 5 from `hd_data_f` which only includes `HD` and `SBP`. Set `set.seed(50)`. List the five observations neatly below. No code should be shown here.
 
 viii. Write down the likelihood function using the five observations above.
-
+set.seed(50)
+fram_data[sample(1:1406, 5), c("HD", "SBP")]
 **answer: **
 
 ix. Find the MLE based on this subset using `glm()`. Report the estimated logit function of `SBP` and the probability of `HD`=1. Briefly explain how the MLE are obtained based on viii. above.
-
+fit1 <- glm(HD~SBP, fram_data, family=binomial(logit))
+summary(fit1)
 **answer: **
 
 x. Evaluate the probability of Liz having heart disease. 
+fit1.predict <- predict(fit1, fram_data.new, type="response")fit1.predict
 
 **answer: **
 
