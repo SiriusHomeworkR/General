@@ -80,10 +80,9 @@ First read in the data.
 The detailed description of variables is in `Appendix: Data description`. Please get familiar with the variables.
 
 ```{r}
-## county-level socioeconomic information
-county_data <- fread("data/covid_county.csv") 
-## county-level COVID case and death
-covid_rate <- fread("data/covid_rates.csv")
+county_data <- fread("data/covid_county.csv") ## county-level socioeconomic information
+covid_rate <- fread("data/covid_rates.csv") ## county-level COVID case and death
+state_codes <- fread("data/abbr-name-list.csv") ##state_codes will convert state names to their codes, so they will be readable to plotly
 ```
 
 
@@ -98,7 +97,11 @@ i) For each month in 2020, plot the monthly deaths per 100k heatmap by state on 
 
 2. Use the data `covid_monthly` after running the R chunk below to create the heatmap
 
-```{r}
+```{r data preparation}
+##remove Alaska and Hawaii from state_codes, change capitalization of DC
+state_codes <- state_codes[-which(state_codes$name %in% c("Hawaii", "Alaska")),]
+state_codes$name[which(state_codes$name == "District Of Columbia")] <- "District of Columbia"
+
 ## get daily new death
 daily_death <- covid_rate %>%
   group_by(FIPS) %>%
@@ -133,16 +136,26 @@ covid_monthly <- covid_monthly %>% rename(state = State)
 
 # Filling in with NA
 covid_monthly <- covid_monthly %>% tidyr::complete(state, month, fill = list(new_case_per100k = NA))
+
+##preserve full state names
+covid_monthly <- cbind(covid_monthly, replicate(1, covid_monthly$state))
+covid_monthly <- rename(covid_monthly, "full state" = "replicate(1, covid_monthly$state)", "Deaths_Per_100k" = "new_death_per100k")
+
+##convert state names to code
+for(i in 1:nrow(state_codes))
+{
+  covid_monthly$state[which(covid_monthly$state == state_codes$name[i])] <- state_codes$abbreviation[i]
+}
 ```
 
-``` {r heatmap}
+``` {r ggplot heatmap}
 
 library(usmap)
 
 covid_monthly.plot <- plot_usmap(regions = "state",                   
                               #regions = "counties", for county level summary
     data = covid_monthly,
-    values = "new_death_per100k", exclude = c("Hawaii", "Alaska"), color = "black") + 
+    values = "Deaths_Per_100k", exclude = c("Hawaii", "Alaska"), color = "black") + 
     scale_fill_gradient(
       low = "white", high = "red", 
       name = "Number of New Deaths per 100,000 People", 
@@ -152,7 +165,26 @@ covid_monthly.plot <- plot_usmap(regions = "state",
     facet_wrap(~ month)
 
 covid_monthly.plot
+```
 
+```{r plotly heatmap}
+deathsper100k.map <- 
+  plot_geo(
+    covid_monthly, 
+    locationmode = 'USA-states', 
+    frame = ~month) %>%
+  add_trace(
+    locations = ~state, 
+    z = ~Deaths_Per_100k,
+    zmin = 0, zmax = 100, 
+    color = ~Deaths_Per_100k,
+    colorscale = 'reds') %>%
+  layout(
+    geo = list(scope = 'usa'), 
+    font = list(family = "Times New Roman"),
+    title = "[2020] Deaths Per 100,000 People by State")
+
+deathsper100k.map
 ```
 
 ## COVID factor
@@ -163,7 +195,7 @@ ii) Create the response variable `total_death_per100k` as the total of number of
 
 ``` {r country_dp100k}
 
-total_death_per100k_country <- sum(covid_monthly$new_death_per100k, na.rm = TRUE)
+total_death_per100k_country <- sum(covid_monthly$Deaths_Per_100k, na.rm = TRUE)
 
 date_specified_data <- covid_rate[covid_rate$date == "2021-02-01"]
 date_specified_data <- date_specified_data %>% mutate(total_death_per100k = cum_deaths/TotalPopEst2019*100000)
@@ -290,14 +322,17 @@ Conceptual questions to understand the building blocks of logistic regression. A
 vii. Take a random subsample of size 5 from `hd_data_f` which only includes `HD` and `SBP`. Set `set.seed(50)`. List the five observations neatly below. No code should be shown here.
 
 viii. Write down the likelihood function using the five observations above.
-
+set.seed(50)
+fram_data[sample(1:1406, 5), c("HD", "SBP")]
 **answer: **
 
 ix. Find the MLE based on this subset using `glm()`. Report the estimated logit function of `SBP` and the probability of `HD`=1. Briefly explain how the MLE are obtained based on viii. above.
-
+fit1 <- glm(HD~SBP, fram_data, family=binomial(logit))
+summary(fit1)
 **answer: **
 
 x. Evaluate the probability of Liz having heart disease. 
+fit1.predict <- predict(fit1, fram_data.new, type="response")fit1.predict
 
 **answer: **
 
