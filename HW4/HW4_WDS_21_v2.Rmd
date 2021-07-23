@@ -229,6 +229,12 @@ summary(fit.lm)
 
 vi) If necessary, reduce the model from v) to a final model with all variables being significant at 0.05 level. Use `Anova()` for backward selection. Again always keep `State` in the model during the process. Are the linear model assumptions all reasonably met?
 
+``` {r backwards_selection}
+
+Anova(fit.lm)
+
+```
+
 **answer: **
 
 vii) Based on your final model, summarize your findings. In particular, summarize the state effect controlling for others. Provide recommendations to policy makers to reduce COVID death rate.
