@@ -182,7 +182,7 @@ covid_county_0201 <- covid_county_0201 %>%
 ```
 
 iv) Use LASSO to choose a parsimonious model with all available sensible county-level information. Let's first prepare the data using the following chunk. Why we need to drop County and FIPS? Why we only have 48 state indicators in the `X` model matrix? (Note that we only include states in the mainland plus DC, so there are 49 states in the data.)
-
+We drop county and fips because we cant estimate for all coefficients as unknown parameters is larger than sample sizes. We only use 0 to 48 to get 49 states excluding Hawaii and Alaska. 
 ```{r}
 # we first drop NAs
 covid_county_0201 <- covid_county_0201 %>% drop_na()
@@ -197,7 +197,7 @@ y <- covid_county_0201$log_death_rate
 
 
 v) Use `cv.glmnet()` to perform LASSO and land on a parsimonious model. You can use `lambda.min`, `lambda.1se`, or any sensible $\lambda$. Follow the chunk below and use `set.seed(15)`. **Force in State** in the process using the `penalty.factor` argument in `cv.glmnet()`. Why we need to force in State?
-
+To include the State in the model, we force in the state as a value of the penalty factor as an argument in the cb.glmnet.
 ```{r}
 # The `penalty.factor` argument in `cv.glmnet()` takes a vector of weights,
 # each of which corresponds to one variable.
@@ -269,7 +269,7 @@ vi) If necessary, reduce the model from v) to a final model with all variables b
 
 ``` {r backwards_selection}
 
- 
+ though not perfect, we will say the linear model assumptions are reasonable. Because we see that the variables have significant p value at 0.05 level. So we conclude our model assumptions are reasonable. 
  
  
  
