@@ -237,10 +237,10 @@ fit.force.cv <- cv.glmnet(X, y, alpha=1, nfolds=10,penalty_factor=state_ind)
  #one may also choose lambda controlled bynzero, the number ofnon-zero elements
  
 coef.force.min <- coef(fit.force.cv, s="lambda.min")#s=c("lambda.1se","lambda.min") or lambda value
-coef.force.min <- coef.force.min[which(coef.min !=0),]
+coef.force.min <- coef.force.min[which(coef.force.min !=0),]
 coef.force.min
 coef.force.1se <- coef(fit.force.cv, s="lambda.1se")
-coef.force.1se <- coef.force.1se[which(coef.1se !=0),]# get the non=zero coefficients
+coef.force.1se <- coef.force.1se[which(coef.force.1se !=0),]# get the non=zero coefficients
 coef.force.1se
 
 var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
