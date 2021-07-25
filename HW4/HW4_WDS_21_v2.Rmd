@@ -329,7 +329,16 @@ Anova(fit.min.lm.back11)
 fit.min.lm.back12<- update(fit.min.lm.back11, .~. - PctEmpTrade)
 Anova(fit.min.lm.back12)
 
-fit.final <- fit.min.lm.back12
+#kick out PctEmpInformation  
+fit.min.lm.back13<- update(fit.min.lm.back12, .~. - PctEmpInformation )
+Anova(fit.min.lm.back13)
+
+ 
+#kick out  PctEmpManufacturing
+fit.min.lm.back14<- update(fit.min.lm.back13, .~. - PctEmpManufacturing )
+Anova(fit.min.lm.back14)
+ 
+fit.final <- fit.min.lm.back14
 
 plot(fit.final, 1)
 plot(fit.final, 2)
