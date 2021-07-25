@@ -252,9 +252,9 @@ len
 var.min<-var.min[50:len] #remove StateXX and intercept from the variables
 var.min
 covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
-covid_county_0201_sub <- covid_county_0201 %>% select(covid_county.sub) #select the columns and get the subset.
-covid_county_0201_sub 
-fit.min.lm <- lm(data=covid_county_0201_sub,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
+covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201.sub) #select the columns and get the subset.
+covid_county_0201_subset 
+fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
 summary(fit.min.lm)
  
 
