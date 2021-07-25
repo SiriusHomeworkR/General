@@ -339,7 +339,7 @@ vii) Based on your final model, summarize your findings. In particular, summariz
 
 **answer: **
 
-
+As the values with the lowest t values are deleted, the t values start to decrease for the other variables. This leads to a larger decrease in the state column as a whole. 
 
 
 # Case Study 2: Framingham heart disease study
@@ -382,6 +382,7 @@ summary(hd_data.f)
 ## Identify risk factors for `Heart.Disease` (Homework: question **viii-x**)
 
 viii. Start with a full model using all the covariates. Use backward selection to get a model with all variables significant at 0.1 level. Summarize your final model.
+
 
 **answer: **
 
