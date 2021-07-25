@@ -334,8 +334,8 @@ fit.min.lm.back13<- update(fit.min.lm.back12, .~. - PctEmpInformation )
 Anova(fit.min.lm.back13)
 
  
-#kick out  PctEmpManufacturing
-fit.min.lm.back14<- update(fit.min.lm.back13, .~. - PctEmpManufacturing )
+#kick out  PopDensity2010
+fit.min.lm.back14<- update(fit.min.lm.back13, .~. - PopDensity2010 )
 Anova(fit.min.lm.back14)
  
 fit.final <- fit.min.lm.back14
