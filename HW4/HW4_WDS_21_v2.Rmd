@@ -270,8 +270,28 @@ vi) If necessary, reduce the model from v) to a final model with all variables b
 ``` {r backwards_selection}
 
 Anova(fit.lm)
-#backward selection
-
+ 
+#Backward selection using coeff [,4]<=.05,4]) - can keep this 
+Anova(fit.min.lm)
+  # get a subset with response and LASSO output
+var.back <- data.frame(summary(fit.min.lm)$coef[summary(fit.min.lm)$coef[,4] <= .05, 4])
+var.back <- rownames(var.back)[-1]
+  #remove StateXX and intercept from the variables
+var.back<-var.back[50:length(var.back)]
+covid_county_0201_sub  <- covid_county_0201[,c("State","log_death_rate", var.back)]
+ covid_county_0201_sub <- c("State","log_death_rate")
+ covid_county_0201_sub <- covid_county_0201 %>% select(covid_county_0201_sub)
+fit.final <- lm(log_death_rate ~., data = covid_county_0201_sub)
+fit.final
+summary(fit.final)
+Anova(fit.final)
+ plot(fit.final, 1)
+ 
+ plot(fit.final, 2)
+ 
+ 
+ #Another way to do Backward selection - Need to check( can remove this )
+# Removing Individual variable 
 #kick out Retirement_Destination_2015_Update highest pvalue
 library(leaps)
 library(car)
