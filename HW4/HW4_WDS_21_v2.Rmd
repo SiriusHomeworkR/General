@@ -350,7 +350,7 @@ vii) Based on your final model, summarize your findings. In particular, summariz
 
 **answer: **
 
-As the values with the lowest t values are deleted, the t values start to decrease for the other variables. This leads to a larger decrease in the state column as a whole. 
+summarize our findings:The death rate increases when the following features increases:state, PctEmpAgriculture, PctEmpManufacturing, Age65AndOlderPct2010,Under18Pct2010, Ed2HSDiplomaOnlyPct,  Ed3SomeCollegePct, Ed5CollegePlusPct, NetMigrationRate1019, NaturalChangeRate1019, WhiteNonHispanicPct2010, RuralUrbanContinuumCode2013 . To control death rate, we need less people employed at the manufacturing and agricultural sector and take care of the elderly and the youth, control migration, and control spread of disease among the rural and urban and the white non hispanic population. 
 
 
 # Case Study 2: Framingham heart disease study
