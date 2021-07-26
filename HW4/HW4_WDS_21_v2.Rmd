@@ -501,10 +501,15 @@ fit.final<-glm(HD~AGE+SEX+SBP+CHOL+CIG,family=binomial,data=hd_data.f)
 summary(fit.final)
 ```
 
-We would rather be conservative in this case because if we misdiagnose the patient as free from heart disease, then it is possible that she would not take the required medications which would then lead to the heart disease exacerbating.  
 
 **answer: **
 
+Summary of final model
+We have introduce elements of logistic regression models and classifications using only SBP. We can immediately extend all the concepts to include more possible risk factors.
+We used logistic regression models as well as classifications with only SBP. We can include other risk factors such as DBP, cholestrol, age, and CIG. 
+From the model, we infer that the DBP and FRW are insignificant so we can remove that. Based on the final model, we see that the CIG has a weak evidence as a factor for heart disease than the other factors. 
+
+According to the threshold of 1/3, we still classify that Liz does not have a heart disease. We would rather be conservative in this case because if we misdiagnose the patient as free from heart disease, then it is possible that she would not take the required medications which would then lead to the heart disease exacerbating.  
 
 
 
