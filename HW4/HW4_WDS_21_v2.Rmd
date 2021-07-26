@@ -246,13 +246,13 @@ coef.force.1se
 var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
 
  var.min
- rownames(as.matrix(coef.min)) #output the names  dim(as.matrix(coef.min))
+ rownames(as.matrix(coef.force.min)) #output the names  dim(as.matrix(coef.min))
 len<-length(var.min) # total variables in var.min
 len
 var.min<-var.min[50:len] #remove StateXX and intercept from the variables
 var.min
 covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
-covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201.sub) #select the columns and get the subset.
+covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201_sub) #select the columns and get the subset.
 covid_county_0201_subset 
 fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
 summary(fit.min.lm)
@@ -267,9 +267,11 @@ summary(fit.min.lm)
 
 vi) If necessary, reduce the model from v) to a final model with all variables being significant at 0.05 level. Use `Anova()` for backward selection. Again always keep `State` in the model during the process. Are the linear model assumptions all reasonably met?
 
+ though not perfect, we will say the linear model assumptions are reasonable. Because we see that the variables have significant p value at 0.05 level. So we conclude our model assumptions are reasonable. 
+
 ``` {r backwards_selection}
 
- though not perfect, we will say the linear model assumptions are reasonable. Because we see that the variables have significant p value at 0.05 level. So we conclude our model assumptions are reasonable. 
+
  
  
  
