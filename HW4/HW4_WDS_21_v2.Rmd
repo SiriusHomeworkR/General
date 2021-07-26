@@ -393,18 +393,111 @@ summary(hd_data.f)
 ## Identify risk factors for `Heart.Disease` (Homework: question **viii-x**)
 
 viii. Start with a full model using all the covariates. Use backward selection to get a model with all variables significant at 0.1 level. Summarize your final model.
+```{r data summary, comment="     "}
+## using the comment="     ", we get rid of the ### in the output.
+summary(hd_data.f)
+hd_data%<>%rename(HD =HD)%>%
+  mutate(HD =as.factor(HD),
+         SEX =as.factor(SEX))
+hd_data.new<-hd_data[1407,]
+hd_data<-hd_data[-1407,]
+```
+
+```{r}
+hd_data%>%mutate(HD =as.numeric(HD)-1)%>%
+  ggplot(aes(x=SBP,y=HD))+
+  geom_jitter(height =.05,aes(color =factor(HD)))
+```
+```{r}
+hd_data%>%mutate(HD =as.numeric(HD)-1)%>%
+  ggplot(aes(x=SBP,y=HD))+
+  geom_jitter(height =.05,aes(color =factor(HD)))+
+  geom_smooth(method ="lm",se =FALSE)+ylab("Prob(HD=1)")
+ 
+ 
+ set.seed(2)
+hd_data[sample(1:1406,10),c("HD","SBP")]
+ 
+ fit1<- glm(HD~SBP,hd_data, family=binomial(logit))
+ 
+summary(fit1)
 
 
+
+hd_data.new = matrix(c(45,"FEMALE",100,80,180,110,5),nrow=1,ncol=7)
+hd_data.df <- as.data.frame(t(hd_data.new))
+ 
+fit1.predict<-predict(fit1,data=hd_data.df ,type="response")
+fit1.predict
+hd_data%>%mutate(HD =as.numeric(HD)-1)%>%ggplot(aes(x=SBP,y=HD))+geom_jitter(height =.05,aes(color =factor(HD)))+geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+  geom_smooth(method = "lm",      color = "red", se = FALSE) +ylab("Prob(HD=1)") # may impose a liner model. we see the two curves are not the same.
+x<-seq(100,300,by=1)
+y<-exp(-3.66+0.0159*x)/(1+exp(-3.66+0.0159*x))
+plot(x, y,pch=16,type ="l",xlab ="SBP",ylab ="Prob of P(Y=1|SBP)")
+confint.default(fit1)
+```
 **answer: **
 
 ix. Based on the model in viii, calculate the mis-classification error (MCE) with 1/2 and 1/3 as the threshold respectively. Which threshold achieves a smaller MCE? 
+```{r}
 
+ifelse(fit1.predict>1/2,"1","0")
+hd_data%>%
+mutate(HD =as.numeric(HD)-1)%>%
+ggplot(aes(x=SBP,y=HD))+
+geom_jitter(height =.05,aes(color =factor(HD)))+
+geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+
+geom_vline(xintercept =230.18,col="red")+
+ggtitle("Classifier: HD = 1 if prob > 1/2")+ylab("Prob(HD=1)")
+
+                                                                                                                                                                                                                       
+                                                                                                                                                                                                          
+```
 
 **answer: **
 
 
-x. Let predict whether Liz has heart disease or not using the model in viii. Use 1/3 as the threshold to be conservative. Why we would rather be conservative in this case? Could you come up with a better metric to measure the cost of mis-classification? 
+x. Let predict whether Liz has heart disease or not using the model in viii. Use 1/3 as the threshold to be conservative. Why we would rather be conservative in this case? Could you come up with a better metric to measure the cost of mis-classification?
+```{r}
+ifelse(fit1.predict>1/3,"1","0")
+hd_data%>%
+mutate(HD =as.numeric(HD)-1)%>%
+ggplot(aes(x=SBP,y=HD))+
+geom_jitter(height =.05,aes(color =factor(HD)))+
+geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+
+geom_line(aes(x=230.18),col="red")+
+geom_line(aes(x=187),col="green")+
+ggtitle("Green: HD = 1 if prob > 1/3; Red: HD = 1 if prob > 1/2")+
+ylab("Prob(HD=1)")
+```
+```{r}
+fit1.pred.5<-ifelse(fit1$fitted>1/2,"1","0")
+error.training<-mean(fit1.pred.5!=hd_data$HD)
+error.training
+accuracy<-1-error.training
+accuracy
+summary(hd_data)
+hd_data.f <-na.omit(hd_data)
+fit2<-glm(HD~., hd_data.f,family=binomial)
+summary(fit2)
+confint.default(fit2)
+Anova(fit2)
+confint.default(fit2)
+summary(glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG,family=binomial,data=hd_data.f))
+```
+```{r}
+fit.final.0<-glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG,family=binomial,data=hd_data.f)
+summary(fit.final.0)
+```
 
+```{r}
+summary(update(fit.final.0,.~.-FRW))
+```
+```{r}
+fit.final<-glm(HD~AGE+SEX+SBP+CHOL+CIG,family=binomial,data=hd_data.f)
+summary(fit.final)
+```
+
+We would rather be conservative in this case because if we misdiagnose the patient as free from heart disease, then it is possible that she would not take the required medications which would then lead to the heart disease exacerbating.  
 
 **answer: **
 
