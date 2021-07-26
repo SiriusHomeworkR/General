@@ -229,37 +229,35 @@ summary(fit.lm)
 # Since the first 48 columns of X are the state indicators, the first 48 elements should be 0
 # The rest should be 1 to keep the penalty.
  
-# library(glmnet)
-# state_ind <- c(rep(0, 48), rep(1, ncol(X)-48))
-# set.seed(15)
-# fit.force.cv <- cv.glmnet(X, y, alpha=1, nfolds=10,penalty_factor=state_ind)
-#  plot(fit.force.cv)
-# # Now set seed then use `penalty.factor = state_ind` in `cv.glmnet()` to perform LAS
-#  #One may choose any lambda between lambda.min and lambda.1seO
-#  #one may also choose lambda controlled bynzero, the number ofnon-zero elements
-#  
-# coef.force.min <- coef(fit.force.cv, s="lambda.min")#s=c("lambda.1se","lambda.min") or lambda value
-# coef.force.min <- coef.force.min[which(coef.force.min !=0),]
-# # coef.force.min
-# coef.force.1se <- coef(fit.force.cv, s="lambda.1se")
-# coef.force.1se <- coef.force.1se[which(coef.force.1se !=0),]# get the non=zero coefficients
-# # coef.force.1se
-# 
-# var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
-# 
-# # var.min
-#  # rownames(as.matrix(coef.force.min)) #output the names  dim(as.matrix(coef.min))
-# len<-length(var.min) # total variables in var.min
-# # len
-# var.min<-var.min[50:len] #remove StateXX and intercept from the variables
-# # var.min
-# covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
-# covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201_sub) #select the columns and get the subset.
-# # covid_county_0201_subset 
-# fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
-# summary(fit.min.lm)
-# 
-# Anova(fit.min.lm)
+library(glmnet)
+state_ind <- c(rep(0, 48), rep(1, ncol(X)-48))
+set.seed(15)
+fit.force.cv <- cv.glmnet(X, y, alpha=1, nfolds=10,penalty_factor=state_ind)
+ plot(fit.force.cv)
+# Now set seed then use `penalty.factor = state_ind` in `cv.glmnet()` to perform LAS
+ #One may choose any lambda between lambda.min and lambda.1seO
+ #one may also choose lambda controlled bynzero, the number ofnon-zero elements
+ 
+coef.force.min <- coef(fit.force.cv, s="lambda.min")#s=c("lambda.1se","lambda.min") or lambda value
+coef.force.min <- coef.force.min[which(coef.force.min !=0),]
+coef.force.min
+coef.force.1se <- coef(fit.force.cv, s="lambda.1se")
+coef.force.1se <- coef.force.1se[which(coef.force.1se !=0),]# get the non=zero coefficients
+coef.force.1se
+
+var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
+
+ var.min
+ rownames(as.matrix(coef.force.min)) #output the names  dim(as.matrix(coef.min))
+len<-length(var.min) # total variables in var.min
+len
+var.min<-var.min[50:len] #remove StateXX and intercept from the variables
+var.min
+covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
+covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201_sub) #select the columns and get the subset.
+covid_county_0201_subset 
+fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
+summary(fit.min.lm)
  
 
 ```
@@ -273,7 +271,7 @@ vi) If necessary, reduce the model from v) to a final model with all variables b
 
  though not perfect, we will say the linear model assumptions are reasonable. Because we see that the variables have significant p value at 0.05 level. So we conclude our model assumptions are reasonable. 
 
-``` {r backwards_selection, results = FALSE}
+``` {r backwards_selection}
 
 
  
@@ -371,20 +369,19 @@ we need to protect people employed at the manufacturing and agricultural sector 
 control migration, and control spread of disease among both the rural and urban as well as the the white non-Hispanic population. 
 
 
+
+
+## Identify risk factors for `Heart.Disease` (Homework: question **viii-x**)
+# code --------------------------------------------------------------------
+
 # Case Study 2: Framingham heart disease study
 
 ## Background
-
-We will continue to use the Framingham Data (`Framingham.dat`) so that you are already familiar with the data and the variables. All the results are obtained through training data. 
-
-Liz is a patient with the following readings: `AGE=50, SEX=FEMALE, SBP=110, DBP=80, CHOL=180, FRW=105, CIG=0`. We would be interested to predict Liz's outcome in heart disease. 
-
-To keep our answers consistent, use a subset of the data, and exclude anyone with a missing entry. For your convenience, we've loaded it here together with a brief summary about the data.
-
-```{r data preparation, include=F}
+ 
+ 
 ## Notice that we hide the code and the results here
 ## Using `include=F` in the chunk declaration.
-hd_data <- read.csv("data/Framingham.dat")
+hd_data <- read.csv("/Users/adiay/Downloads/Wharton/HW4/data/Framingham.dat")
 str(hd_data) 
 
 #### Renames, setting the variables with correct natures...
@@ -393,127 +390,143 @@ hd_data$HD <- as.factor(hd_data$HD)
 hd_data$SEX <- as.factor(hd_data$SEX)
 str(hd_data)
 hd_data.f <- na.omit(hd_data)
-```
+ 
 
-We note that this dataset contains 311 people diagnosed with heart disease and 1095 without heart disease.
-```{r table heart disease, echo = F, comment = " "}
+ 
+ 
 ## we use echo = F to avoid showing this R code
 ## notice the usage of comment = " " here in the header
 table(hd_data$HD) ## HD: 311 of "0" and 1095 "1" 
-```
+ 
 
-After a quick cleaning up here is a summary about the data:
-```{r data summary, comment="     "}
+ 
+  
 ## using the comment="     ", we get rid of the ### in the output.
 summary(hd_data.f)
-```
-
 ## Identify risk factors for `Heart.Disease` (Homework: question **viii-x**)
-
-viii. Start with a full model using all the covariates. Use backward selection to get a model with all variables significant at 0.1 level. Summarize your final model.
-```{r data summary 2, comment="     "}
-## using the comment="     ", we get rid of the ### in the output.
-summary(hd_data.f)
-hd_data%<>%rename(HD =HD)%>%
-  mutate(HD =as.factor(HD),
-         SEX =as.factor(SEX))
-hd_data.new<-hd_data[1407,]
-hd_data<-hd_data[-1407,]
-```
-
-```{r}
-hd_data%>%mutate(HD =as.numeric(HD)-1)%>%
-  ggplot(aes(x=SBP,y=HD))+
-  geom_jitter(height =.05,aes(color =factor(HD)))
-```
-```{r}
-hd_data%>%mutate(HD =as.numeric(HD)-1)%>%
-  ggplot(aes(x=SBP,y=HD))+
-  geom_jitter(height =.05,aes(color =factor(HD)))+
-  geom_smooth(method ="lm",se =FALSE)+ylab("Prob(HD=1)")
- 
- 
- set.seed(2)
-hd_data[sample(1:1406,10),c("HD","SBP")]
- 
- fit1<- glm(HD~SBP,hd_data, family=binomial(logit))
- 
-summary(fit1)
-
-
-
+hd_data.f %<>%rename(HD = HD) %>%
+  mutate(HD = as.factor(HD),SEX = as.factor(SEX))
 hd_data.new = matrix(c(45,"FEMALE",100,80,180,110,5),nrow=1,ncol=7)
-hd_data.df <- as.data.frame(t(hd_data.new))
- 
-fit1.predict<-predict(fit1,data=hd_data.df ,type="response")
+hd_data <- hd_data[-1406,]
+
+hd_data %>% mutate(HD = as.numeric(HD)-1) %>%
+  ggplot(aes(x=SBP, y=HD)) +
+  geom_jitter(height = .05, aes(color = factor(HD)))
+#viii. Start with a full model using all the covariates. Use backward selection to get a model with all variables significant at 0.1 level. Summarize your final model.
+hd_data %>% mutate(HD = as.numeric(HD)-1) %>%
+  ggplot(aes(x=SBP, y=HD)) +
+  geom_jitter(height = .05, aes(color = factor(HD))) +
+  geom_smooth(method = "lm", se = FALSE) +ylab("Prob(HD=1)")
+set.seed(2)
+hd_data[sample(1:1406, 10), c("HD", "SBP","Age","")]
+fit1 <- glm(HD~SBP, hd_data, family=binomial(logit))#summary(glm(as.numeric(HD)~SBP, fram_data, family="gaussian"))
+summary(fit1)
+hd_data.new <- data.frame(AGE=50, SEX="FEMALE", SBP=110, DBP=80, CHOL=180, FRW=105, CIG=0)
+fit1.predict <- predict(fit1, hd_data.new, type="response")
 fit1.predict
-hd_data%>%mutate(HD =as.numeric(HD)-1)%>%ggplot(aes(x=SBP,y=HD))+geom_jitter(height =.05,aes(color =factor(HD)))+geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+  geom_smooth(method = "lm",      color = "red", se = FALSE) +ylab("Prob(HD=1)") # may impose a liner model. we see the two curves are not the same.
-x<-seq(100,300,by=1)
-y<-exp(-3.66+0.0159*x)/(1+exp(-3.66+0.0159*x))
-plot(x, y,pch=16,type ="l",xlab ="SBP",ylab ="Prob of P(Y=1|SBP)")
+hd_data %>% mutate(HD = as.numeric(HD)-1) %>%
+  ggplot(aes(x=SBP, y=HD)) +
+  geom_jitter(height = .05, aes(color = factor(HD))) +
+  geom_smooth(method = "glm",method.args = list(family = "binomial"),se = FALSE) +#
+  geom_smooth(method = "lm",    # may impose a liner model. we see the two curves are not the same.#             
+              color = "red",#             
+              se = FALSE) +
+              ylab("Prob(HD=1)")
+x <- seq(100, 300, by=1)
+y <- exp(-3.66+0.0159*x)/(1+exp(-3.66+0.0159*x))
+plot(x, y, pch=16, type = "l",xlab = "SBP",ylab = "Prob of P(Y=1|SBP)" )
 confint.default(fit1)
-```
-**answer: **
 
-ix. Based on the model in viii, calculate the mis-classification error (MCE) with 1/2 and 1/3 as the threshold respectively. Which threshold achieves a smaller MCE? 
-```{r}
+ #**answer: ** 
 
-ifelse(fit1.predict>1/2,"1","0")
-hd_data%>%
-mutate(HD =as.numeric(HD)-1)%>%
-ggplot(aes(x=SBP,y=HD))+
-geom_jitter(height =.05,aes(color =factor(HD)))+
-geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+
-geom_vline(xintercept =230.18,col="red")+
-ggtitle("Classifier: HD = 1 if prob > 1/2")+ylab("Prob(HD=1)")
-
-                                                                                                                                                                                                                       
-                                                                                                                                                                                                          
-```
-
-**answer: **
-
-
-x. Let predict whether Liz has heart disease or not using the model in viii. Use 1/3 as the threshold to be conservative. Why we would rather be conservative in this case? Could you come up with a better metric to measure the cost of mis-classification?
-```{r}
-ifelse(fit1.predict>1/3,"1","0")
-hd_data%>%
-mutate(HD =as.numeric(HD)-1)%>%
-ggplot(aes(x=SBP,y=HD))+
-geom_jitter(height =.05,aes(color =factor(HD)))+
-geom_smooth(method ="glm",method.args =list(family ="binomial"),se =FALSE)+
-geom_line(aes(x=230.18),col="red")+
-geom_line(aes(x=187),col="green")+
-ggtitle("Green: HD = 1 if prob > 1/3; Red: HD = 1 if prob > 1/2")+
-ylab("Prob(HD=1)")
-```
-```{r}
-fit1.pred.5<-ifelse(fit1$fitted>1/2,"1","0")
-error.training<-mean(fit1.pred.5!=hd_data$HD)
+  
+ # ix. Based on the model in viii, calculate the mis-classification error (MCE) with 1/2 and 1/3 as the threshold respectively. Which threshold achieves a smaller MCE? 
+ifelse(fit1.predict > 1/2, "1", "0")
+hd_data %>% mutate(HD = as.numeric(HD)-1) %>%
+  ggplot(aes(x=SBP, y=HD)) +
+  geom_jitter(height = .05, aes(color = factor(HD))) +
+  geom_smooth(method = "glm",method.args = list(family = "binomial"),se = FALSE) +
+  geom_vline(xintercept = 230.18, col="red") +
+  ggtitle("Classifier: HD = 1 if prob > 1/2") +
+  ylab("Prob(HD=1)")
+ifelse(fit1.predict > 1/3, "1", "0")
+hd_data %>% mutate(HD = as.numeric(HD)-1) %>%ggplot(aes(x=SBP, y=HD)) +
+  geom_jitter(height = .05, aes(color = factor(HD))) +
+  geom_smooth(method = "glm",method.args = list(family = "binomial"),se = FALSE) +
+  geom_line(aes(x = 230.18), col="red") +
+  geom_line(aes(x = 187), col="green") +
+  ggtitle("Green: HD = 1 if prob > 1/3; Red: HD = 1 if prob > 1/2") +
+  ylab("Prob(HD=1)")
+fit1.pred.5 <- ifelse(fit1$fitted > 1/2, "1", "0")
+error.training <- mean(fit1.pred.5 != hd_data$HD)
 error.training
-accuracy<-1-error.training
+accuracy <- 1 - error.training
 accuracy
-summary(hd_data)
-hd_data.f <-na.omit(hd_data)
-fit2<-glm(HD~., hd_data.f,family=binomial)
+
+  
+  #**answer: **
+  
+  
+ # x. Let predict whether Liz has heart disease or not using the model in viii. Use 1/3 as the threshold to be conservative. Why we would rather be conservative in this case? Could you come up with a better metric to measure the cost of mis-classification? 
+fit2 <- glm(HD~., hd_data.f, family=binomial)
 summary(fit2)
 confint.default(fit2)
 Anova(fit2)
-confint.default(fit2)
-summary(glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG,family=binomial,data=hd_data.f))
-```
-```{r}
-fit.final.0<-glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG,family=binomial,data=hd_data.f)
+confint.default(fit2)#   predict(fit2,fram_data.new, type = "response" )
+summary(glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG, family=binomial, data=hd_data.f))
+fit.final.0 <- glm(HD~AGE+SEX+SBP+CHOL+FRW+CIG, family=binomial, data=hd_data.f)
 summary(fit.final.0)
-```
-
-```{r}
-summary(update(fit.final.0,.~.-FRW))
-```
-```{r}
-fit.final<-glm(HD~AGE+SEX+SBP+CHOL+CIG,family=binomial,data=hd_data.f)
+fit.final <- glm(HD~AGE+SEX+SBP+CHOL+CIG, family=binomial, data=hd_data.f)
 summary(fit.final)
-```
+  
+  #**answer: **
+#Using 2 features  
+fit6 = glm(HD~.,hd_data.f, family= binomial)
+fit2 <- glm(HD~SBP+AGE, family= binomial, hd_data.f)
+summary(fit2)
+hd_data.f  %>%
+  ggplot(aes(x=AGE, y=SBP)) +
+  geom_jitter(width = 0.2, aes(color = factor(HD))) +
+  geom_abline(intercept = 503, slope = -4.09, col = "blue") +
+  geom_abline(intercept = 455, slope = -4.09, col = "red") +
+  ggtitle("Blue: HD = 1 if prob > 2/3; Red: HD = 1 if prob > 1/2")
+fit6.pred.5 <- ifelse(fit6$fitted > 1/2, "1", "0")  
+fit1.pred.5 <- ifelse(fit1$fitted > 1/2, "1", "0")
+error.training.fit1 <- mean(fit6.pred.5 != hd_data.f$HD)
+accuracy.fit1 <- 1 - error.training.fit1
+fit2.pred.5 <- ifelse(fit2$fitted > 1/2, "1", "0")
+error.training.fit2 <- mean(fit2.pred.5 != hd_data.f$HD)
+accuracy.fit2 <- 1 - error.training.fit2  
+error.training.fit1
+error.training.fit2
+N <- length(hd_data.f$HD)
+n1 <- floor(.6*N)
+n2 <- floor(.2*N)
+idx_train <- sample(N, n1)
+idx_no_train <- (which(! seq(1:N) %in% idx_train))
+idx_test <- sample( idx_no_train, n2)
+idx_val <- which(! idx_no_train %in% idx_test)
+data.train <- hd_data.f[idx_train,]
+data.test <- hd_data.f[idx_test,]
+data.val <- hd_data.f[idx_val,]
+fit1.train <- glm(HD~SBP, data=data.train, family=binomial)
+summary(fit1.train)
+fit5.train <- glm(HD~SBP+SEX+AGE+CHOL+CIG, data=data.train, family=binomial)
+summary(fit5.train)
+fit5.train <- glm(HD~SBP+SEX+AGE+CHOL+CIG, data=data.train, family=binomial)
+summary(fit5.train)
+fit1.fitted.test <- predict(fit1.train, data.test, type="response")# get the prob'sfit5.
+fit5.fitted.test <- predict(fit5.train, data.test, type="response")
+data.frame(fit1.fitted.test, fit5.fitted.test)[1:10, ]
+fit1.test.pred.5 <- ifelse(fit1.fitted.test > 1/2, "1", "0")
+error.testing.fit1.final <- mean(fit1.test.pred.5 != data.test$HD)
+error.testing.fit1.final 
+fit5.test.pred.5 <- ifelse(fit5.fitted.test > 1/2, "1", "0")
+error.testing.fit5.final <- mean(fit5.test.pred.5 != data.test$HD)
+error.testing.fit5.final 
+sum(fit1.test.pred.5!=fit5.test.pred.5)
+#  **END**"
+  
 
 
 **answer: **
