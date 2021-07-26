@@ -31,7 +31,7 @@ options(scipen = 0, digits = 3)  ## controls base R output
 if(!require("pacman")) install.packages("pacman")
 
 pacman::p_load(tidyverse, dplyr, ggplot2, data.table, lubridate,
-               plotROC, usmap, glmnet)
+               plotROC, usmap, glmnet, car)
 ```
 
 
@@ -222,8 +222,6 @@ lm_cols <- covid_county_0201 %>% select(select_cols)
 fit.lm <- lm(data = lm_cols, log_death_rate ~ .)
 summary(fit.lm)
 
-Anova(fit.lm)
-
 #Another method using lambda.min and lambda.1se
 # The `penalty.factor` argument in `cv.glmnet()` takes a vector of weights,
 # each of which corresponds to one variable.
@@ -355,7 +353,7 @@ summary(fit.final.cov)
 ```
 
 ``` {r}
-
+summary(fit.final.cov)
 ```
 
 **answer: **
