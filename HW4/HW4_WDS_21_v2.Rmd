@@ -222,6 +222,8 @@ lm_cols <- covid_county_0201 %>% select(select_cols)
 fit.lm <- lm(data = lm_cols, log_death_rate ~ .)
 summary(fit.lm)
 
+Anova(fit.lm)
+
 #Another method using lambda.min and lambda.1se
 # The `penalty.factor` argument in `cv.glmnet()` takes a vector of weights,
 # each of which corresponds to one variable.
@@ -229,37 +231,37 @@ summary(fit.lm)
 # Since the first 48 columns of X are the state indicators, the first 48 elements should be 0
 # The rest should be 1 to keep the penalty.
  
-library(glmnet)
-state_ind <- c(rep(0, 48), rep(1, ncol(X)-48))
-set.seed(15)
-fit.force.cv <- cv.glmnet(X, y, alpha=1, nfolds=10,penalty_factor=state_ind)
- plot(fit.force.cv)
-# Now set seed then use `penalty.factor = state_ind` in `cv.glmnet()` to perform LAS
- #One may choose any lambda between lambda.min and lambda.1seO
- #one may also choose lambda controlled bynzero, the number ofnon-zero elements
- 
-coef.force.min <- coef(fit.force.cv, s="lambda.min")#s=c("lambda.1se","lambda.min") or lambda value
-coef.force.min <- coef.force.min[which(coef.force.min !=0),]
-coef.force.min
-coef.force.1se <- coef(fit.force.cv, s="lambda.1se")
-coef.force.1se <- coef.force.1se[which(coef.force.1se !=0),]# get the non=zero coefficients
-# coef.force.1se
-
-var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
-
- var.min
- rownames(as.matrix(coef.force.min)) #output the names  dim(as.matrix(coef.min))
-len<-length(var.min) # total variables in var.min
-# len
-var.min<-var.min[50:len] #remove StateXX and intercept from the variables
-# var.min
-covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
-covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201_sub) #select the columns and get the subset.
-# covid_county_0201_subset 
-fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
-summary(fit.min.lm)
-
-Anova(fit.min.lm)
+# library(glmnet)
+# state_ind <- c(rep(0, 48), rep(1, ncol(X)-48))
+# set.seed(15)
+# fit.force.cv <- cv.glmnet(X, y, alpha=1, nfolds=10,penalty_factor=state_ind)
+#  plot(fit.force.cv)
+# # Now set seed then use `penalty.factor = state_ind` in `cv.glmnet()` to perform LAS
+#  #One may choose any lambda between lambda.min and lambda.1seO
+#  #one may also choose lambda controlled bynzero, the number ofnon-zero elements
+#  
+# coef.force.min <- coef(fit.force.cv, s="lambda.min")#s=c("lambda.1se","lambda.min") or lambda value
+# coef.force.min <- coef.force.min[which(coef.force.min !=0),]
+# # coef.force.min
+# coef.force.1se <- coef(fit.force.cv, s="lambda.1se")
+# coef.force.1se <- coef.force.1se[which(coef.force.1se !=0),]# get the non=zero coefficients
+# # coef.force.1se
+# 
+# var.min <- rownames(as.matrix(coef.force.min))[-1] # get all the NA values
+# 
+# # var.min
+#  # rownames(as.matrix(coef.force.min)) #output the names  dim(as.matrix(coef.min))
+# len<-length(var.min) # total variables in var.min
+# # len
+# var.min<-var.min[50:len] #remove StateXX and intercept from the variables
+# # var.min
+# covid_county_0201_sub <-  covid_county_0201[,c("State","log_death_rate", var.min)]# get a subset with response and LASSO output#names(data.fl.sub) # hardcode concatenate state with the response variable
+# covid_county_0201_subset <- covid_county_0201 %>% select(covid_county_0201_sub) #select the columns and get the subset.
+# # covid_county_0201_subset 
+# fit.min.lm <- lm(data=covid_county_0201_subset,log_death_rate~.)# debiased or relaxed LASSO #get the LaSSO output.
+# summary(fit.min.lm)
+# 
+# Anova(fit.min.lm)
  
 
 ```
