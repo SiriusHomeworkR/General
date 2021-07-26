@@ -1,8 +1,8 @@
 ---
 title: "Homework 4 - COVID-19 Study and Framingham Study"
 author:
-- Group Member 1
-- Group Member 2
+- Group Member 1 Andrew Oliver
+- Group Member 2 Adithya Ayanam
 - Group Member 3
 - Group Member 4
 - Group Member 5
