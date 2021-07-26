@@ -174,9 +174,10 @@ iii) Select possible variables in `county_data` as covariates. We provide `count
 
 Report missing values in your final subset of variables. In the following analysis, you may ignore the missing values.
     
-**answer: **
+**answer: **  
+We use the default selected variables as selected in the code chunk below.
 
-```{r}
+```{r, echo = TRUE}
 covid_county_0201 <- covid_county_0201 %>%
   select(County, State, FIPS, Deep_Pov_All, PovertyAllAgesPct, PerCapitaInc, UnempRate2019, PctEmpFIRE, PctEmpConstruction, PctEmpTrans, PctEmpMining, PctEmpTrade, PctEmpInformation, PctEmpAgriculture, PctEmpManufacturing, PctEmpServices, PopDensity2010, OwnHomePct, Age65AndOlderPct2010, TotalPop25Plus, Under18Pct2010, Ed2HSDiplomaOnlyPct, Ed3SomeCollegePct, Ed4AssocDegreePct, Ed5CollegePlusPct, ForeignBornPct, Net_International_Migration_Rate_2010_2019, NetMigrationRate1019, NaturalChangeRate1019, TotalPopEst2019, WhiteNonHispanicPct2010, NativeAmericanNonHispanicPct2010, BlackNonHispanicPct2010, AsianNonHispanicPct2010, HispanicPct2010, Type_2015_Update, RuralUrbanContinuumCode2013, UrbanInfluenceCode2013, Perpov_1980_0711, HiCreativeClass2000, HiAmenity, Retirement_Destination_2015_Update, log_death_rate)
 ```
@@ -196,8 +197,9 @@ y <- covid_county_0201$log_death_rate
 ```
 
 
-v) Use `cv.glmnet()` to perform LASSO and land on a parsimonious model. You can use `lambda.min`, `lambda.1se`, or any sensible $\lambda$. Follow the chunk below and use `set.seed(15)`. **Force in State** in the process using the `penalty.factor` argument in `cv.glmnet()`. Why we need to force in State?
-To include the State in the model, we force in the state as a value of the penalty factor as an argument in the cb.glmnet.
+v) Use `cv.glmnet()` to perform LASSO and land on a parsimonious model. You can use `lambda.min`, `lambda.1se`, or any sensible $\lambda$. Follow the chunk below and use `set.seed(15)`. **Force in State** in the process using the `penalty.factor` argument in `cv.glmnet()`. Why we need to force in State?  
+
+To include the State in the model, we force in the state as a value of the penalty factor as an argument in the cv.glmnet. We need to force it in because we are trying to find the effect of the state's action on COVID infection.
 ```{r}
 # The `penalty.factor` argument in `cv.glmnet()` takes a vector of weights,
 # each of which corresponds to one variable.
@@ -260,7 +262,7 @@ summary(fit.min.lm)
 
 ```
 # Now set seed then use `penalty.factor = state_ind` in `cv.glmnet()` to perform LASSO
-```
+
 
 
 **answer: **
@@ -340,10 +342,16 @@ Anova(fit.min.lm.back13)
 fit.min.lm.back14<- update(fit.min.lm.back13, .~. - PopDensity2010 )
 Anova(fit.min.lm.back14)
  
-fit.final <- fit.min.lm.back14
+fit.final.cov <- fit.min.lm.back14
 
-plot(fit.final, 1)
-plot(fit.final, 2)
+plot(fit.final.cov, 1)
+plot(fit.final.cov, 2)
+
+summary(fit.final.cov)
+```
+
+``` {r}
+
 ```
 
 **answer: **
