@@ -50,7 +50,7 @@ raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 
 
 
-ggplot(raw_data, aes(x = Year, y = peak.state, color = state)) +
+ggplot(raw_data, aes(x = Year, y = mean.state, color = state)) +
   geom_line() +
   geom_point()
 
@@ -61,10 +61,12 @@ plot_usmap(regions = "state",
                                                      "Virgin Islands", "Puerto Rico")
            , color = "black") + 
   scale_fill_gradient(
-    low = "blue", high = "red", 
+    low = "white", high = "red", 
     name = "AQI", 
     label = scales::comma) + 
   labs(title = "state Avg AQI") +
   theme(legend.position = "right") +
   facet_wrap(~ Year)
+
+
 
