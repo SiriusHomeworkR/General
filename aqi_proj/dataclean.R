@@ -56,7 +56,7 @@ ggplot(raw_data, aes(x = Year, y = peak.state, color = state)) +
 
 plot_usmap(regions = "state",                   
            #regions = "counties", for county level summary
-           data = raw_data,
+           data = mean.state.df,
            values = "mean.state", exclude = c("District of Columbia", "Country of Mexico",
                                                      "Virgin Islands", "Puerto Rico")
            , color = "black") + 
