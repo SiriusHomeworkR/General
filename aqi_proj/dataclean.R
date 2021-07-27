@@ -45,14 +45,18 @@ raw_data <- raw_data %>%
 
 mean.state.df <- raw_data %>% group_by(state, Year) %>% summarize(mean.state = mean(med.aqi),
                                                                   peak.state = max(max.aqi))
+mean.state.df <- mean.state.df %>% group_by(state) %>%
+  mutate(delta.aqi.state = mean.state - lag(mean.state))
 
 raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 
 
 
-ggplot(raw_data, aes(x = Year, y = mean.state, color = state)) +
+ggplot(raw_data, aes(x = Year, y = delta.aqi.state, color = state)) +
   geom_line() +
-  geom_point()
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  facet_wrap( ~ state)
 
 plot_usmap(regions = "state",                   
            #regions = "counties", for county level summary
