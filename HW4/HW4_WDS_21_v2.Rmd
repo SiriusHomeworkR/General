@@ -31,7 +31,7 @@ options(scipen = 0, digits = 3)  ## controls base R output
 if(!require("pacman")) install.packages("pacman")
 
 pacman::p_load(tidyverse, dplyr, ggplot2, data.table, lubridate,
-               plotROC, usmap, glmnet, car)
+               plotROC, usmap, glmnet)
 ```
 
 
@@ -93,6 +93,7 @@ covid_rate <- fread("data/covid_rates.csv")
 i) For each month in 2020, plot the monthly deaths per 100k heatmap by state on US map. Use the same color range across months. (Hints: Set `limits` argument in `scale_fill_gradient()` to fix the color scale. Use `facet_wrap()` to plot by month.)
 
 **Important Remark**: 
+
 
 1. Using the following R chunk, we processed the data into the right format `covid_monthly` for you :) Specifically, we use `lubridate::month()` and `lubridate::year()` to extract month and year from date, use `tidyr::complete(state, month, fill = list(new_case_per100k = NA))` to complete the missing months with no cases.
 
@@ -177,7 +178,7 @@ Report missing values in your final subset of variables. In the following analys
 **answer: **  
 We use the default selected variables as selected in the code chunk below.
 
-```{r, echo = TRUE}
+```{r, echo = false}
 covid_county_0201 <- covid_county_0201 %>%
   select(County, State, FIPS, Deep_Pov_All, PovertyAllAgesPct, PerCapitaInc, UnempRate2019, PctEmpFIRE, PctEmpConstruction, PctEmpTrans, PctEmpMining, PctEmpTrade, PctEmpInformation, PctEmpAgriculture, PctEmpManufacturing, PctEmpServices, PopDensity2010, OwnHomePct, Age65AndOlderPct2010, TotalPop25Plus, Under18Pct2010, Ed2HSDiplomaOnlyPct, Ed3SomeCollegePct, Ed4AssocDegreePct, Ed5CollegePlusPct, ForeignBornPct, Net_International_Migration_Rate_2010_2019, NetMigrationRate1019, NaturalChangeRate1019, TotalPopEst2019, WhiteNonHispanicPct2010, NativeAmericanNonHispanicPct2010, BlackNonHispanicPct2010, AsianNonHispanicPct2010, HispanicPct2010, Type_2015_Update, RuralUrbanContinuumCode2013, UrbanInfluenceCode2013, Perpov_1980_0711, HiCreativeClass2000, HiAmenity, Retirement_Destination_2015_Update, log_death_rate)
 ```
@@ -351,7 +352,7 @@ summary(fit.final.cov)
 ```
 
 ``` {r}
-summary(fit.final.cov)
+
 ```
 
 **answer: **
@@ -423,7 +424,7 @@ fit1 <- glm(HD~SBP, hd_data, family=binomial(logit))#summary(glm(as.numeric(HD)~
 summary(fit1)
 hd_data.new <- data.frame(AGE=50, SEX="FEMALE", SBP=110, DBP=80, CHOL=180, FRW=105, CIG=0)
 fit1.predict <- predict(fit1, hd_data.new, type="response")
-fit1.predict
+#fit1.predict
 hd_data %>% mutate(HD = as.numeric(HD)-1) %>%
   ggplot(aes(x=SBP, y=HD)) +
   geom_jitter(height = .05, aes(color = factor(HD))) +
