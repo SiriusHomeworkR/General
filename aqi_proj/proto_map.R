@@ -1,9 +1,10 @@
-
 library(dplyr)
 library(tidyverse)
+install.packages('geofacet')
 library(geofacet)
 library(ggplot2)
 library(rvest)
+
 url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
 data1 <- read_html(url) %>% html_table()
 state_data <- data.frame(data1[1])

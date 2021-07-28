@@ -1,0 +1,200 @@
+---
+title: "assembly"
+author: "Group 2"
+date: "7/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, cache = T, fig.width=8, fig.height=4,
+                      warning = F)
+options(scipen = 0, digits = 3)
+
+install.packages('geofacet')
+if(!require('pacman')) install.packages('pacman')
+
+pacman::p_load(tidyverse, dplyr, ggplot2, data.table, lubridate, plotROC, usmap, glmnet, 
+               plotly, haven, magrittr, Stat2Data, skimr, GGally)
+```
+
+```{r read data}
+####annual aqi####
+data2020.yr <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
+data2019.yr <- fread("data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
+data2018.yr <- fread("data/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
+data2017.yr <- fread("data/annual_aqi_by_county_2017.csv", stringsAsFactors = TRUE)
+data2016.yr <- fread("data/annual_aqi_by_county_2016.csv", stringsAsFactors = TRUE)
+data2015.yr <- fread("data/annual_aqi_by_county_2015.csv", stringsAsFactors = TRUE)
+data2014.yr <- fread("data/annual_aqi_by_county_2014.csv", stringsAsFactors = TRUE)
+data2013.yr <- fread("data/annual_aqi_by_county_2013.csv", stringsAsFactors = TRUE)
+data2012.yr <- fread("data/annual_aqi_by_county_2012.csv", stringsAsFactors = TRUE)
+data2011.yr <- fread("data/annual_aqi_by_county_2011.csv", stringsAsFactors = TRUE)
+data2010.yr <- fread("data/annual_aqi_by_county_2010.csv", stringsAsFactors = TRUE)
+
+####daily aqi####
+data2020.day <- fread("data/daily_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
+data2019.day <- fread("data/daily_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
+data2018.day <- fread("data/daily_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
+data2017.day <- fread("data/daily_aqi_by_county_2017.csv", stringsAsFactors = TRUE)
+data2016.day <- fread("data/daily_aqi_by_county_2016.csv", stringsAsFactors = TRUE)
+data2015.day <- fread("data/daily_aqi_by_county_2015.csv", stringsAsFactors = TRUE)
+data2014.day <- fread("data/daily_aqi_by_county_2014.csv", stringsAsFactors = TRUE)
+data2013.day <- fread("data/daily_aqi_by_county_2013.csv", stringsAsFactors = TRUE)
+data2012.day <- fread("data/daily_aqi_by_county_2012.csv", stringsAsFactors = TRUE)
+data2011.day <- fread("data/daily_aqi_by_county_2011.csv", stringsAsFactors = TRUE)
+data2010.day <- fread("data/daily_aqi_by_county_2010.csv", stringsAsFactors = TRUE)
+data2009.day <- fread("data/daily_aqi_by_county_2009.csv", stringsAsFactors = TRUE)
+data2008.day <- fread("data/daily_aqi_by_county_2008.csv", stringsAsFactors = TRUE)
+data2007.day <- fread("data/daily_aqi_by_county_2007.csv", stringsAsFactors = TRUE)
+data2006.day <- fread("data/daily_aqi_by_county_2006.csv", stringsAsFactors = TRUE)
+data2005.day <- fread("data/daily_aqi_by_county_2005.csv", stringsAsFactors = TRUE)
+data2004.day <- fread("data/daily_aqi_by_county_2004.csv", stringsAsFactors = TRUE)
+data2003.day <- fread("data/daily_aqi_by_county_2003.csv", stringsAsFactors = TRUE)
+data2002.day <- fread("data/daily_aqi_by_county_2002.csv", stringsAsFactors = TRUE)
+data2001.day <- fread("data/daily_aqi_by_county_2001.csv", stringsAsFactors = TRUE)
+data2000.day <- fread("data/daily_aqi_by_county_2000.csv", stringsAsFactors = TRUE)
+
+####yearly greenhouse gas####
+airquality_ozone<- read.csv("data/OzoneNational.csv", header=T)
+airquality_nitrogen<- read.csv("data/Nitrogen_DioxideNational.csv", header=T)
+airquality_sulfur<-read.csv("data/Sulfur_DioxideNational.csv", header=T)
+airquality_cmonoxide<- read.csv("data/Carbon_MonoxideNational.csv", header=T)
+airquality_lead<- read.csv("data/LeadNational.csv", header=T)
+```
+
+```{r prepare daily data}
+raw_data.day <- rbind(
+  data2020.day, data2019.day, data2018.day, data2017.day, data2016.day, data2015.day, data2014.day, data2013.day, 
+  data2012.day, data2011.day, data2010.day, data2009.day, data2008.day, data2007.day, data2006.day, data2005.day,
+  data2004.day,data2003.day, data2002.day, data2001.day, data2000.day
+)
+
+raw_data.day <- mutate(raw_data.day, 
+                       date_formatted = as.Date(Date), 
+                       month = as.Date(format(date_formatted, "%Y-%m-01"))
+)
+
+raw_data.day <- rename(raw_data.day,
+  state = `State Name`,
+  county = `county Name`,
+  state.code = `State Code`,
+  county.code = `County Code`,
+  defining.parameter = `Defining Parameter`,
+  defining.site = `Defining Site`,
+  num.rep.sites = `Number of Sites Reporting`
+)
+
+counties_by_month <- group_by(raw_data.day, county, month) %>% summarise(county.mean = mean(AQI))
+states_by_month <- group_by(raw_data.day, state, month) %>% summarise(state.mean = mean(AQI))
+
+states_by_month <- group_by(states_by_month, state) %>% mutate(delta.aqi.state = state.mean - lag(state.mean))
+
+raw_data.day <- merge(raw_data.day, counties_by_month, by=c("county", "month"))
+raw_data.day <- merge(raw_data.day, states_by_month, by=c("state", "month"))
+```
+
+```{r plots daily data}
+ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
+  geom_line() +
+  facet_wrap( ~ state)
+```
+
+
+```{r prepare annual data}
+raw_data.yr <- rbind(data2020.yr, data2019.yr, data2018.yr, data2017.yr, data2016.yr,
+                     data2015.yr, data2014.yr, data2013.yr, data2012.yr, data2011.yr, data2010.yr)
+
+raw_data.yr <- raw_data.yr %>% rename(
+  num.days = `Days with AQI`,
+  good.days = `Good Days`,
+  mod.days = `Moderate Days`,
+  sens.group.days = `Unhealthy for Sensitive Groups Days`,
+  unhlthy.days = `Unhealthy Days`,
+  very.unhlthy.days = `Very Unhealthy Days`,
+  haz.days = `Hazardous Days`,
+  max.aqi = `Max AQI`,
+  med.aqi = `Median AQI`,
+  state = State
+)
+
+raw_data.yr <- raw_data.yr %>%
+  mutate(good.pct = good.days/num.days*100,
+         mod.pct = mod.days/num.days*100,
+         sens.group.pct = sens.group.days/num.days*100,
+         unhlthy.pct = unhlthy.days/num.days*100,
+         very.unhlthy.pct = very.unhlthy.days/num.days*100,
+         haz.pct = haz.days/num.days*100)
+
+mean.state.df <- raw_data.yr %>% group_by(state, Year) %>% summarize(mean.state = mean(med.aqi),
+                                                                  peak.state = max(max.aqi))
+
+raw_data.yr <- merge(raw_data.yr, mean.state.df, by=c("state", "Year"))
+```
+
+```{r plots annual data}
+ggplot(raw_data.yr, aes(x = Year, y = mean.state, color = state)) +
+  geom_line() +
+  geom_point()
+
+plot_usmap(regions = "state",                   
+           #regions = "counties", for county level summary
+           data = mean.state.df,
+           values = "mean.state", exclude = c("District of Columbia", "Country of Mexico",
+                                                     "Virgin Islands", "Puerto Rico")
+           , color = "black") + 
+  scale_fill_gradient(
+    low = "white", high = "red", 
+    name = "AQI", 
+    label = scales::comma) + 
+  labs(title = "state Avg AQI") +
+  theme(legend.position = "right") +
+  facet_wrap(~ Year)
+
+
+#Pollutant trend graphs that affect air quality by year
+library(ggplot2) 
+library(dplyr)
+library(gridExtra)
+ 
+#EDA
+
+nitrogen_concentration<- airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile 
+ozone_concentration<- airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile  
+sulfur_concentration<- airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile 
+
+str( airquality_ozone)# data format
+summary( airquality_ozone)# quick summary. missing values may be shown
+ 
+str( airquality_nitrogen)# data format
+summary( airquality_nitrogen)# quick summary. missing values may be shown
+
+str( airquality_sulfur)# data format
+summary( airquality_sulfur)# quick summary. missing values may be shown
+  
+#Ozone concentration by year
+fit1 <- lm(airquality_ozone$Year~ ozone_concentration, data =  airquality_ozone)# model specification response ~ x1,..
+ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = Concentration.ppm)) +
+  ggtitle(" Ozone Concentration by Year") +
+  geom_line() +
+  geom_point()
+ concentration<-ozone_concentration+nitrogen_concentration
+ 
+ 
+#Nitrogen concentration by year 
+fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)# model specification response ~ x1,..
+ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = Concentration.ppm)) +
+  ggtitle(" Nitrogen Concentration by Year") +
+  geom_line() +
+  geom_point()
+  
+#Sulfur concentration by year
+ fit1 <- lm(airquality_sulfur$Year~ sulfur_concentration, data =  airquality_sulfur)# model specification response ~ x1,..
+ ggplot(airquality_sulfur , aes(x = Year, y = sulfur_concentration, color = Concentration.ppm)) +
+  ggtitle(" Sulfur Concentration by Year") +
+  geom_line() +
+  geom_point()
+```
+
+
+
+

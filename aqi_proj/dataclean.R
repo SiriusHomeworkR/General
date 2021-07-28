@@ -70,7 +70,6 @@ plot_usmap(regions = "state",
 
 
 #Pollutant trend graphs that affect air quality by year
-```{r cars}
 library(ggplot2) 
 library(dplyr)
 library(gridExtra)
