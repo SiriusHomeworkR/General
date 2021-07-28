@@ -79,8 +79,10 @@ library(gridExtra)
 
 airquality_ozone<- read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNational.csv", header=T)
 airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNational.csv", header=T)
+airquality_sulfur<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNational.csv", header=T)
 nitrogen_concentration<- airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile 
 ozone_concentration<- airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile  
+sulfur_concentration<- airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile 
 
 str( airquality_ozone)# data format
 summary( airquality_ozone)# quick summary. missing values may be shown
@@ -88,6 +90,9 @@ summary( airquality_ozone)# quick summary. missing values may be shown
  
 str( airquality_nitrogen)# data format
 summary( airquality_nitrogen)# quick summary. missing values may be shown
+
+str( airquality_sulfur)# data format
+summary( airquality_sulfur)# quick summary. missing values may be shown
   
 #Ozone concentration by year
 fit1 <- lm(airquality_ozone$Year~ ozone_concentration, data =  airquality_ozone)# model specification response ~ x1,..
@@ -96,15 +101,19 @@ ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = Concent
   geom_line() +
   geom_point()
  concentration<-ozone_concentration+nitrogen_concentration
-
+ 
+ 
 #Nitrogen concentration by year 
 fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)# model specification response ~ x1,..
 ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = Concentration.ppm)) +
   ggtitle(" Nitrogen Concentration by Year") +
   geom_line() +
   geom_point()
- 
- 
+  
+#Sulfur concentration by year
+ fit1 <- lm(airquality_sulfur$Year~ sulfur_concentration, data =  airquality_sulfur)# model specification response ~ x1,..
+ ggplot(airquality_sulfur , aes(x = Year, y = sulfur_concentration, color = Concentration.ppm)) +
+  ggtitle(" Sulfur Concentration by Year") +
+  geom_line() +
+  geom_point()
 ```
-
-
