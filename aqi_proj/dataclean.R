@@ -70,7 +70,9 @@ plot_usmap(regions = "state",
 
 data1<- fread("Users/adiay/Downloads/Wharton/OzoneNational.csv", stringsAsFactors = TRUE)
 
-plot(v,type,col,xlab,ylab)
+ggplot(aes(x=SBP,y=HD))+
+  geom_jitter(height =.05,aes(color =factor(HD)))+
+  geom_smooth(method ="lm",se =FALSE)+ylab("Prob(HD=1)")
 
 
 
