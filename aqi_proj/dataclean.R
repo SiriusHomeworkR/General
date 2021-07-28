@@ -71,9 +71,7 @@ plot_usmap(regions = "state",
 
 
 #Pollutant trend graphs that affect air quality by year
-library(ggplot2) 
-library(dplyr)
-library(gridExtra)
+
  
 #EDA
 airquality_ozone<- read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNational.csv", header=T)
