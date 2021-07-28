@@ -98,5 +98,5 @@ data2<- fread("Users/adiay/Downloads/Wharton/OzoneNational.csv", stringsAsFactor
 fit1 <- lm(Year~Concentration.ppm, data = data1)# model specification response ~ x1,..
 ggplot(data1, aes(x = Year , y = Concentration of Nitrogen Dioxide)) +geom_point() +geom_smooth(method="lm",formula ='y~x', se=F)")
 
-
+fit1 <- lm(MPG_City ~ Length, data = data1)# model onesummary(fit1)
 
