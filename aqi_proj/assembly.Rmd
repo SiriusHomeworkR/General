@@ -2,7 +2,9 @@
 title: "assembly"
 author: "Group 2"
 date: "7/28/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -148,16 +150,16 @@ plot_usmap(regions = "state",
   theme(legend.position = "right") +
   facet_wrap(~ Year)
 
-#EDA
-airquality_nitrogen <- mutate(airquality_nitrogen, 
+# EDA
+airquality_nitrogen <- mutate(airquality_nitrogen,
                               nitrogen_concentration = airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile)
-airquality_ozone <- mutate(airquality_ozone, 
+airquality_ozone <- mutate(airquality_ozone,
                            ozone_concentration = airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile)
-airquality_sulfur <- mutate(airquality_sulfur, 
+airquality_sulfur <- mutate(airquality_sulfur,
                             sulfur_concentration = airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile)
-airquality_lead <- mutate(airquality_lead, 
+airquality_lead <- mutate(airquality_lead,
                           lead_concentration = airquality_lead$X10th.Percentile+airquality_lead$X90th.Percentile)
-airquality_cmonoxide <- mutate(airquality_cmonoxide, 
+airquality_cmonoxide <- mutate(airquality_cmonoxide,
                                cmonoxide_concentration = airquality_cmonoxide$X10th.Percentile+airquality_cmonoxide$X90th.Percentile)
 
 #data format
@@ -171,8 +173,8 @@ str(airquality_lead)
 summary(airquality_ozone)
 summary(airquality_nitrogen)
 summary(airquality_sulfur)
-summary(cmonoxide_concentration)
-summary(lead_concentration)
+summary(airquality_cmonoxide)
+summary(airquality_lead)
 
 ozone.fit <- lm(Year~ozone_concentration, data =  airquality_ozone)
 nitrogen.fit <- lm(Year~ nitrogen_concentration, data =  airquality_nitrogen)
@@ -196,8 +198,8 @@ ppm <- ppm[,c(1, 4, 3, 2)]
 ppm <- group_by(ppm, Year, element, X10th.Percentile)
 summarise(ppm)
 
-ppm.plot <- ggplot(ppm, aes(x = Year, y = X10th.Percentile, color = element, group = element)) + 
-  geom_line() + 
+ppm.plot <- ggplot(ppm, aes(x = Year, y = X10th.Percentile, color = element, group = element)) +
+  geom_line() +
   geom_point()
 ppm.plot
 
