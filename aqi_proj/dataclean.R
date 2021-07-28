@@ -21,7 +21,7 @@ raw_data <- rbind(data2020, data2019, data2018, data2017, data2016,
                   data2015, data2014, data2013, data2012, data2011, data2010)
 
 
-
+  
 raw_data <- raw_data %>% rename(
   num.days = `Days with AQI`,
   good.days = `Good Days`,
