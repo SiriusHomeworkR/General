@@ -13,7 +13,7 @@ options(scipen = 0, digits = 3)
 if(!require('pacman')) install.packages('pacman')
 
 pacman::p_load(Rcpp, geofacet, tidyverse, dplyr, ggplot2, data.table, lubridate, plotROC, usmap, glmnet, 
-               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra)
+               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra, scales)
 ```
 
 ```{r read data}
@@ -85,7 +85,6 @@ raw_data.day <- rename(raw_data.day,
 
 counties_by_month <- group_by(raw_data.day, county, month) %>% summarise(county.mean = mean(AQI))
 states_by_month <- group_by(raw_data.day, state, month) %>% summarise(state.mean = mean(AQI))
-
 states_by_month <- group_by(states_by_month, state) %>% mutate(delta.aqi.state = state.mean - lag(state.mean))
 
 raw_data.day <- merge(raw_data.day, counties_by_month, by=c("county", "month"))
@@ -150,11 +149,16 @@ plot_usmap(regions = "state",
   facet_wrap(~ Year)
 
 #EDA
-nitrogen_concentration<- airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile 
-ozone_concentration<- airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile  
-sulfur_concentration<- airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile 
-cmonoxide_concentration <- airquality_cmonoxide$X10th.Percentile+airquality_cmonoxide$X90th.Percentile 
-lead_concentration <- airquality_lead$X10th.Percentile+airquality_lead$X90th.Percentile 
+airquality_nitrogen <- mutate(airquality_nitrogen, 
+                              nitrogen_concentration = airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile)
+airquality_ozone <- mutate(airquality_ozone, 
+                              ozone_concentration = airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile)
+airquality_sulfur <- mutate(airquality_sulfur, 
+                              sulfur_concentration = airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile)
+airquality_lead <- mutate(airquality_lead, 
+                              lead_concentration = airquality_lead$X10th.Percentile+airquality_lead$X90th.Percentile)
+airquality_cmonoxide <- mutate(airquality_cmonoxide, 
+                              cmonoxide_concentration = airquality_cmonoxide$X10th.Percentile+airquality_cmonoxide$X90th.Percentile)
 
 #data format
 str(airquality_ozone)
@@ -170,47 +174,71 @@ summary(airquality_sulfur)
 summary(cmonoxide_concentration)
 summary(lead_concentration)
 
-#Ozone concentration by year
-fit1 <- lm(airquality_ozone$Year~ ozone_concentration, data =  airquality_ozone)# model specification response ~ x1,..
-ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = ozone_concentration)) +
-  ggtitle(" Ozone Concentration by Year") +
-  geom_line() +
-  geom_point()
-concentration<-ozone_concentration+nitrogen_concentration
+ozone.fit <- lm(Year~ozone_concentration, data =  airquality_ozone)
+nitrogen.fit <- lm(Year~ nitrogen_concentration, data =  airquality_nitrogen)
+sulfur.fit <- lm(Year~ sulfur_concentration, data =  airquality_sulfur)
+cmonoxide.fit <- lm(Year~ cmonoxide_concentration, data =  airquality_cmonoxide)
+lead.fit <- lm(Year~ lead_concentration, data =  airquality_lead)
 
-#Nitrogen concentration by year 
-fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)# model specification response ~ x1,..
-ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = nitrogen_concentration)) +
-  ggtitle(" Nitrogen Concentration by Year") +
-  geom_line() +
-  geom_point()
+ozone.temp <- select(airquality_ozone, c("Year", "X90th.Percentile"))
+nitrogen.temp <- select(airquality_nitrogen, c("Year", "X90th.Percentile"))
+sulfur.temp <- select(airquality_sulfur, c("Year", "X90th.Percentile"))
+cmonoxide.temp <- select(airquality_cmonoxide, c("Year", "X90th.Percentile"))
+lead.temp <- select(airquality_lead, c("Year", "X90th.Percentile"))
+ozone.temp <- rename(ozone.temp, ozone.90Percentile = "X90th.Percentile")
+nitrogen.temp <- rename(nitrogen.temp, nitrogen.90Percentile = "X90th.Percentile")
+sulfur.temp <- rename(sulfur.temp, sulfur.90Percentile = "X90th.Percentile")
+cmonoxide.temp <- rename(cmonoxide.temp, cmonoxide.90Percentile = "X90th.Percentile")
+lead.temp <- rename(lead.temp, lead.90Percentile = "X90th.Percentile")
 
-#Sulfur concentration by year
-fit1 <- lm(airquality_sulfur$Year~ sulfur_concentration, data =  airquality_sulfur)# model specification response ~ x1,..
-ggplot(airquality_sulfur , aes(x = Year, y = sulfur_concentration, color = sulfur_concentration)) +
-  ggtitle(" Sulfur Concentration by Year") +
-  geom_line() +
-  geom_point()
 
-#CO1 concentration by year
-fit1 <- lm(airquality_cmonoxide$Year~ cmonoxide_concentration, data =  airquality_cmonoxide)# model specification response ~ x1,..
-ggplot(airquality_cmonoxide , aes(x = Year, y = cmonoxide_concentration, color = cmonoxide_concentration)) +
-  ggtitle(" cmonoxide Concentration by Year") +
-  geom_line() +
-  geom_point()
+ppm <- merge(ozone.temp, nitrogen.temp, "Year") %>%
+  merge(sulfur.temp, "Year") %>%
+  merge(cmonoxide.temp, "Year") %>%
+  merge(lead.temp, "Year")
 
-#Lead concentration by year
-fit1 <- lm(airquality_lead$Year~ lead_concentration, data =  airquality_lead)# model specification response ~ x1,..
-ggplot(airquality_lead , aes(x = Year, y = lead_concentration, color = lead_concentration)) +
-  ggtitle(" lead Concentration by Year") +
-  geom_line() +
-  geom_point()
+###individual elmnts plots####
+# #Ozone concentration by year
+# fit1 <- lm(Year~ozone_concentration, data = airquality_ozone)
+# ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = ozone_concentration)) +
+#   ggtitle(" Ozone Concentration by Year") +
+#   geom_line() +
+#   geom_point()
+# 
+# #Nitrogen concentration by year
+# fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)
+# ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = nitrogen_concentration)) +
+#   ggtitle(" Nitrogen Concentration by Year") +
+#   geom_line() +
+#   geom_point()
+# 
+# #Sulfur concentration by year
+# fit1 <- lm(airquality_sulfur$Year~ sulfur_concentration, data =  airquality_sulfur)
+# ggplot(airquality_sulfur , aes(x = Year, y = sulfur_concentration, color = sulfur_concentration)) +
+#   ggtitle(" Sulfur Concentration by Year") +
+#   geom_line() +
+#   geom_point()
+# 
+# #CO1 concentration by year
+# fit1 <- lm(airquality_cmonoxide$Year~ cmonoxide_concentration, data =  airquality_cmonoxide)
+# ggplot(airquality_cmonoxide , aes(x = Year, y = cmonoxide_concentration, color = cmonoxide_concentration)) +
+#   ggtitle(" CO Concentration by Year") +
+#   geom_line() +
+#   geom_point()
+# 
+# #Lead concentration by year
+# fit1 <- lm(airquality_lead$Year~ lead_concentration, data =  airquality_lead)
+# ggplot(airquality_lead , aes(x = Year, y = lead_concentration, color = lead_concentration)) +
+#   ggtitle(" Lead Concentration by Year") +
+#   geom_line() +
+#   geom_point()
 ```
 
-```{r proto map}
+```{r state energy sources}
 url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
-data1 <- read_html(url) %>% html_table()
-state_data <- data.frame(data1[1])
+enrgy_srcs <- read_html(url) %>% html_table()
+
+state_data <- data.frame(enrgy_srcs)
 state_data <- state_data %>% rename(
   Nuclear.pct = Nuclear....,
   Coal.pct = Coal....,
@@ -222,25 +250,30 @@ state_data <- state_data %>% rename(
   Wind.pct = Wind....,
   Biomass.and.Other.pct = Biomass.and.Other....
 )
+
 state_data[state_data$Hydro.pct == "(0.2)", c("Hydro.pct")] <- 0.2
 state_data[state_data$Biomass.and.Other.pct == "(0.0)", c("Biomass.and.Other.pct")] <- 0.0
 state_data[state_data$State == "Iowa1", c("State")] <- "Iowa"
 state_data[state_data$State == "New York2", c("State")] <- "New York"
-state_data$Nuclear.pct <- as.numeric(state_data$Nuclear.pct)
-state_data$Coal.pct <- as.numeric(state_data$Coal.pct)
-state_data$NaturalGas.pct <- as.numeric(state_data$NaturalGas.pct)
-state_data$Petroleum.pct <- as.numeric(state_data$Petroleum.pct)
-state_data$Hydro.pct <- as.numeric(state_data$Hydro.pct)
-state_data$Geothermal.pct <- as.numeric(state_data$Geothermal.pct)
-state_data$Solar.pct <- as.numeric(state_data$Solar.pct)
-state_data$Wind.pct <- as.numeric(state_data$Wind.pct)
-state_data$Biomass.and.Other.pct <- as.numeric(state_data$Biomass.and.Other.pct)
-data_long <- state_data %>%
-  tidyr::gather("type", "pct", -State)
 
-ggplot(data_long, aes(y = pct, x = type, fill = type)) +
+state_data %<>% mutate_at(c(
+  "Nuclear.pct", 
+  "Coal.pct", 
+  "NaturalGas.pct", 
+  "Petroleum.pct", 
+  "Hydro.pct", 
+  "Geothermal.pct", 
+  "Solar.pct", 
+  "Wind.pct", 
+  "Biomass.and.Other.pct"),
+  as.numeric)
+
+data_long <- gather(state_data, "type", "pct", -State)
+
+stateEnrgyDist <- ggplot(data_long, aes(y = pct, x = type, fill = type)) +
   geom_col() +
   coord_flip() +
   theme_bw() +
   facet_geo(~ State, move_axes = FALSE)
+stateEnrgyDist
 ```
