@@ -81,7 +81,8 @@ airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_
 airquality_sulfur<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNational.csv", header=T)
 airquality_lead<-read.csv("/Users/adiay/Downloads/Wharton/Project/LeadNational.csv", header=T)
 airquality_carbon<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideNational.csv", header=T)
-
+airquality_PM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10National.csv", header=T)
+airquality_PM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25National.csv", header=T)
 
 str( airquality_nitrogen)# data format
 summary( airquality_nitrogen)# quick summary. missing values may be shown
@@ -109,9 +110,9 @@ summary( airquality_sulfur)# quick summary. missing values may be shown
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
-  ylab("Sulfur") +
+  ylab("Sulfur Dioxide") +
   xlab("Year") +
-  ggtitle("Sulfur Concentration by year")
+  ggtitle("Sulfur Dioxide Concentration by year")
  
 str( airquality_lead)# data format
 summary( airquality_lead)# quick summary. missing values may be shown
@@ -132,6 +133,26 @@ summary( airquality_carbon)# quick summary. missing values may be shown
   ylab("Carbon Monoxide") +
   xlab("Year") +
   ggtitle("Carbon Monoxide Concentration by year")
+ 
+str( airquality_PM10)# data format  
+summary( airquality_PM10)# quick summary. missing values may be shown
+ airquality_PM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("Particulate Matter 10 Concentration by year")
+ 
+ str( airquality_PM25)# data format  
+summary( airquality_PM25)# quick summary. missing values may be shown
+ airquality_PM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("Particulate Matter 25 Concentration by year")
 
 
 
