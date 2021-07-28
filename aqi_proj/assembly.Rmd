@@ -152,20 +152,20 @@ plot_usmap(regions = "state",
 airquality_nitrogen <- mutate(airquality_nitrogen, 
                               nitrogen_concentration = airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile)
 airquality_ozone <- mutate(airquality_ozone, 
-                              ozone_concentration = airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile)
+                           ozone_concentration = airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile)
 airquality_sulfur <- mutate(airquality_sulfur, 
-                              sulfur_concentration = airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile)
+                            sulfur_concentration = airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile)
 airquality_lead <- mutate(airquality_lead, 
-                              lead_concentration = airquality_lead$X10th.Percentile+airquality_lead$X90th.Percentile)
+                          lead_concentration = airquality_lead$X10th.Percentile+airquality_lead$X90th.Percentile)
 airquality_cmonoxide <- mutate(airquality_cmonoxide, 
-                              cmonoxide_concentration = airquality_cmonoxide$X10th.Percentile+airquality_cmonoxide$X90th.Percentile)
+                               cmonoxide_concentration = airquality_cmonoxide$X10th.Percentile+airquality_cmonoxide$X90th.Percentile)
 
 #data format
 str(airquality_ozone)
 str(airquality_nitrogen)
 str(airquality_sulfur)
-str(cmonoxide_concentration)
-str(lead_concentration)
+str(airquality_cmonoxide)
+str(airquality_lead)
 
 #quick summary. missing values may be shown
 summary(airquality_ozone)
@@ -180,22 +180,26 @@ sulfur.fit <- lm(Year~ sulfur_concentration, data =  airquality_sulfur)
 cmonoxide.fit <- lm(Year~ cmonoxide_concentration, data =  airquality_cmonoxide)
 lead.fit <- lm(Year~ lead_concentration, data =  airquality_lead)
 
-ozone.temp <- select(airquality_ozone, c("Year", "X90th.Percentile"))
-nitrogen.temp <- select(airquality_nitrogen, c("Year", "X90th.Percentile"))
-sulfur.temp <- select(airquality_sulfur, c("Year", "X90th.Percentile"))
-cmonoxide.temp <- select(airquality_cmonoxide, c("Year", "X90th.Percentile"))
-lead.temp <- select(airquality_lead, c("Year", "X90th.Percentile"))
-ozone.temp <- rename(ozone.temp, ozone.90Percentile = "X90th.Percentile")
-nitrogen.temp <- rename(nitrogen.temp, nitrogen.90Percentile = "X90th.Percentile")
-sulfur.temp <- rename(sulfur.temp, sulfur.90Percentile = "X90th.Percentile")
-cmonoxide.temp <- rename(cmonoxide.temp, cmonoxide.90Percentile = "X90th.Percentile")
-lead.temp <- rename(lead.temp, lead.90Percentile = "X90th.Percentile")
+ozone.temp <- select(airquality_ozone, c("Year", "X90th.Percentile", "X10th.Percentile"))
+nitrogen.temp <- select(airquality_nitrogen, c("Year", "X90th.Percentile", "X10th.Percentile"))
+sulfur.temp <- select(airquality_sulfur, c("Year", "X90th.Percentile", "X10th.Percentile"))
+cmonoxide.temp <- select(airquality_cmonoxide, c("Year", "X90th.Percentile", "X10th.Percentile"))
+lead.temp <- select(airquality_lead, c("Year", "X90th.Percentile", "X10th.Percentile"))
+ozone.temp <- mutate(ozone.temp, element = "ozone")
+nitrogen.temp <- mutate(nitrogen.temp, element = "nitrogen")
+sulfur.temp <- mutate(sulfur.temp, element = "sulfur")
+cmonoxide.temp <- mutate(cmonoxide.temp, element = "carbon monoxide")
+lead.temp <- mutate(lead.temp, element = "lead")
 
+ppm <- rbind(ozone.temp, nitrogen.temp, sulfur.temp, cmonoxide.temp, lead.temp)
+ppm <- ppm[,c(1, 4, 3, 2)]
+ppm <- group_by(ppm, Year, element, X10th.Percentile)
+summarise(ppm)
 
-ppm <- merge(ozone.temp, nitrogen.temp, "Year") %>%
-  merge(sulfur.temp, "Year") %>%
-  merge(cmonoxide.temp, "Year") %>%
-  merge(lead.temp, "Year")
+ppm.plot <- ggplot(ppm, aes(x = Year, y = X10th.Percentile, color = element, group = element)) + 
+  geom_line() + 
+  geom_point()
+ppm.plot
 
 ###individual elmnts plots####
 # #Ozone concentration by year
