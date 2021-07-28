@@ -68,18 +68,4 @@ plot_usmap(regions = "state",
   theme(legend.position = "right") +
   facet_wrap(~ Year)
 
-data1<- fread("Users/adiay/Downloads/Wharton/OzoneNational.csv", stringsAsFactors = TRUE)
-
-ggplot(aes(x=SBP,y=HD))+
-  geom_jitter(height =.05,aes(color =factor(HD)))+
-  geom_smooth(method ="lm",se =FALSE)+ylab("Prob(HD=1)")
-
-
-
-png(file = "Ozone_National")
-
-
-plot(v,type = "o", col = "red", xlab = "Year", ylab = "Concentration.ppm",
-   main = "Concentration of Ozone")
-
 
