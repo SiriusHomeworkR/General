@@ -21,7 +21,7 @@ raw_data <- rbind(data2020, data2019, data2018, data2017, data2016,
                   data2015, data2014, data2013, data2012, data2011, data2010)
 
 
-  
+
 raw_data <- raw_data %>% rename(
   num.days = `Days with AQI`,
   good.days = `Good Days`,
@@ -76,46 +76,65 @@ library(dplyr)
 library(gridExtra)
  
 #EDA
-
 airquality_ozone<- read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNational.csv", header=T)
 airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNational.csv", header=T)
 airquality_sulfur<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNational.csv", header=T)
-nitrogen_concentration<- airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile 
-ozone_concentration<- airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile  
-sulfur_concentration<- airquality_sulfur$X10th.Percentile+airquality_sulfur$X90th.Percentile 
+airquality_lead<-read.csv("/Users/adiay/Downloads/Wharton/Project/LeadNational.csv", header=T)
+airquality_carbon<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideNational.csv", header=T)
+
+
+str( airquality_nitrogen)# data format
+summary( airquality_nitrogen)# quick summary. missing values may be shown
+airquality_nitrogen %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Nitrogen") +
+  xlab("Year") +
+  ggtitle("Nitrogen Concentration by year")
 
 str( airquality_ozone)# data format
 summary( airquality_ozone)# quick summary. missing values may be shown
+ airquality_ozone %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") +
+  xlab("Year") +
+  ggtitle("Ozone Concentration by year")
  
- 
-str( airquality_nitrogen)# data format
-summary( airquality_nitrogen)# quick summary. missing values may be shown
-
 str( airquality_sulfur)# data format
 summary( airquality_sulfur)# quick summary. missing values may be shown
-  
-#Ozone concentration by year
-fit1 <- lm(airquality_ozone$Year~ ozone_concentration, data =  airquality_ozone)# model specification response ~ x1,..
-ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = Concentration.ppm)) +
-  ggtitle(" Ozone Concentration by Year") +
-  geom_line() +
-  geom_point()
- concentration<-ozone_concentration+nitrogen_concentration
+ airquality_sulfur %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Sulfur") +
+  xlab("Year") +
+  ggtitle("Sulfur Concentration by year")
  
+str( airquality_lead)# data format
+summary( airquality_lead)# quick summary. missing values may be shown
+ airquality_lead %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Lead") +
+  xlab("Year") +
+  ggtitle("Lead Concentration by year")
  
-#Nitrogen concentration by year 
-fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)# model specification response ~ x1,..
-ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = Concentration.ppm)) +
-  ggtitle(" Nitrogen Concentration by Year") +
-  geom_line() +
-  geom_point()
-  
-#Sulfur concentration by year
- fit1 <- lm(airquality_sulfur$Year~ sulfur_concentration, data =  airquality_sulfur)# model specification response ~ x1,..
- ggplot(airquality_sulfur , aes(x = Year, y = sulfur_concentration, color = Concentration.ppm)) +
-  ggtitle(" Sulfur Concentration by Year") +
-  geom_line() +
-  geom_point()
+str( airquality_carbon)# data format
+summary( airquality_carbon)# quick summary. missing values may be shown
+ airquality_carbon%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Carbon Monoxide") +
+  xlab("Year") +
+  ggtitle("Carbon Monoxide Concentration by year")
+
+
+
  
  url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
  data1 <- read_html(url) %>% html_table()
