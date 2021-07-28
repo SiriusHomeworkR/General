@@ -83,20 +83,3 @@ plot(v,type = "o", col = "red", xlab = "Year", ylab = "Concentration.ppm",
    main = "Concentration of Ozone")
 
 
-data1<- fread("Users/adiay/Downloads/Wharton/OzoneNational.csv", stringsAsFactors = TRUE)
-
-fit1 <- lm(Year~Concentration.ppm, data = data1)# model specification response ~ x1,..
-ggplot(data1, aes(x = Year , y = Concentration of Ozone)) +geom_point() +geom_smooth(method="lm",formula ='y~x', se=F)")
-
-
-
-png(file = "NitrogenDioxide_National")
-plot(v,type = "o", col = "red", xlab = "Year", ylab = "Concentration.ppm",
-   main = "Concentration of Nitrogen Dioxide")
-data2<- fread("Users/adiay/Downloads/Wharton/OzoneNational.csv", stringsAsFactors = TRUE)
-
-fit1 <- lm(Year~Concentration.ppm, data = data1)# model specification response ~ x1,..
-ggplot(data1, aes(x = Year , y = Concentration of Nitrogen Dioxide)) +geom_point() +geom_smooth(method="lm",formula ='y~x', se=F)")
-
-fit1 <- lm(MPG_City ~ Length, data = data1)# model onesummary(fit1)
-
