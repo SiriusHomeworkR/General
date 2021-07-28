@@ -3,6 +3,7 @@ library(tidyverse)
 install.packages('geofacet')
 library(geofacet)
 library(ggplot2)
+install.packages('rvest')
 library(rvest)
 
 url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
