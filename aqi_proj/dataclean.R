@@ -69,3 +69,42 @@ plot_usmap(regions = "state",
   facet_wrap(~ Year)
 
 
+#Pollutant trend graphs that affect air quality by year
+```{r cars}
+library(ggplot2) 
+library(dplyr)
+library(gridExtra)
+ 
+#EDA
+
+airquality_ozone<- read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNational.csv", header=T)
+airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNational.csv", header=T)
+nitrogen_concentration<- airquality_nitrogen$X10th.Percentile+airquality_nitrogen$X90th.Percentile 
+ozone_concentration<- airquality_ozone$X10th.Percentile+airquality_ozone$X90th.Percentile  
+
+str( airquality_ozone)# data format
+summary( airquality_ozone)# quick summary. missing values may be shown
+ 
+ 
+str( airquality_nitrogen)# data format
+summary( airquality_nitrogen)# quick summary. missing values may be shown
+  
+#Ozone concentration by year
+fit1 <- lm(airquality_ozone$Year~ ozone_concentration, data =  airquality_ozone)# model specification response ~ x1,..
+ggplot(airquality_ozone , aes(x = Year, y = ozone_concentration, color = Concentration.ppm)) +
+  ggtitle(" Ozone Concentration by Year") +
+  geom_line() +
+  geom_point()
+ concentration<-ozone_concentration+nitrogen_concentration
+
+#Nitrogen concentration by year 
+fit1 <- lm(airquality_nitrogen$Year~ nitrogen_concentration, data =  airquality_nitrogen)# model specification response ~ x1,..
+ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = Concentration.ppm)) +
+  ggtitle(" Nitrogen Concentration by Year") +
+  geom_line() +
+  geom_point()
+ 
+ 
+```
+
+
