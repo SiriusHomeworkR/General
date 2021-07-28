@@ -3,6 +3,7 @@ library(data.table)
 library(lubridate)
 library(ggplot2)
 library(usmap)
+library(rvest)
 
 data2020 <- fread("aqi_proj/data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("aqi_proj/data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
@@ -115,4 +116,36 @@ ggplot(airquality_nitrogen , aes(x = Year, y = nitrogen_concentration, color = C
   ggtitle(" Sulfur Concentration by Year") +
   geom_line() +
   geom_point()
-```
+ 
+ url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
+ data1 <- read_html(url) %>% html_table()
+ state_data <- data.frame(data1[1])
+ state_data <- state_data %>% rename(
+   state = State,
+   Nuclear.pct = Nuclear....,
+   Coal.pct = Coal....,
+   NaturalGas.pct = Natural.Gas....,
+   Petroleum.pct = Petroleum....,
+   Hydro.pct = Hydro....,
+   Geothermal.pct = Geothermal....,
+   Solar.pct = Solar...PV....,
+   Wind.pct = Wind....,
+   Biomass.and.Other.pct = Biomass.and.Other....
+ )
+ state_data[state_data$Hydro.pct == "(0.2)", c("Hydro.pct")] <- 0.2
+ state_data[state_data$Biomass.and.Other.pct == "(0.0)", c("Biomass.and.Other.pct")] <- 0.0
+ state_data[state_data$state == "Iowa1", c("state")] <- "Iowa"
+ state_data[state_data$state == "New York2", c("state")] <- "New York"
+ state_data$Nuclear.pct <- as.numeric(state_data$Nuclear.pct)
+ state_data$Coal.pct <- as.numeric(state_data$Coal.pct)
+ state_data$NaturalGas.pct <- as.numeric(state_data$NaturalGas.pct)
+ state_data$Petroleum.pct <- as.numeric(state_data$Petroleum.pct)
+ state_data$Hydro.pct <- as.numeric(state_data$Hydro.pct)
+ state_data$Geothermal.pct <- as.numeric(state_data$Geothermal.pct)
+ state_data$Solar.pct <- as.numeric(state_data$Solar.pct)
+ state_data$Wind.pct <- as.numeric(state_data$Wind.pct)
+ state_data$Biomass.and.Other.pct <- as.numeric(state_data$Biomass.and.Other.pct)
+ data_long <- state_data %>%
+   tidyr::gather("type", "pct", -state)
+ 
+ energy.aqi.join <- merge(mean.state.df[mean.state.df$Year == 2020, ], state_data, by = c("state"))
