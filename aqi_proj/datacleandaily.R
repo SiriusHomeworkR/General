@@ -3,6 +3,10 @@ library(data.table)
 library(lubridate)
 library(ggplot2)
 library(usmap)
+library(maps)
+library(gganimate)
+library(transformr)
+library(gifski)
 
 data2020 <- fread("aqi_proj/data/daily_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("aqi_proj/data/daily_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
@@ -44,6 +48,8 @@ raw_data <- raw_data %>% rename(
   num.rep.sites = `Number of Sites Reporting`
 )
 
+raw_data$county <-tolower(raw_data$county)
+
 counties_by_month <- raw_data %>% group_by(county, month) %>% summarise(county.mean = mean(AQI))
 states_by_month <- raw_data %>% group_by(state, month) %>% summarise(state.mean = mean(AQI))
 
@@ -53,7 +59,36 @@ states_by_month <- states_by_month %>% group_by(state) %>%
 raw_data <- merge(raw_data, counties_by_month, by=c("county", "month"))
 raw_data <- merge(raw_data, states_by_month, by=c("state", "month"))
 
+important <- raw_data %>% select(state, month, county, AQI, Category, date_formatted,
+                                 state.mean, delta.aqi.state)
 
 ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
   geom_line() +
   facet_wrap( ~ state)
+
+ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"), map_data("county", "Oregon"), map_data("county", "Washington"))
+
+raw_subset <- raw_data %>% select("state", "county", "date_formatted", "AQI", "month")
+
+ca_county_subset <- inner_join(ca_map, raw_subset,by=c('subregion' = 'county'))
+
+
+california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-06-01"), ],
+                          mapping = aes(x = long, y = lat, group = subregion)) +
+  coord_fixed(1.3) +
+  geom_polygon(color = "black", fill = "gray")
+
+preanim <- california_base +
+  geom_polygon(aes(fill = AQI), color = "white") +
+  scale_fill_gradient(limits = c(0,300), high = "red", low = "white") +
+  geom_polygon(color = "black", fill = NA) +
+  theme_bw() +
+  transition_time(date_formatted)
+
+anim <- animate(preanim, nframes = 360, fps = 10, renderer = gifski_renderer(), end_pause = 30)
+
+anim_save("cali6.gif", anim)
+
+
+
+
