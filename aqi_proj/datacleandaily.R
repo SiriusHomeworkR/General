@@ -59,6 +59,8 @@ states_by_month <- states_by_month %>% group_by(state) %>%
 raw_data <- merge(raw_data, counties_by_month, by=c("county", "month"))
 raw_data <- merge(raw_data, states_by_month, by=c("state", "month"))
 
+important <- raw_data %>% select(state, month, county, AQI, Category, date_formatted,
+                                 state.mean, delta.aqi.state)
 
 ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
   geom_line() +
