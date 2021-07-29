@@ -152,7 +152,7 @@ summary( airquality_PM25)# quick summary. missing values may be shown
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
 
-
+#Region wise Ozone Concentration
 
  
  url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
