@@ -66,7 +66,9 @@ ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
 
 ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"))
 
-ca_county_subset <- inner_join(ca_map, raw_data,by=c('subregion' = 'county'))%>% filter(!is.na(date_formatted))
+raw_subset <- raw_data %>% select("county", "date_formatted", "AQI", "month")
+
+ca_county_subset <- inner_join(ca_map, raw_subset,by=c('subregion' = 'county'))
 
 california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-08-01"), ], mapping = aes(x = long, y = lat, group = subregion)) +
   coord_fixed(1.3) +
@@ -82,6 +84,6 @@ anim <- animate(preanim, nframes = 12, fps = 5, renderer = gifski_renderer())
 
 anim_save("cali.gif", anim)
 
-(cali.gif)
+
 
 
