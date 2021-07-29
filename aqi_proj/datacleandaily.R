@@ -64,7 +64,7 @@ ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
   geom_line() +
   facet_wrap( ~ state)
 
-ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"))
+ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"), map_data("county", "Oregon"), map_data("county", "Washington"))
 
 raw_subset <- raw_data %>% select("state", "county", "date_formatted", "AQI", "month")
 
@@ -78,14 +78,14 @@ california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatte
 
 preanim <- california_base +
   geom_polygon(aes(fill = AQI), color = "white") +
-  scale_fill_gradient(limits = c(0,300), palette = "GnYlRd") +
+  scale_fill_gradient(limits = c(0,300), high = "red", low = "white") +
   geom_polygon(color = "black", fill = NA) +
   theme_bw() +
   transition_time(date_formatted)
 
-anim <- animate(preanim, nframes = 360, fps = 15, renderer = gifski_renderer(), end_pause = 30)
+anim <- animate(preanim, nframes = 360, fps = 10, renderer = gifski_renderer(), end_pause = 30)
 
-anim_save("cali5.gif", anim)
+anim_save("cali6.gif", anim)
 
 
 
