@@ -6,7 +6,8 @@ library(ggplot2)
 library(usmap)
 library(rvest)
 library(gridExtra)
-
+library(usdata)
+library(glmnet)
 
 
 data2020 <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
@@ -68,6 +69,14 @@ raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
                                    good.pct, mod.pct, sens.group.pct, unhlthy.pct,
                                    very.unhlthy.pct, haz.pct, mean.state, is.climate.alli)
+
+# Analysis of the effectiveness of the climate alliance
+# We take years 2017 (establishment) to 2019 to avoid outliers (2020 fires on West Coast)
+subbed_data$is.climate.alli <- as.factor(subbed_data$is.climate.alli)
+focus_data <- subbed_data[subbed_data$Year %in% 2016:2019,]
+summary(lm(data = focus_data, med.aqi ~ is.climate.alli + state))
+
+# The climate alliance states are on average better but its not significant
 
 
 ggplot(raw_data, aes(x = Year, y = mean.state, color = state)) +
@@ -724,6 +733,49 @@ grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots
    tidyr::gather("type", "pct", -state)
  
  energy.aqi.join <- merge(mean.state.df[mean.state.df$Year == 2020, ], state_data, by = c("state"))
+```
+ 
+ 
+``` {r CountyImpact}
+
+set.seed(1)
+
+# how does the socioeconomic status of a county impact air quality?
+county_data_jobs <- fread("data/Release23_June2021/Jobs.csv")
+county_data_people <- fread("data/Release23_June2021/People.csv")
+county_data_income <- fread("data/Release23_June2021/Income.csv")
+
+
+county_data_master <- merge(county_data_jobs, county_data_people, by = c("County", "FIPS", "State"))
+county_data_master <- merge(county_data_master, county_data_income, by = c("County", "FIPS", "State"))
+county_data_master$State <- abbr2state(county_data_master$State)
+county_data_master <- county_data_master %>% rename(state = State)
+
+dated_subbed_data <- subbed_data[subbed_data$Year == 2019,] %>% select(state, Year, County, med.aqi)
+
+master_data <- merge(county_data_master, dated_subbed_data, by = c("County", "state"))
+
+glmnet_data <- master_data %>% select(-County, -FIPS) %>% drop_na()
+
+X <- model.matrix(med.aqi~., glmnet_data)[,-1]
+y <- glmnet_data$med.aqi
+
+state_ind <- c(rep(0, 48), rep(1, ncol(X)-48))
+
+fit.cv <- cv.glmnet(X, y, alpha = 1, nfolds = 10)
+
+coeffs <- coef(fit.cv)
+nonzeros <- rownames(as.matrix(coeffs[which(coeffs != 0), 0]))
+non_state_intercept_coef <- nonzeros[10:length(nonzeros)]
+
+select_cols <- c("state", "med.aqi", non_state_intercept_coef)
+lm_cols <- glmnet_data %>% select(select_cols)
+
+fit.lm <- lm(data = lm_cols, med.aqi ~ .)
+summary(fit.lm)
+
+
+
 ```
  
 ``` {r experimental}
