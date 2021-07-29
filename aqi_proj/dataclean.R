@@ -86,12 +86,12 @@ ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
  
 #EDA
 airquality_ozone<- read.csv("aqi_proj/data/OzoneNational.csv", header=T)
-airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNational.csv", header=T)
-airquality_sulfur<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNational.csv", header=T)
-airquality_lead<-read.csv("/Users/adiay/Downloads/Wharton/Project/LeadNational.csv", header=T)
-airquality_carbon<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideNational.csv", header=T)
-airquality_PM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10National.csv", header=T)
-airquality_PM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25National.csv", header=T)
+airquality_nitrogen<- read.csv("aqi_proj/data/Nitrogen_DioxideNational.csv", header=T)
+airquality_sulfur<-read.csv("aqi_proj/data/Sulfur_DioxideNational.csv", header=T)
+airquality_lead<-read.csv("aqi_proj/data/LeadNational.csv", header=T)
+airquality_carbon<-read.csv("aqi_proj/data/Carbon_MonoxideNational.csv", header=T)
+airquality_PM10<-read.csv("aqi_proj/data/PM10National.csv", header=T)
+airquality_PM25<-read.csv("aqi_proj/data/PM25National.csv", header=T)
 
 str( airquality_nitrogen)# data format
 summary( airquality_nitrogen)# quick summary. missing values may be shown
@@ -165,15 +165,15 @@ summary( airquality_PM25)# quick summary. missing values may be shown
 
 #Region wise Ozone Concentration
 ```{r Region /ozone}
-airquality_centralozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneCentral.csv", header=T)
-airquality_UpperMidwestozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneUpperMidwest.csv", header=T)
-airquality_Northeastozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNortheast.csv", header=T)
-airquality_Northwestozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNorthwest.csv", header=T)
-airquality_Southozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneSouth.csv", header=T)
-airquality_Southeastozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneSoutheast.csv", header=T)
-airquality_Southwestozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneSouthwest.csv", header=T)
-airquality_Westozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneWest.csv", header=T)
-airquality_NRPozone<-read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNorthernRockies.csv", header=T)
+airquality_centralozone<-read.csv("aqi_proj/data/OzoneCentral.csv", header=T)
+airquality_UpperMidwestozone<-read.csv("aqi_proj/data/OzoneUpperMidwest.csv", header=T)
+airquality_Northeastozone<-read.csv("aqi_proj/data/OzoneNortheast.csv", header=T)
+airquality_Northwestozone<-read.csv("aqi_proj/data/OzoneNorthwest.csv", header=T)
+airquality_Southozone<-read.csv("aqi_proj/data/OzoneSouth.csv", header=T)
+airquality_Southeastozone<-read.csv("aqi_proj/data/OzoneSoutheast.csv", header=T)
+airquality_Southwestozone<-read.csv("aqi_proj/data/OzoneSouthwest.csv", header=T)
+airquality_Westozone<-read.csv("aqi_proj/data/OzoneWest.csv", header=T)
+airquality_NRPozone<-read.csv("aqi_proj/data/OzoneNorthernRockies.csv", header=T)
  
 p1<-airquality_centralozone%>%
   ggplot(aes(x=Year )) +
@@ -252,14 +252,14 @@ grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side b
 ```
  ```
 ```{r Region wise Nitrogen Di oxide }
-airquality_centralnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideCentral.csv", header=T)
-airquality_UpperMidwestnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideUpperMidwest.csv", header=T)
-airquality_Northeastnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNortheast.csv", header=T)
-airquality_Southnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideSouth.csv", header=T)
-airquality_Southeastnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideSoutheast.csv", header=T)
-airquality_Southwestnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideSouthwest.csv", header=T)
-airquality_Westnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideWest.csv", header=T)
-airquality_NRPnitrogen<-read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNorthernRockies.csv", header=T)
+airquality_centralnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideCentral.csv", header=T)
+airquality_UpperMidwestnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideUpperMidwest.csv", header=T)
+airquality_Northeastnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideNortheast.csv", header=T)
+airquality_Southnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideSouth.csv", header=T)
+airquality_Southeastnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideSoutheast.csv", header=T)
+airquality_Southwestnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideSouthwest.csv", header=T)
+airquality_Westnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideWest.csv", header=T)
+airquality_NRPnitrogen<-read.csv("aqi_proj/data/Nitrogen_DioxideNorthernRockies.csv", header=T)
 
 p11<-airquality_centralnitrogen%>%
   ggplot(aes(x=Year )) +
@@ -336,14 +336,14 @@ grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  s
 
 ```
 ```{r Regionwise Sulphurdioxide}
-airquality_centralsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideCentral.csv", header=T)
-airquality_UpperMidwestsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideUpperMidwest.csv", header=T)
-airquality_Northeastsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNortheast.csv", header=T)
-airquality_Southsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideSouth.csv", header=T)
-airquality_Southeastsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideSoutheast.csv", header=T)
-airquality_Southwestsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideSouthwest.csv", header=T)
-airquality_Westsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideWest.csv", header=T)
-airquality_NRPsulfurdioxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNorthernRockies.csv", header=T)
+airquality_centralsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideCentral.csv", header=T)
+airquality_UpperMidwestsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideUpperMidwest.csv", header=T)
+airquality_Northeastsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideNortheast.csv", header=T)
+airquality_Southsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideSouth.csv", header=T)
+airquality_Southeastsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideSoutheast.csv", header=T)
+airquality_Southwestsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideSouthwest.csv", header=T)
+airquality_Westsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideWest.csv", header=T)
+airquality_NRPsulfurdioxide<-read.csv("aqi_proj/data/Sulfur_DioxideNorthernRockies.csv", header=T)
 
 
 
@@ -420,14 +420,14 @@ p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
 grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
 ```
 ```{r Regionwise CO}
-airquality_centralcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideCentral.csv", header=T)
-airquality_UpperMidwestcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideUpperMidwest.csv", header=T)
-airquality_Northeastcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideNortheast.csv", header=T)
-airquality_Northwestcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideNorthwest.csv", header=T)
-airquality_Southcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideSouth.csv", header=T)
-airquality_Southeastcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideSoutheast.csv", header=T)
-airquality_Southwestcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideSouthwest.csv", header=T)
-airquality_Westcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideWest.csv", header=T)
+airquality_centralcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideCentral.csv", header=T)
+airquality_UpperMidwestcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideUpperMidwest.csv", header=T)
+airquality_Northeastcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideNortheast.csv", header=T)
+airquality_Northwestcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideNorthwest.csv", header=T)
+airquality_Southcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideSouth.csv", header=T)
+airquality_Southeastcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideSoutheast.csv", header=T)
+airquality_Southwestcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideSouthwest.csv", header=T)
+airquality_Westcarbonmonoxide<-read.csv("aqi_proj/data/Carbon_MonoxideWest.csv", header=T)
  
 
 p41<-airquality_centralcarbonmonoxide%>% 
@@ -497,15 +497,15 @@ p48 <- airquality_Westcarbonmonoxide%>%
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
 ```
 ```{r Regionwise PM10 echo=False}
-airquality_centralPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Central.csv", header=T)
-airquality_UpperMidwestPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10UpperMidwest.csv", header=T)
-airquality_NortheastPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Northeast.csv", header=T)
-airquality_NorthwestPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Northwest.csv", header=T)
-airquality_SouthPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10South.csv", header=T)
-airquality_SoutheastPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Southeast.csv", header=T)
-airquality_SouthwestPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Southwest.csv", header=T)
-airquality_WestPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10West.csv", header=T)
-airquality_NRPPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10NorthernRockies.csv", header=T)
+airquality_centralPM10<-read.csv("aqi_proj/data/PM10Central.csv", header=T)
+airquality_UpperMidwestPM10<-read.csv("aqi_proj/data/PM10UpperMidwest.csv", header=T)
+airquality_NortheastPM10<-read.csv("aqi_proj/data/PM10Northeast.csv", header=T)
+airquality_NorthwestPM10<-read.csv("aqi_proj/data/PM10Northwest.csv", header=T)
+airquality_SouthPM10<-read.csv("aqi_proj/data/PM10South.csv", header=T)
+airquality_SoutheastPM10<-read.csv("aqi_proj/data/PM10Southeast.csv", header=T)
+airquality_SouthwestPM10<-read.csv("aqi_proj/data/PM10Southwest.csv", header=T)
+airquality_WestPM10<-read.csv("aqi_proj/data/PM10West.csv", header=T)
+airquality_NRPPM10<-read.csv("aqi_proj/data/PM10NorthernRockies.csv", header=T)
 
 p51<-airquality_centralPM10%>%
   ggplot(aes(x=Year )) +
@@ -586,15 +586,15 @@ grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots
 ```
 
 ```{r Regionwise PM25}
-airquality_centralPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25Central.csv", header=T)
-airquality_UpperMidwestPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25UpperMidwest.csv", header=T)
-airquality_NortheastPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25Northeast.csv", header=T)
-airquality_NorthwestPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25Northwest.csv", header=T)
-airquality_SouthPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25South.csv", header=T)
-airquality_SoutheastPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25Southeast.csv", header=T)
-airquality_SouthwestPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25Southwest.csv", header=T)
-airquality_WestPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25West.csv", header=T)
-airquality_NRPPM25<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM25NorthernRockies.csv", header=T)
+airquality_centralPM25<-read.csv("aqi_proj/data/PM25Central.csv", header=T)
+airquality_UpperMidwestPM25<-read.csv("aqi_proj/data/PM25UpperMidwest.csv", header=T)
+airquality_NortheastPM25<-read.csv("aqi_proj/data/PM25Northeast.csv", header=T)
+airquality_NorthwestPM25<-read.csv("aqi_proj/data/PM25Northwest.csv", header=T)
+airquality_SouthPM25<-read.csv("aqi_proj/data/PM25South.csv", header=T)
+airquality_SoutheastPM25<-read.csv("aqi_proj/data/PM25Southeast.csv", header=T)
+airquality_SouthwestPM25<-read.csv("aqi_proj/data/PM25Southwest.csv", header=T)
+airquality_WestPM25<-read.csv("aqi_proj/data/PM25West.csv", header=T)
+airquality_NRPPM25<-read.csv("aqi_proj/data/PM25NorthernRockies.csv", header=T)
 
 p61<-airquality_centralPM25%>%
   ggplot(aes(x=Year )) +
