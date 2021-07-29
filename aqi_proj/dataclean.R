@@ -85,7 +85,7 @@ ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
 
  
 #EDA
-airquality_ozone<- read.csv("/Users/adiay/Downloads/Wharton/Project/OzoneNational.csv", header=T)
+airquality_ozone<- read.csv("aqi_proj/data/OzoneNational.csv", header=T)
 airquality_nitrogen<- read.csv("/Users/adiay/Downloads/Wharton/Project/Nitrogen_DioxideNational.csv", header=T)
 airquality_sulfur<-read.csv("/Users/adiay/Downloads/Wharton/Project/Sulfur_DioxideNational.csv", header=T)
 airquality_lead<-read.csv("/Users/adiay/Downloads/Wharton/Project/LeadNational.csv", header=T)
