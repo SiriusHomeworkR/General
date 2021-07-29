@@ -70,6 +70,16 @@ plot_usmap(regions = "state",
   theme(legend.position = "right") +
   facet_wrap(~ Year)
 
+#Plotting of all 50 States vs Avg AQI
+raw_data %>%
+ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
+  geom_line() +
+  geom_point()+
+  geom_smooth(method="lm", formula=y~x, se=F,color = "red")+
+  facet_wrap(~state) +
+  theme_bw() +
+  theme(legend.position = 0) +
+  ggtitle("`State`vs`Avg AQI")
 
 #Pollutant trend graphs that affect air quality by year
 
