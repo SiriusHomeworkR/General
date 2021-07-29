@@ -3,6 +3,10 @@ library(data.table)
 library(lubridate)
 library(ggplot2)
 library(usmap)
+library(maps)
+library(gganimate)
+library(transformr)
+library(gifski)
 
 data2020 <- fread("aqi_proj/data/daily_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("aqi_proj/data/daily_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
@@ -44,6 +48,8 @@ raw_data <- raw_data %>% rename(
   num.rep.sites = `Number of Sites Reporting`
 )
 
+raw_data$county <-tolower(raw_data$county)
+
 counties_by_month <- raw_data %>% group_by(county, month) %>% summarise(county.mean = mean(AQI))
 states_by_month <- raw_data %>% group_by(state, month) %>% summarise(state.mean = mean(AQI))
 
@@ -57,3 +63,25 @@ raw_data <- merge(raw_data, states_by_month, by=c("state", "month"))
 ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
   geom_line() +
   facet_wrap( ~ state)
+
+ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"))
+
+ca_county_subset <- inner_join(ca_map, raw_data,by=c('subregion' = 'county'))%>% filter(!is.na(date_formatted))
+
+california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-08-01"), ], mapping = aes(x = long, y = lat, group = subregion)) +
+  coord_fixed(1.3) +
+  geom_polygon(color = "black", fill = "gray")
+
+preanim <- california_base +
+  geom_polygon(aes(fill = AQI), color = "white") +
+  geom_polygon(color = "black", fill = NA) +
+  theme_bw() +
+  transition_time(month)
+
+anim <- animate(preanim, nframes = 12, fps = 5, renderer = gifski_renderer())
+
+anim_save("cali.gif", anim)
+
+(cali.gif)
+
+
