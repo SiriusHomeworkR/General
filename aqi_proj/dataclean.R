@@ -4,6 +4,7 @@ library(lubridate)
 library(ggplot2)
 library(usmap)
 library(rvest)
+library(gridExtra)
 
 data2020 <- fread("aqi_proj/data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("aqi_proj/data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
