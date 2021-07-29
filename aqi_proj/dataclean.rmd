@@ -26,6 +26,8 @@ raw_data <- rbind(data2020, data2019, data2018, data2017, data2016,
 
 
 
+
+
 raw_data <- raw_data %>% rename(
   num.days = `Days with AQI`,
   good.days = `Good Days`,
@@ -38,6 +40,16 @@ raw_data <- raw_data %>% rename(
   med.aqi = `Median AQI`,
   state = State
 )
+
+raw_data$is.climate.alli <- "no"
+
+raw_data[raw_data$state %in% c("California", "Colorado", "Connecticut", "Delaware",
+                               "Hawaii", "Illinois", "Louisiana", "Maine", "Maryland",
+                               "Massachucets", "Michigan", "Minnesota", "Nevada",
+                               "New Jersey", "New Mexico", "New York", "North Carolina",
+                               "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island",
+                               "Vermont", "Virginia", "Washington", "Wisconsin"
+                               ), c("is.climate.alli")] <- "yes"
 
 
 raw_data <- raw_data %>%
@@ -55,7 +67,7 @@ raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 
 subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
                                    good.pct, mod.pct, sens.group.pct, unhlthy.pct,
-                                   very.unhlthy.pct, haz.pct, mean.state)
+                                   very.unhlthy.pct, haz.pct, mean.state, is.climate.alli)
 
 
 ggplot(raw_data, aes(x = Year, y = mean.state, color = state)) +
@@ -712,4 +724,13 @@ grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots
    tidyr::gather("type", "pct", -state)
  
  energy.aqi.join <- merge(mean.state.df[mean.state.df$Year == 2020, ], state_data, by = c("state"))
- ```
+```
+ 
+``` {r experimental}
+
+aq<-read_csv("data/daily_42101_2021.csv")
+
+ 
+
+aq %>% filter(`Pollutant Standard`=="CO 1-hour 1971") %>% ggplot(aes(x= `Date Local`,y=`Arithmetic Mean`,colour=`State Name`)) + geom_point() +geom_smooth()+ facet_wrap(. ~ `State Name`,scales = "free_y")
+```
