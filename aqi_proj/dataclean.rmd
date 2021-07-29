@@ -1,4 +1,24 @@
-``` {r}
+---
+title: "assembly"
+author: "Group 2"
+date: "7/28/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, cache = T, fig.width=8, fig.height=4,
+                      warning = F)
+options(scipen = 0, digits = 3)
+
+if(!require('pacman')) install.packages('pacman')
+
+pacman::p_load(Rcpp, geofacet, tidyverse, dplyr, ggplot2, data.table, lubridate, plotROC, usmap, glmnet, 
+               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra, scales, usdata, party)
+```
+
+```{r}
 library(tidyverse)
 library(data.table)
 library(lubridate)
@@ -189,7 +209,7 @@ summary( airquality_PM25)# quick summary. missing values may be shown
   ylab("PM25") + 
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
-
+```
 #Region wise Ozone Concentration
 ```{r Region /ozone}
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
@@ -773,10 +793,28 @@ lm_cols <- glmnet_data %>% select(select_cols)
 
 fit.lm <- lm(data = lm_cols, med.aqi ~ .)
 summary(fit.lm)
-
-
-
 ```
+
+```{r}
+library(ggplot2)
+library(cowplot)
+library(randomForest)
+library(party)
+
+head(glmnet_data)
+
+#Data Partition
+set.seed(381)
+train <- sample(nrow(glmnet_data), (nrow(glmnet_data)*0.7), replace = F)
+glmnet.train <- glmnet_data[train,]
+glmnet.test <- glmnet_data[-train,]
+
+fit <- cforest(med.aqi~., data = glmnet.train, controls = cforest_unbiased(ntree = 500, mtry = 59))
+library(randomForest)
+set.seed(1034)
+glmnet.rf <- randomForest(med.aqi~., data = glmnet.train)
+```
+
  
 ``` {r experimental}
 
