@@ -70,22 +70,23 @@ raw_subset <- raw_data %>% select("state", "county", "date_formatted", "AQI", "m
 
 ca_county_subset <- inner_join(ca_map, raw_subset,by=c('subregion' = 'county'))
 
-california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-08-01"), ],
+
+california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-06-01"), ],
                           mapping = aes(x = long, y = lat, group = subregion)) +
   coord_fixed(1.3) +
   geom_polygon(color = "black", fill = "gray")
 
 preanim <- california_base +
   geom_polygon(aes(fill = AQI), color = "white") +
-  scale_fill_gradient(limits = c(0,200)) +
+  scale_fill_gradient(limits = c(0,300), palette = "GnYlRd") +
   geom_polygon(color = "black", fill = NA) +
   theme_bw() +
-  transition_time(month)
+  transition_time(date_formatted)
 
-anim <- animate(preanim, nframes = 12, fps = 5, renderer = gifski_renderer(), end_pause = 6)
+anim <- animate(preanim, nframes = 360, fps = 15, renderer = gifski_renderer(), end_pause = 30)
 
-anim_save("cali3.gif", anim)
+anim_save("cali5.gif", anim)
 
-(cali.gif)
+
 
 
