@@ -66,24 +66,26 @@ ggplot(states_by_month, aes(x = month, y = delta.aqi.state, color = state)) +
 
 ca_map <- rbind(map_data("county","California"), map_data("county", "Nevada"))
 
-raw_subset <- raw_data %>% select("county", "date_formatted", "AQI", "month")
+raw_subset <- raw_data %>% select("state", "county", "date_formatted", "AQI", "month")
 
 ca_county_subset <- inner_join(ca_map, raw_subset,by=c('subregion' = 'county'))
 
-california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-08-01"), ], mapping = aes(x = long, y = lat, group = subregion)) +
+california_base <- ggplot(data = ca_county_subset[ca_county_subset$date_formatted >= as.Date("2020-08-01"), ],
+                          mapping = aes(x = long, y = lat, group = subregion)) +
   coord_fixed(1.3) +
   geom_polygon(color = "black", fill = "gray")
 
 preanim <- california_base +
   geom_polygon(aes(fill = AQI), color = "white") +
+  scale_fill_gradient(limits = c(0,200)) +
   geom_polygon(color = "black", fill = NA) +
   theme_bw() +
   transition_time(month)
 
-anim <- animate(preanim, nframes = 12, fps = 5, renderer = gifski_renderer())
+anim <- animate(preanim, nframes = 12, fps = 5, renderer = gifski_renderer(), end_pause = 6)
 
-anim_save("cali.gif", anim)
+anim_save("cali3.gif", anim)
 
-
+(cali.gif)
 
 
