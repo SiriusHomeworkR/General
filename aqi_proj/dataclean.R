@@ -247,7 +247,7 @@ p1<-airquality_centralozone%>%
   xlab("Year") +
   ggtitle("Ozone NRP") #North Rockie and Plains
  
-grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=4)# facet the two plots  side by side
+grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
 
 ```
  ```
@@ -331,7 +331,7 @@ p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
   xlab("Year") +
   ggtitle("NO2 NRP")
 
-grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=4)# facet the two plots  side by side
+grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
 
 
 ```
@@ -417,7 +417,7 @@ p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
   xlab("Year") +
   ggtitle("SO2 NRP")
 
-grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=4)# facet the two plots  side by side
+grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
 ```
 ```{r Regionwise CO}
 airquality_centralcarbonmonoxide<-read.csv("/Users/adiay/Downloads/Wharton/Project/Carbon_MonoxideCentral.csv", header=T)
@@ -494,7 +494,7 @@ p48 <- airquality_Westcarbonmonoxide%>%
   xlab("Year") +
   ggtitle("CO West")
 
-grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=4)# facet the two plots  side by side
+grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
 ```
 ```{r Regionwise PM10 echo=False}
 airquality_centralPM10<-read.csv("/Users/adiay/Downloads/Wharton/Project/PM10Central.csv", header=T)
@@ -582,7 +582,7 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   xlab("Year") +
   ggtitle("PM10 NRP")
 
-grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=4)# facet the two plots  side by side
+grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
 ```
 
 ```{r Regionwise PM25}
@@ -670,7 +670,7 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
   xlab("Year") +
   ggtitle("PM25 NRP")
 
-grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=4)# facet the two plots  side by side
+grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
 ```
 
  url <- "https://www.nei.org/resources/statistics/state-electricity-generation-fuel-shares"
