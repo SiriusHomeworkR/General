@@ -858,8 +858,34 @@ MSE_Train <- mean((test$med.aqi - rf.fit.pred)^2)
 
 =======
 >>>>>>> b57778c73f62a4c8909f42939cd72940494e6d4b
+
 ``` {r experimental}
 aq<-read_csv("data/daily_42101_2021.csv")
 
 aq %>% filter(`Pollutant Standard`=="CO 1-hour 1971") %>% ggplot(aes(x= `Date Local`,y=`Arithmetic Mean`,colour=`State Name`)) + geom_point() +geom_smooth()+ facet_wrap(. ~ `State Name`,scales = "free_y")
+```
+
+``` {r}
+
+preanim <- plot_geo(mean.state.df,
+                  locationmode = 'USA-states') %>% add_trace(locations = ~state.abb,
+                                               z = ~mean.state,
+                                               color = ~mean.state,
+                                               colorscale = 'brwnyl',
+                                               zmin = 0, 
+                                               zmax = 100) %>%
+  layout(geo = list(scope = 'usa'),
+         title = "[2010:2020] Avg Air Quality Index by State") %>%
+  config(displayModeBar = F) +
+  transition_time(Year)
+
+anim <- animate(preanim, nframes = 10, fps = 1, renderer = gifski_renderer(), end_pause = 1)
+
+anim_save("cali6.gif", anim)
+
+
+
+
+
+
 ```

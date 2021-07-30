@@ -107,11 +107,14 @@ raw_data <- raw_data %>%
 mean.state.df <- raw_data %>% group_by(state, Year) %>% summarize(mean.state = mean(med.aqi),
                                                                   peak.state = max(max.aqi))
 
+mean.state.df <- mean.state.df %>% group_by(state) %>%
+  mutate(delta.aqi.state = mean.state - lag(mean.state))
+
 raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 
 subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
                                    good.pct, mod.pct, sens.group.pct, unhlthy.pct,
-                                   very.unhlthy.pct, haz.pct, mean.state, is.climate.alli)
+                                   very.unhlthy.pct, haz.pct, mean.state, is.climate.alli, delta.aqi.state)
 ```
 
 \frametitle{Heatmap}
@@ -735,6 +738,7 @@ Climate Alliance
 subbed_data$is.climate.alli <- as.factor(subbed_data$is.climate.alli)
 focus_data <- subbed_data[subbed_data$Year %in% 2018:2019,]
 summary(lm(data = focus_data, med.aqi ~ is.climate.alli + state))
+summary(lm(data = focus_data, delta.aqi.state ~ is.climate.alli)
 ```
 
 
@@ -743,7 +747,8 @@ summary(lm(data = focus_data, med.aqi ~ is.climate.alli + state))
 
 Climate Alliance states tend to have a better AQI on average but it is not significant.  
 
-This might be because the Climate Alliance only went into effect 3 years ago in 2017.
+This might be because the Climate Alliance only went into effect 3 years ago in 2017. Note that
+climate Alliance states have better improvements on AQI on average.
 
 ## County Level Effects on AQI
 Using the data found by the USDA’s Economic Research Service, we look for predictors in counties to determine air quality and find correlations.
@@ -771,11 +776,13 @@ county_data_master <- merge(county_data_master, county_data_income, by = c("Coun
 county_data_master$State <- abbr2state(county_data_master$State)
 county_data_master <- county_data_master %>% rename(state = State)
 
-dated_subbed_data <- subbed_data[subbed_data$Year == 2019,] %>% select(state, Year, County, med.aqi)
+dated_subbed_data <- subbed_data[subbed_data$Year == 2019,] %>% select(state, Year, County, med.aqi, delta.aqi.state)
 
 master_data <- merge(county_data_master, dated_subbed_data, by = c("County", "state"))
 
 glmnet_data <- master_data %>% select(-County, -FIPS) %>% drop_na()
+
+hist(glmnet_data$med.aqi)
 ```
 
 
@@ -789,15 +796,15 @@ set.seed(1) for consistency.
 ``` {r glmnet}
 
 set.seed(1)
-X <- model.matrix(med.aqi~., glmnet_data)[,-1]
-y <- glmnet_data$med.aqi
+X <- model.matrix(delta.aqi.state~., glmnet_data)[,-1]
+y <- glmnet_data$delta.aqi.state
 
 
 fit.cv <- cv.glmnet(X, y, alpha = 1, nfolds = 10)
 
 coeffs <- coef(fit.cv)
 nonzeros <- rownames(as.matrix(coeffs[which(coeffs != 0), 0]))
-non_state_intercept_coef <- nonzeros[10:length(nonzeros)]
+non_state_intercept_coef <- nonzeros[50:length(nonzeros)]
 
 select_cols <- c("state", "med.aqi", non_state_intercept_coef)
 lm_cols <- glmnet_data %>% select(select_cols)
@@ -812,13 +819,47 @@ Anova(fit.lm)
 ---
 \frametitle{Backwards Selection with Anova}
 
-From the Anova call above, we see that Age65AndOlderPct2010 is the least relevant, so
-we remove it.
-
+We remove the variables that are the least relevant to see what factors remain.
 \tiny
 ``` {r anova1}
-fit.backward.1 <- update(fit.lm, .~. -Age65AndOlderPct2010)
-Anova(fit.backward.1)
+fit.lm <- update(fit.lm, .~. -UnempRate2013)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -OwnHomePct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpTrans)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpChange0710)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpConstruction)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -ForeignBornAfricaPct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -UnempRate2020)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -MedHHInc)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -AsianNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpInformation)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -BlackNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NetMigrationRate1019)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpGovt)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -AsianNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpManufacturing)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpAgriculture)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -UnempRate2007)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -Ed1LessThanHSPct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NonHispanicBlackPopChangeRate0010)
+Anova(fit.lm)
 ```
 
 
