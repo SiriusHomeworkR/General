@@ -213,8 +213,7 @@ summary( airquality_PM25)# quick summary. missing values may be shown
 <<<<<<< HEAD
 =======
 
->>>>>>> 0860526a24fc2bfbf8e5231190f09b25f74a2547
-#Region wise Ozone Concentration
+
 ``` {r Region}
 airquality_centralozone<-read.csv("aqi_proj/data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
@@ -759,9 +758,9 @@ grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots
  data_long <- state_data %>%
    tidyr::gather("type", "pct", -state)
  
- energy.aqi.join <- merge(mean.state.df[mean.state.df$Year == 2020, ], state_data, by = c("state"))
+energy.aqi.join <- merge(mean.state.df[mean.state.df$Year == 2020, ], state_data, by = c("state"))
 ```
- 
+
  
 ``` {r CountyImpact}
 
