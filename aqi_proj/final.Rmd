@@ -1,6 +1,6 @@
 ---
-title: "Large Data, Sparsity and LASSO"
-author: ""
+title: "Environmental Legislation and its Effects on Air Quality"
+author: "Group 2"
 output:
   beamer_presentation:
     slide_level: 3
