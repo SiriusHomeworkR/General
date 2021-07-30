@@ -2,10 +2,10 @@
 title: "Environmental Legislation and its Effects on Air Quality"
 author: "Group 2"
 output:
+  ioslides_presentation: default
   beamer_presentation:
     slide_level: 3
     theme: Boadilla
-  ioslides_presentation: default
   slidy_presentation: default
 header-includes:
 - \AtBeginSection[]{\begin{frame}\tableofcontents[currentsection]\end{frame}}
