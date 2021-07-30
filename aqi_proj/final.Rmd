@@ -878,6 +878,7 @@ plot(fit.final, 1)
 plot(fit.final, 2)
 
 ```
+
 ## Conclusion
 
 The overall objective of this study was to use the AQI of counties across the USA to determine the impact of variables on the climate. Using data collected by the EPA, we were able to focus on the effect of the Climate Alliance on curbing the deterioration of the AQI across the nation, as well as the correlation between aspects of counties and their air quality.
