@@ -115,6 +115,11 @@ raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
                                    good.pct, mod.pct, sens.group.pct, unhlthy.pct,
                                    very.unhlthy.pct, haz.pct, mean.state, is.climate.alli, delta.aqi.state)
+
+summary(lm(data = subbed_data, med.aqi ~ Year))
+
+
+
 ```
 
 \frametitle{Heatmap}
@@ -737,8 +742,8 @@ Climate Alliance
 ``` {r CA Linear Regression}
 subbed_data$is.climate.alli <- as.factor(subbed_data$is.climate.alli)
 focus_data <- subbed_data[subbed_data$Year %in% 2018:2019,]
-summary(lm(data = focus_data, med.aqi ~ is.climate.alli + state))
-summary(lm(data = focus_data, delta.aqi.state ~ is.climate.alli)
+summary(lm(data = focus_data, med.aqi ~ is.climate.alli + Year))
+summary(lm(data = focus_data, delta.aqi.state ~ is.climate.alli + Year))
 ```
 
 
@@ -796,7 +801,7 @@ set.seed(1) for consistency.
 ``` {r glmnet}
 
 set.seed(1)
-X <- model.matrix(delta.aqi.state~., glmnet_data)[,-1]
+X <- model.matrix(delta.aqi.state~.-state, glmnet_data)[,-1]
 y <- glmnet_data$delta.aqi.state
 
 
@@ -804,9 +809,9 @@ fit.cv <- cv.glmnet(X, y, alpha = 1, nfolds = 10)
 
 coeffs <- coef(fit.cv)
 nonzeros <- rownames(as.matrix(coeffs[which(coeffs != 0), 0]))
-non_state_intercept_coef <- nonzeros[50:length(nonzeros)]
+non_state_intercept_coef <- nonzeros[2:length(nonzeros)]
 
-select_cols <- c("state", "med.aqi", non_state_intercept_coef)
+select_cols <- c("med.aqi", non_state_intercept_coef)
 lm_cols <- glmnet_data %>% select(select_cols)
 
 fit.lm <- lm(data = lm_cols, med.aqi ~ .)
@@ -821,7 +826,7 @@ Anova(fit.lm)
 
 We remove the variables that are the least relevant to see what factors remain.
 \tiny
-``` {r anova1}
+``` {r anova1, results = FALSE}
 fit.lm <- update(fit.lm, .~. -UnempRate2013)
 Anova(fit.lm)
 fit.lm <- update(fit.lm, .~. -OwnHomePct)
@@ -864,38 +869,6 @@ Anova(fit.lm)
 
 
 
----
-\frametitle{Backwards Selection with Anova}
-
-From the Anova call above, we see that PctEmpAgriculture is the least relevant, so
-we remove it.
-
-\tiny
-``` {r anova2}
-fit.backward.2 <- update(fit.backward.1, .~. - PctEmpAgriculture)
-Anova(fit.backward.2)
-```
-
-
-
----
-\frametitle{Backwards Selection with Anova}
-
-From the Anova call above, we see that PctEmpConstruction is the least relevant, so
-we remove it.
-
-\tiny
-``` {r anova3}
-fit.backward.3 <- update(fit.backward.2, .~. - PctEmpConstruction)
-Anova(fit.backward.3)
-fit.final <- fit.backward.3
-```
-
-```{r lasso test}
-lasso.fit.pred <- predict(fit.final, lm_cols)
-MSE_test <- mean((lm_cols$med.aqi - lasso.fit.pred)^2)
-MSE_null <- mean((lm_cols$med.aqi - mean(lm_cols$med.aqi))^2)
-```
 
 
 
