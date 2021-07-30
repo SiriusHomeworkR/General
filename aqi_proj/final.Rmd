@@ -137,9 +137,8 @@ ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
   theme_bw() +
   theme(legend.position = 0) +
   ggtitle("`State`vs`Avg AQI")
-
-```
-airquality_ozone<- read.csv("aqi_proj/data/OzoneNational.csv", header=T)
+  
+  airquality_ozone<- read.csv("aqi_proj/data/OzoneNational.csv", header=T)
 airquality_nitrogen<- read.csv("aqi_proj/data/Nitrogen_DioxideNational.csv", header=T)
 airquality_sulfur<-read.csv("aqi_proj/data/Sulfur_DioxideNational.csv", header=T)
 airquality_lead<-read.csv("aqi_proj/data/LeadNational.csv", header=T)
@@ -719,6 +718,9 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
   ggtitle("PM25 NRP")
 
 grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
+
+```
+
 ## Climate Alliance
 
 ---
