@@ -46,7 +46,6 @@ To begin we read the data in from the EPA datasets.
 
 \tiny
 ``` {r readin, results = F}
-
 data2020 <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
 data2018 <- fread("data/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
@@ -61,10 +60,6 @@ data2010 <- fread("data/annual_aqi_by_county_2010.csv", stringsAsFactors = TRUE)
 
 raw_data <- rbind(data2020, data2019, data2018, data2017, data2016,
                   data2015, data2014, data2013, data2012, data2011, data2010)
-
-
-
-
 
 raw_data <- raw_data %>% rename(
   num.days = `Days with AQI`,
@@ -208,7 +203,6 @@ set.seed(1) for consistency.
 ``` {r glmnet}
 
 set.seed(1)
-
 X <- model.matrix(med.aqi~., glmnet_data)[,-1]
 y <- glmnet_data$med.aqi
 
