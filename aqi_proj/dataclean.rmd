@@ -547,7 +547,7 @@ p48 <- airquality_Westcarbonmonoxide%>%
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
 ```
 
-```{r Regionwise PM10 echo=False}
+```{r Regionwise PM10, echo=False}
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
 airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
@@ -605,8 +605,6 @@ p56 <- airquality_SoutheastPM10%>%
   ylab("PM10") + 
   xlab("Year") +
   ggtitle("PM10 SE")
-
-
 
 p57 <- airquality_SouthwestPM10%>%
   ggplot(aes(x=Year )) +
@@ -809,12 +807,57 @@ fit.backward.2 <- update(fit.backward.1, .~. - PctEmpAgriculture)
 Anova(fit.backward.2)
 ```
 
-```{r backward 2}
+```{r backward 3}
 fit.backward.3 <- update(fit.backward.2, .~. - PctEmpConstruction)
 Anova(fit.backward.3)
 fit.final <- fit.backward.3
 ```
 
+<<<<<<< HEAD
+```{r glmnet randomForest}
+glmnet.2019 <- glmnet_data[Year == '2019',] %>% select(-contains(c("1819", "1920", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2020")))
+names(glmnet.2019)
+
+glmnet.2019 <- select(glmnet.2019, -c("Year"))
+
+set.seed(183)
+ind <- sample(2, nrow(glmnet.2019), replace = T, prob = c(0.7, 0.3))
+train <- glmnet.2019[ind == 1]
+test <- glmnet.2019[ind == 2]
+
+library(randomForest)
+set.seed(984)
+rf.fit <- randomForest(med.aqi~., data = train, ntree = 500, mtry = 9, replace = T)
+plot(rf.fit, col="red", pch=16, type="p", 
+     main="default plot, ")
+
+rf.error.p <- 1:19  # set up a vector of length 19
+for (p in 1:19)  # repeat the following code inside { } 19 times
+{
+  rf.fit <- randomForest(med.aqi~., data = train, ntree = 250, mtry = p, replace = T)
+  #plot(fit.rf, col= p, lwd = 3)
+  rf.error.p[p] <- rf.fit$mse[250]  # collecting oob mse based on 250 trees
+}
+rf.error.p
+
+plot(1:19, rf.error.p, pch=16,
+     main = "Testing errors of mtry with 250 trees",
+     xlab="mtry",
+     ylab="OOB mse of mtry")
+lines(1:19, rf.error.p)  ##Best mtry =  13
+
+rf.fit <- randomForest(med.aqi~., data = train, ntree = 250, mtry = 13, replace = T)
+
+attributes(rf.fit)
+rf.fit$importance
+
+rf.fit.pred <- predict(rf.fit, test)
+rf.fit$mse[250]
+MSE_Train <- mean((test$med.aqi - rf.fit.pred)^2)
+```
+
+=======
+>>>>>>> b57778c73f62a4c8909f42939cd72940494e6d4b
 ``` {r experimental}
 aq<-read_csv("data/daily_42101_2021.csv")
 
