@@ -9,6 +9,7 @@ library(gridExtra)
 library(usdata)
 library(glmnet)
 library(car)
+
 data2020 <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
 data2018 <- fread("data/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
@@ -728,6 +729,10 @@ rf.fit <- randomForest(med.aqi~., data = train, ntree = 250, mtry = 13, replace 
 
 attributes(rf.fit)
 rf.fit$importance
+
+rf.fit.pred <- predict(rf.fit, test)
+rf.fit$mse[250]
+MSE_Train <- mean((test$med.aqi - rf.fit.pred)^2)
 ```
 
 
