@@ -910,10 +910,15 @@ plot(1:19, rf.error.p, pch=16,
 lines(1:19, rf.error.p)
 
 set.seed(250)
-rf.fit <- randomForest(med.aqi~., train, mtry=1, ntree=500)
+rf.fit <- randomForest(med.aqi~., train, mtry=2, ntree=500)
 rf.fit.pred <- predict(rf.fit, train)
 MSE_test2 <- mean((train$med.aqi - rf.fit.pred)^2)
 MSE_test3 <- mean((test$med.aqi - rf.fit.pred)^2)
+
+rf.fit$importance
+attributes(rf.fit)
+
+varImpPlot(rf.fit, sort=TRUE, n.var=min(30, nrow(rf.fit$importance)))
 
 plot(rf.fit)
 ```
