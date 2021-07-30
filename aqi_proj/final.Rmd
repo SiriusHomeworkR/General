@@ -1,7 +1,13 @@
 ---
 title: "Environmental Legislation and its Effects on Air Quality"
-author: "Group 2"
-output:
+author:
+- Adithya
+- Alexander
+- Andrew
+- Kamron
+- Sahej 
+- Raymond
+output: 
   ioslides_presentation: default
   beamer_presentation:
     slide_level: 3
@@ -39,13 +45,12 @@ aspects of counties and the air quality.
 
 ## Reading the Data and EDA
 
----
-\frametitle{Read and Clean}
 
+\frametitle{Read and Clean}
 To begin we read the data in from the EPA datasets.
 
 \tiny
-``` {r readin, results = F}
+``` {r readin, results = F, results = 'hide'}
 data2020 <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
 data2019 <- fread("data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
 data2018 <- fread("data/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
@@ -103,9 +108,6 @@ subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.a
                                    very.unhlthy.pct, haz.pct, mean.state, is.climate.alli)
 
 ```
-
-
----
 \frametitle{Heatmap}
 ```{r heatmap}
 
@@ -222,7 +224,7 @@ summary( airquality_PM25)# quick summary. missing values may be shown
 
 
 ``` {r Region}
-airquality_centralozone<-read.csv("aqi_proj/data/OzoneCentral.csv", header=T)
+airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
 airquality_Northeastozone<-read.csv("data/OzoneNortheast.csv", header=T)
 airquality_Northwestozone<-read.csv("data/OzoneNorthwest.csv", header=T)
@@ -556,7 +558,7 @@ p48 <- airquality_Westcarbonmonoxide%>%
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
 ```
 
-```{r Regionwise PM10 echo=False}
+```{r Regionwise PM10}
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
 airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
@@ -733,11 +735,7 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
 grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
 ```
 
-```
-
-
-## Climate Alliance
-
+Climate Alliance
 ---
 \frametitle{Linear Regression}
 
@@ -755,12 +753,11 @@ Climate Alliance states tend to have a better AQI on average but it is not signi
 This might be because the Climate Alliance only went into effect 3 years ago in 2017.
 
 ## County Level Effects on AQI
-
 Using the data found by the USDA’s Economic Research Service, we look for predictors in counties to determine air quality and find correlations.
-
 This begins by merging the 2019 AQI with the latest USDA ERS data. We use 2019 data to avoid skewing due to the 2020 West Coast fires.
 
 ---
+
 \frametitle{Merging AQI Data with County Data}
 
 To begin the analysis, we start by merging county data with AQI data. We start by
