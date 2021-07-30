@@ -27,7 +27,7 @@ pacman::p_load(Rcpp, geofacet, tidyverse, dplyr, ggplot2, data.table, lubridate,
 
 ## Introduction
 
-The goal of this study is to examine the impact of certain variable on the climate 
+The goal of this study is to examine the impact of certain variables on the climate 
 by examining the AQI of counties across the United States of America using data collected
 by the EPA.
 
@@ -304,6 +304,10 @@ the mean.
 plot(fit.final, 1)
 plot(fit.final, 2)
 
-
 ```
+## Conclusion
+
+The overall objective of this study was to use the AQI of counties across the USA to determine the impact of variables on the climate. Using data collected by the EPA, we were able to focus on the effect of the Climate Alliance on curbing the deterioration of the AQI across the nation, as well as the correlation between aspects of counties and their air quality.
+
+From this study, we were able to conclude that the Climate Alliance has not had much of an effect yet on the AQI of member states, but do have better AQIs on average compared to other states. We were also able to see that most of the impact on the AQI is geographical based on the significant variables of the model. 
 

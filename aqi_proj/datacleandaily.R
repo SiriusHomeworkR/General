@@ -52,6 +52,7 @@ raw_data$county <-tolower(raw_data$county)
 
 counties_by_month <- raw_data %>% group_by(county, month) %>% summarise(county.mean = mean(AQI))
 states_by_month <- raw_data %>% group_by(state, month) %>% summarise(state.mean = mean(AQI))
+ca_states <- states_by_month %>% select(state, )
 
 states_by_month <- states_by_month %>% group_by(state) %>%
   mutate(delta.aqi.state = state.mean - lag(state.mean))
@@ -88,7 +89,6 @@ preanim <- california_base +
 anim <- animate(preanim, nframes = 360, fps = 10, renderer = gifski_renderer(), end_pause = 30)
 
 anim_save("cali6.gif", anim)
-
 
 
 
