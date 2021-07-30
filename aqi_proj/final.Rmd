@@ -85,15 +85,6 @@ raw_data <- raw_data[raw_data$state != "Virgin Islands",]
 raw_data <- raw_data[raw_data$state != "District Of Columbia",]
 raw_data <- droplevels(raw_data)
 
-raw_data$is.climate.alli <- "no"
-
-raw_data[raw_data$state %in% c("California", "Colorado", "Connecticut", "Delaware",
-                               "Hawaii", "Illinois", "Louisiana", "Maine", "Maryland",
-                               "Massachucets", "Michigan", "Minnesota", "Nevada",
-                               "New Jersey", "New Mexico", "New York", "North Carolina",
-                               "Oregon", "Pennsylvania", "Rhode Island",
-                               "Vermont", "Virginia", "Washington", "Wisconsin"
-), c("is.climate.alli")] <- "yes"
 
 
 raw_data <- raw_data %>%
@@ -109,6 +100,18 @@ mean.state.df <- raw_data %>% group_by(state, Year) %>% summarize(mean.state = m
 
 mean.state.df <- mean.state.df %>% group_by(state) %>%
   mutate(delta.aqi.state = mean.state - lag(mean.state))
+
+mean.state.df$is.climate.alli <- "no"
+
+mean.state.df[mean.state.df$state %in% c("California", "Colorado", "Connecticut", "Delaware",
+                               "Hawaii", "Illinois", "Louisiana", "Maine", "Maryland",
+                               "Massachucets", "Michigan", "Minnesota", "Nevada",
+                               "New Jersey", "New Mexico", "New York", "North Carolina",
+                               "Oregon", "Pennsylvania", "Rhode Island",
+                               "Vermont", "Virginia", "Washington", "Wisconsin"
+), c("is.climate.alli")] <- "yes"
+
+mean.state.df$is.climate.alli <- as.factor(mean.state.df$is.climate.alli)
 
 raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 
@@ -741,9 +744,9 @@ Climate Alliance
 
 ``` {r CA Linear Regression}
 subbed_data$is.climate.alli <- as.factor(subbed_data$is.climate.alli)
-focus_data <- subbed_data[subbed_data$Year %in% 2018:2019,]
-summary(lm(data = focus_data, med.aqi ~ is.climate.alli + Year))
-summary(lm(data = focus_data, delta.aqi.state ~ is.climate.alli + Year))
+focus_data <- subbed_data[subbed_data$Year %in% 2016:2019,]
+summary(lm(data = mean.state.df, mean.state ~ is.climate.alli + Year))
+summary(lm(data = mean.state.df, delta.aqi.state ~ is.climate.alli + Year))
 ```
 
 
