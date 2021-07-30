@@ -28,7 +28,7 @@ options(scipen = 0, digits = 3)
 if(!require('pacman')) install.packages('pacman')
 
 pacman::p_load(Rcpp, geofacet, tidyverse, dplyr, ggplot2, data.table, lubridate, plotROC, usmap, glmnet, 
-               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra, scales, usdata, party, car)
+               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra, scales, usdata, party, car, randomForest)
 ```
 
 ## Introduction
@@ -871,12 +871,7 @@ fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
 Anova(fit.lm)
 fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
 Anova(fit.lm)
-
-
 ```
-
-
-
 
 
 
