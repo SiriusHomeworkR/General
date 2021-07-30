@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, cache = T, fig.width=8, fig.height=4,
+knitr::opts_chunk$set(echo = F, fig.width=8, fig.height=4,
                       warning = F, width = 60)
 options(scipen = 0, digits = 3)
 
@@ -79,15 +79,21 @@ raw_data <- raw_data %>% rename(
   state = State
 )
 
+raw_data <- raw_data[raw_data$state != "Country Of Mexico",]
+raw_data <- raw_data[raw_data$state != "Puerto Rico",]
+raw_data <- raw_data[raw_data$state != "Virgin Islands",]
+raw_data <- raw_data[raw_data$state != "District Of Columbia",]
+raw_data <- droplevels(raw_data)
+
 raw_data$is.climate.alli <- "no"
 
 raw_data[raw_data$state %in% c("California", "Colorado", "Connecticut", "Delaware",
                                "Hawaii", "Illinois", "Louisiana", "Maine", "Maryland",
                                "Massachucets", "Michigan", "Minnesota", "Nevada",
                                "New Jersey", "New Mexico", "New York", "North Carolina",
-                               "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island",
+                               "Oregon", "Pennsylvania", "Rhode Island",
                                "Vermont", "Virginia", "Washington", "Wisconsin"
-                               ), c("is.climate.alli")] <- "yes"
+), c("is.climate.alli")] <- "yes"
 
 
 raw_data <- raw_data %>%
@@ -106,41 +112,45 @@ raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
 subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
                                    good.pct, mod.pct, sens.group.pct, unhlthy.pct,
                                    very.unhlthy.pct, haz.pct, mean.state, is.climate.alli)
-
 ```
+
 \frametitle{Heatmap}
+
 ```{r heatmap}
+codes <- as.data.frame(cbind(state.abb, state.name)) %>% rename("state" = state.name)
+mean.state.df <- merge(mean.state.df, codes, by = "state")
 
-plot_usmap(regions = "state",                   
-           #regions = "counties", for county level summary
-           data = mean.state.df,
-           values = "mean.state", exclude = c("District of Columbia", "Country of Mexico",
-                                                     "Virgin Islands", "Puerto Rico")
-           , color = "black") + 
-  scale_fill_gradient(
-    low = "white", high = "red", 
-    name = "AQI", 
-    label = scales::comma) + 
-  labs(title = "state Avg AQI") +
-  theme(legend.position = "right") +
-  facet_wrap(~ Year)
+max(mean.state.df$mean.state)
 
+usAqi.plot <- plot_geo(mean.state.df,
+                  locationmode = 'USA-states',
+                  frame = ~Year) %>% add_trace(locations = ~state.abb,
+                                               z = ~mean.state,
+                                               color = ~mean.state,
+                                               colorscale = 'brwnyl',
+                                               zmin = 0, 
+                                               zmax = 100) %>%
+  layout(geo = list(scope = 'usa'),
+         title = "[2010:2020] Avg Air Quality Index by State") %>%
+  config(displayModeBar = F)
+usAqi.plot
 ```
 
 ---
 \frametitle{AQI by Year Faceted by State}
 
 ``` {r facetAqi}
-
 raw_data %>%
-ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
+  ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
   geom_line() +
   facet_wrap(~state) +
   theme_bw() +
   theme(legend.position = 0) +
   ggtitle("`State`vs`Avg AQI")
-  
- #EDA
+```
+
+```{r pollutants, eval = F}
+#EDA
 airquality_ozone<- read.csv("data/OzoneNational.csv", header=T)
 airquality_nitrogen<- read.csv("data/Nitrogen_DioxideNational.csv", header=T)
 airquality_sulfur<-read.csv("data/Sulfur_DioxideNational.csv", header=T)
@@ -161,69 +171,64 @@ airquality_nitrogen %>%
 
 str( airquality_ozone)# data format
 summary( airquality_ozone)# quick summary. missing values may be shown
- airquality_ozone %>%
+airquality_ozone %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") +
   xlab("Year") +
   ggtitle("Ozone Concentration by year")
- 
+
 str( airquality_sulfur)# data format
 summary( airquality_sulfur)# quick summary. missing values may be shown
- airquality_sulfur %>%
+airquality_sulfur %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Sulfur Dioxide") +
   xlab("Year") +
   ggtitle("Sulfur Dioxide Concentration by year")
- 
+
 str( airquality_lead)# data format
 summary( airquality_lead)# quick summary. missing values may be shown
- airquality_lead %>%
+airquality_lead %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Lead") +
   xlab("Year") +
   ggtitle("Lead Concentration by year")
- 
+
 str( airquality_carbon)# data format
 summary( airquality_carbon)# quick summary. missing values may be shown
- airquality_carbon%>%
+airquality_carbon%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Carbon Monoxide") +
   xlab("Year") +
   ggtitle("Carbon Monoxide Concentration by year")
- 
+
 str( airquality_PM10)# data format  
 summary( airquality_PM10)# quick summary. missing values may be shown
- airquality_PM10%>%
+airquality_PM10%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("PM10") + 
   xlab("Year") +
   ggtitle("Particulate Matter 10 Concentration by year")
- 
- str( airquality_PM25)# data format  
+
+str( airquality_PM25)# data format  
 summary( airquality_PM25)# quick summary. missing values may be shown
- airquality_PM25%>%
+airquality_PM25%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("PM25") + 
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
-```
-<<<<<<< HEAD
-=======
 
-
-``` {r Region}
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
 airquality_Northeastozone<-read.csv("data/OzoneNortheast.csv", header=T)
@@ -233,7 +238,7 @@ airquality_Southeastozone<-read.csv("data/OzoneSoutheast.csv", header=T)
 airquality_Southwestozone<-read.csv("data/OzoneSouthwest.csv", header=T)
 airquality_Westozone<-read.csv("data/OzoneWest.csv", header=T)
 airquality_NRPozone<-read.csv("data/OzoneNorthernRockies.csv", header=T)
- 
+
 p1<-airquality_centralozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -241,76 +246,73 @@ p1<-airquality_centralozone%>%
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone Central")
- 
-  p2 <- airquality_UpperMidwestozone%>% #upper midwest
+
+p2 <- airquality_UpperMidwestozone%>% #upper midwest
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone MW")
-  
-  p3 <- airquality_Northeastozone%>%
+
+p3 <- airquality_Northeastozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone NE")
-  
-  p4 <- airquality_Northwestozone%>%
+
+p4 <- airquality_Northwestozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone NW")
-  
-  p5 <- airquality_Southozone%>%
+
+p5 <- airquality_Southozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone South")
-  
-  p6 <- airquality_Southeastozone%>%
+
+p6 <- airquality_Southeastozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone SE")
-    
-  p7 <- airquality_Southwestozone%>%
+
+p7 <- airquality_Southwestozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone SW")
-     
-  p8 <- airquality_Westozone%>%
+
+p8 <- airquality_Westozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone West")
- 
-  p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
+
+p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("Ozone") + 
   xlab("Year") +
   ggtitle("Ozone NRP") #North Rockie and Plains
- 
+
 grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
 
-```
-
-```{r Region wise Nitrogen Di oxide }
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
 airquality_Northeastnitrogen<-read.csv("data/Nitrogen_DioxideNortheast.csv", header=T)
@@ -344,7 +346,7 @@ p13 <- airquality_Northeastnitrogen%>%
   xlab("Year") +
   ggtitle("NO2 NE")
 
- 
+
 
 p14 <- airquality_Southnitrogen%>%
   ggplot(aes(x=Year )) +
@@ -380,7 +382,7 @@ p17 <- airquality_Westnitrogen%>%
   xlab("Year") +
   ggtitle("NO2 West")
 
- 
+
 
 p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
   ggplot(aes(x=Year )) +
@@ -392,10 +394,6 @@ p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
 
 grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
 
-
-```
-
-```{r Regionwise Sulphurdioxide}
 airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
 airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
 airquality_Northeastsulfurdioxide<-read.csv("data/Sulfur_DioxideNortheast.csv", header=T)
@@ -431,7 +429,7 @@ p23 <- airquality_Northeastsulfurdioxide%>%
   xlab("Year") +
   ggtitle("SO2 NE")
 
- 
+
 
 p24 <- airquality_Southsulfurdioxide%>%
   ggplot(aes(x=Year )) +
@@ -467,7 +465,7 @@ p27 <- airquality_Westsulfurdioxide%>%
   xlab("Year") +
   ggtitle("SO2 West")
 
- 
+
 
 p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
   ggplot(aes(x=Year )) +
@@ -478,9 +476,7 @@ p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
   ggtitle("SO2 NRP")
 
 grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
-```
 
-```{r Regionwise CO}
 airquality_centralcarbonmonoxide<-read.csv("data/Carbon_MonoxideCentral.csv", header=T)
 airquality_UpperMidwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideUpperMidwest.csv", header=T)
 airquality_Northeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideNortheast.csv", header=T)
@@ -489,7 +485,7 @@ airquality_Southcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouth.csv", header
 airquality_Southeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideSoutheast.csv", header=T)
 airquality_Southwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouthwest.csv", header=T)
 airquality_Westcarbonmonoxide<-read.csv("data/Carbon_MonoxideWest.csv", header=T)
- 
+
 
 p41<-airquality_centralcarbonmonoxide%>% 
   ggplot(aes(x=Year )) +
@@ -556,9 +552,7 @@ p48 <- airquality_Westcarbonmonoxide%>%
   ggtitle("CO West")
 
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
-```
 
-```{r Regionwise PM10}
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
 airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
@@ -634,7 +628,7 @@ p58 <- airquality_WestPM10%>%
   ylab("PM10") + 
   xlab("Year") +
   ggtitle("PM10 West")
- 
+
 
 p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   ggplot(aes(x=Year )) +
@@ -645,9 +639,7 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   ggtitle("PM10 NRP")
 
 grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
-```
 
-```{r Regionwise PM25}
 airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
 airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
 airquality_NortheastPM25<-read.csv("data/PM25Northeast.csv", header=T)
@@ -723,7 +715,7 @@ p68 <- airquality_WestPM25%>%
   ylab("PM25") + 
   xlab("Year") +
   ggtitle("PM25 West")
- 
+
 p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
@@ -739,11 +731,12 @@ Climate Alliance
 ---
 \frametitle{Linear Regression}
 
-``` {r LinearRegression}
+``` {r CA Linear Regression}
 subbed_data$is.climate.alli <- as.factor(subbed_data$is.climate.alli)
 focus_data <- subbed_data[subbed_data$Year %in% 2018:2019,]
 summary(lm(data = focus_data, med.aqi ~ is.climate.alli + state))
 ```
+
 
 ---
 \frametitle{Analysis}
@@ -857,6 +850,13 @@ Anova(fit.backward.3)
 fit.final <- fit.backward.3
 ```
 
+```{r lasso test}
+lasso.fit.pred <- predict(fit.final, lm_cols)
+MSE_test <- mean((lm_cols$med.aqi - lasso.fit.pred)^2)
+MSE_null <- mean((lm_cols$med.aqi - mean(lm_cols$med.aqi))^2)
+```
+
+
 
 
 
@@ -883,14 +883,47 @@ The assumptions for linearity appear to hold up until about 1 standard deviation
 the mean.
 
 
+```{r CA Random Forest}
+set.seed(467)
+ind <- sample(2, nrow(lm_cols), replace = T, prob = c(0.7, 0.3))
+train <- lm_cols[ind==1,]
+test <- lm_cols[ind==2,]
+
+library(randomForest)
+set.seed(200)
+rf.fit <- randomForest(med.aqi~., data = train, ntree = 500)
+
+plot(rf.fit, col="red", pch=16, type="p", 
+     main="default plot, ")
+
+rf.error.p <- 1:19
+for (i in 1:19)
+{
+  rf.fit <- randomForest(med.aqi~., train, mtry=i, ntree=500)
+  rf.error.p[i] <- rf.fit$mse[500]
+}
+
+plot(1:19, rf.error.p, pch=16,
+     main = "Testing Errors: ntree = 500",
+     xlab="mtry",
+     ylab="OOB MSE of mtry")
+lines(1:19, rf.error.p)
+
+set.seed(250)
+rf.fit <- randomForest(med.aqi~., train, mtry=1, ntree=500)
+rf.fit.pred <- predict(rf.fit, train)
+MSE_test2 <- mean((train$med.aqi - rf.fit.pred)^2)
+MSE_test3 <- mean((test$med.aqi - rf.fit.pred)^2)
+
+plot(rf.fit)
+```
+
 ---
 \frametitle{Diagnostic Plots}
 
 ``` {r plots, fig.show="hold", out.width="50%"}
-
 plot(fit.final, 1)
 plot(fit.final, 2)
-
 ```
 
 ## Conclusion
