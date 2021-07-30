@@ -706,6 +706,25 @@ test <- glmnet.2019[ind == 2]
 library(randomForest)
 set.seed(984)
 rf.fit <- randomForest(med.aqi~., data = train, ntree = 500, mtry = 9, replace = T)
+plot(rf.fit, col="red", pch=16, type="p", 
+     main="default plot, ")
+
+rf.error.p <- 1:19  # set up a vector of length 19
+for (p in 1:19)  # repeat the following code inside { } 19 times
+{
+  rf.fit <- randomForest(med.aqi~., data = train, ntree = 250, mtry = p, replace = T)
+  #plot(fit.rf, col= p, lwd = 3)
+  rf.error.p[p] <- rf.fit$mse[250]  # collecting oob mse based on 250 trees
+}
+rf.error.p
+
+plot(1:19, rf.error.p, pch=16,
+     main = "Testing errors of mtry with 250 trees",
+     xlab="mtry",
+     ylab="OOB mse of mtry")
+lines(1:19, rf.error.p)  ##Best mtry =  13
+
+rf.fit <- randomForest(med.aqi~., data = train, ntree = 250, mtry = 13, replace = T)
 
 attributes(rf.fit)
 rf.fit$importance
