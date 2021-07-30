@@ -681,6 +681,7 @@ grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots
    Wind.pct = Wind....,
    Biomass.and.Other.pct = Biomass.and.Other....
  )
+ 
  state_data[state_data$Hydro.pct == "(0.2)", c("Hydro.pct")] <- 0.2
  state_data[state_data$Biomass.and.Other.pct == "(0.0)", c("Biomass.and.Other.pct")] <- 0.0
  state_data[state_data$state == "Iowa1", c("state")] <- "Iowa"
