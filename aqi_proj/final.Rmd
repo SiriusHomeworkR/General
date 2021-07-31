@@ -326,6 +326,8 @@ p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
 grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
 #Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
 
+
+
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
 airquality_Northeastnitrogen<-read.csv("data/Nitrogen_DioxideNortheast.csv", header=T)
