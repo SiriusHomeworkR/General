@@ -1,21 +1,29 @@
 ---
 title: "Environmental Legislation and its Effects on Air Quality"
 author:
-- Adithya
-- Alexander
-- Andrew
-- Kamron
-- Sahej 
-- Raymond
+- Adithya Ayanam
+- Alexander Chen
+- Andrew Oliver
+- Kamron Ramelmeier
+- Sahej Singh
+- Raymond Xu
 output: 
-  ioslides_presentation: default
-  beamer_presentation:
-    slide_level: 3
-    theme: Boadilla
-  slidy_presentation: default
-header-includes:
-- \AtBeginSection[]{\begin{frame}\tableofcontents[currentsection]\end{frame}}
-- \AtBeginSubsection[]{\begin{frame}\tableofcontents[currentsubsection]\end{frame}{}}
+  html_document:
+    code_folding: show
+    highlight: haddock
+    number_sections: yes
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: '4'
+  word_document:
+    toc: yes
+    toc_depth: '4'
+urlcolor: blue
 editor_options: 
   chunk_output_type: inline
 ---
@@ -848,7 +856,7 @@ Anova(fit.lm)
 
 We remove the variables that are the least relevant to see what factors remain.
 \tiny
-``` {r anova1, results = FALSE}
+``` {r anova1, include = FALSE}
 fit.lm <- update(fit.lm, .~. -PctEmpMining)
 Anova(fit.lm)
 fit.lm <- update(fit.lm, .~. -ForeignBornCaribPct)
@@ -896,7 +904,9 @@ Anova(fit.lm)
 ```
 
 
-
+```{r assign final}
+fit.final <- fit.lm
+```
 
 
 ---
@@ -907,7 +917,7 @@ Anova(fit.lm)
 ``` {r finalFit, size = "tiny"}
 
 temp <- summary(fit.final)$coefficients[, c("Estimate")]
-non_states <- summary(fit.final)$coefficients[50:length(temp),]
+non_states <- summary(fit.final)$coefficients[50:length(temp)]
 
 non_states
 
