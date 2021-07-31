@@ -178,7 +178,8 @@ airquality_lead<-read.csv("data/LeadNational.csv", header=T)
 airquality_carbon<-read.csv("data/Carbon_MonoxideNational.csv", header=T)
 airquality_PM10<-read.csv("data/PM10National.csv", header=T)
 airquality_PM25<-read.csv("data/PM25National.csv", header=T)
-
+```
+```{r Nitrogen Di Oxide National}
 str( airquality_nitrogen)# data format
 summary( airquality_nitrogen)# quick summary. missing values may be shown
 airquality_nitrogen %>%
@@ -188,7 +189,8 @@ airquality_nitrogen %>%
   ylab("Nitrogen") +
   xlab("Year") +
   ggtitle("Nitrogen Concentration by year")
-
+```
+```{r Ozone National}
 str( airquality_ozone)# data format
 summary( airquality_ozone)# quick summary. missing values may be shown
 airquality_ozone %>%
@@ -198,7 +200,8 @@ airquality_ozone %>%
   ylab("Ozone") +
   xlab("Year") +
   ggtitle("Ozone Concentration by year")
-
+```
+```{r Sulphur di oxide National}
 str( airquality_sulfur)# data format
 summary( airquality_sulfur)# quick summary. missing values may be shown
 airquality_sulfur %>%
@@ -208,7 +211,8 @@ airquality_sulfur %>%
   ylab("Sulfur Dioxide") +
   xlab("Year") +
   ggtitle("Sulfur Dioxide Concentration by year")
-
+```
+```{r Lead National}
 str( airquality_lead)# data format
 summary( airquality_lead)# quick summary. missing values may be shown
 airquality_lead %>%
@@ -218,7 +222,8 @@ airquality_lead %>%
   ylab("Lead") +
   xlab("Year") +
   ggtitle("Lead Concentration by year")
-
+```
+```{r Carbon Monoxide National}
 str( airquality_carbon)# data format
 summary( airquality_carbon)# quick summary. missing values may be shown
 airquality_carbon%>%
@@ -228,7 +233,8 @@ airquality_carbon%>%
   ylab("Carbon Monoxide") +
   xlab("Year") +
   ggtitle("Carbon Monoxide Concentration by year")
-
+```
+```{r PM_10 National}
 str( airquality_PM10)# data format  
 summary( airquality_PM10)# quick summary. missing values may be shown
 airquality_PM10%>%
@@ -238,7 +244,8 @@ airquality_PM10%>%
   ylab("PM10") + 
   xlab("Year") +
   ggtitle("Particulate Matter 10 Concentration by year")
-
+```
+```{r PM_25 National}
 str( airquality_PM25)# data format  
 summary( airquality_PM25)# quick summary. missing values may be shown
 airquality_PM25%>%
@@ -248,7 +255,9 @@ airquality_PM25%>%
   ylab("PM25") + 
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
-
+```
+```{r pollutants, eval = F}
+#EDA 
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
 airquality_Northeastozone<-read.csv("data/OzoneNortheast.csv", header=T)
@@ -258,7 +267,9 @@ airquality_Southeastozone<-read.csv("data/OzoneSoutheast.csv", header=T)
 airquality_Southwestozone<-read.csv("data/OzoneSouthwest.csv", header=T)
 airquality_Westozone<-read.csv("data/OzoneWest.csv", header=T)
 airquality_NRPozone<-read.csv("data/OzoneNorthernRockies.csv", header=T)
+```
 
+```{r Regional Ozone, eval = F}
 p1<-airquality_centralozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -332,12 +343,15 @@ p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
   ggtitle("Ozone NRP") #North Rockie and Plains
 
 grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
+```
 #**
 Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
 
 
 **
 
+```{r Regional Nitrogen Di oxide, eval = F}
+#EDA
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
 airquality_Northeastnitrogen<-read.csv("data/Nitrogen_DioxideNortheast.csv", header=T)
@@ -346,7 +360,8 @@ airquality_Southeastnitrogen<-read.csv("data/Nitrogen_DioxideSoutheast.csv", hea
 airquality_Southwestnitrogen<-read.csv("data/Nitrogen_DioxideSouthwest.csv", header=T)
 airquality_Westnitrogen<-read.csv("data/Nitrogen_DioxideWest.csv", header=T)
 airquality_NRPnitrogen<-read.csv("data/Nitrogen_DioxideNorthernRockies.csv", header=T)
-
+```
+```{r Regional Nitrogen Di oxide, eval = F}
 p11<-airquality_centralnitrogen%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -418,11 +433,13 @@ p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
   ggtitle("NO2 NRP")
 
 grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
+```
 
 #The northern rockies and plains not withstanding, NO2 seems to be declining throughout every region.
 #However, this is because No2 is generally very low in that region. 
 #The areas where NO2 is naturally very high is in the very urban areas most notably the Northeast and California.  
- 
+```{r Regional Sulphur Di oxide, eval = F} 
+#EDA
 airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
 airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
 airquality_Northeastsulfurdioxide<-read.csv("data/Sulfur_DioxideNortheast.csv", header=T)
@@ -431,9 +448,9 @@ airquality_Southeastsulfurdioxide<-read.csv("data/Sulfur_DioxideSoutheast.csv", 
 airquality_Southwestsulfurdioxide<-read.csv("data/Sulfur_DioxideSouthwest.csv", header=T)
 airquality_Westsulfurdioxide<-read.csv("data/Sulfur_DioxideWest.csv", header=T)
 airquality_NRPsulfurdioxide<-read.csv("data/Sulfur_DioxideNorthernRockies.csv", header=T)
+```
 
-
-
+```{r Regional Sulphur Di oxide} 
 p21<-airquality_centralsulfurdioxide%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -505,7 +522,16 @@ p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
   ggtitle("SO2 NRP")
 
 grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
+```
+
 #Like the other two pollutants, the concentration of sulfur dioxide has also decreased remarkably. 
+#Sulfur Dioxide concentrations have been decreasing throughout the country outside of the Southwest
+#in the past several years.
+#Sulfur is most prevalent in the Southwest and Central Region while being least prevalent in the West.
+
+
+```{r Regional Carbon Monoxide, eval = F} 
+#EDA
 airquality_centralcarbonmonoxide<-read.csv("data/Carbon_MonoxideCentral.csv", header=T)
 airquality_UpperMidwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideUpperMidwest.csv", header=T)
 airquality_Northeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideNortheast.csv", header=T)
@@ -514,10 +540,8 @@ airquality_Southcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouth.csv", header
 airquality_Southeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideSoutheast.csv", header=T)
 airquality_Southwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouthwest.csv", header=T)
 airquality_Westcarbonmonoxide<-read.csv("data/Carbon_MonoxideWest.csv", header=T)
-
-#Sulfur Dioxide concentrations have been decreasing throughout the country outside of the Southwest
-#in the past several years.
-#Sulfur is most prevalent in the Southwest and Central Region while being least prevalent in the West. 
+```
+ ```{r Regional Carbon Monoxide} 
 p41<-airquality_centralcarbonmonoxide%>% 
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -583,10 +607,12 @@ p48 <- airquality_Westcarbonmonoxide%>%
   ggtitle("CO West")
 
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
-
+```
 #Carbon monoxide concentration decreases in every location except the Northwest where it increases. 
 #Carbon monoxide is most prevalent in the Northwest right now but it used to be very prevalent in the Central and Western area. 
 
+ ```{r Regional PM10} 
+ #EDA
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
 airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
@@ -596,7 +622,8 @@ airquality_SoutheastPM10<-read.csv("data/PM10Southeast.csv", header=T)
 airquality_SouthwestPM10<-read.csv("data/PM10Southwest.csv", header=T)
 airquality_WestPM10<-read.csv("data/PM10West.csv", header=T)
 airquality_NRPPM10<-read.csv("data/PM10NorthernRockies.csv", header=T)
-
+```
+```{r Regional PM10}
 p51<-airquality_centralPM10%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -673,9 +700,12 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   ggtitle("PM10 NRP")
 
 grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
+```
 
-#In the majority of areas with the exception of the Rockies and Plains, the concentration of PM10 has been decreasing for many years. 
+#In the majority of areas with the exception of the Rockies and Plains, the concentration of PM10 has been decreasing for many years.
 
+```{r Regional PM25} 
+ #EDA
 airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
 airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
 airquality_NortheastPM25<-read.csv("data/PM25Northeast.csv", header=T)
@@ -685,7 +715,8 @@ airquality_SoutheastPM25<-read.csv("data/PM25Southeast.csv", header=T)
 airquality_SouthwestPM25<-read.csv("data/PM25Southwest.csv", header=T)
 airquality_WestPM25<-read.csv("data/PM25West.csv", header=T)
 airquality_NRPPM25<-read.csv("data/PM25NorthernRockies.csv", header=T)
-
+```
+```{r Regional PM25} 
 p61<-airquality_centralPM25%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
@@ -762,6 +793,7 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
 
 grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
 ```
+
 #The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. 
 The places where the data varies significantly are the West, Southwest, and the Rockies. 
 
