@@ -256,6 +256,7 @@ airquality_PM25%>%
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
 ```
+#Displays the graphs of the pollutants over the span of 40 years. As shown in the graphs, the concentrations of each pollutant have decreased since the 1980s due to effective environmnetal regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the p[ollutant. 
 ```{r pollutants, eval = F}
 #EDA 
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
