@@ -159,7 +159,7 @@ raw_data %>%
   theme(legend.position = 0) +
   ggtitle("`State`vs`Avg AQI")
 ```
-6 most dangerous Pollutants 
+\frametitle{6 most dangerous Pollutants }
 The 6 most dangerous pollutants are ozone, nitrogen dioxide, sulfur dioxide, lead, carbon monoxide, and particulate matter.
 ```{r pollutants, eval = F}
 #EDA 
@@ -324,9 +324,10 @@ p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
   ggtitle("Ozone NRP") #North Rockie and Plains
 
 grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
-#Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
+#**
+Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
 
-
+**
 
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
@@ -408,7 +409,10 @@ p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
   ggtitle("NO2 NRP")
 
 grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
-#The northern rockies and plains notwithstanding, NO2 seems to be declining throughout every region. However, this is because no2 is generally very low in that region. The areas where NO2 is naturally very high is in the very urban areas most notably the Northeast and California.  
+
+#The northern rockies and plains not withstanding, NO2 seems to be declining throughout every region.
+#However, this is because No2 is generally very low in that region. 
+#The areas where NO2 is naturally very high is in the very urban areas most notably the Northeast and California.  
 
 airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
 airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
@@ -502,7 +506,9 @@ airquality_Southeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideSoutheast.csv"
 airquality_Southwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouthwest.csv", header=T)
 airquality_Westcarbonmonoxide<-read.csv("data/Carbon_MonoxideWest.csv", header=T)
 
-#Sulfur Dioxide concentrations have been decreasing throughout the country outside of the Southwest in the past several years. Sulfur is most prevalent in the Southwest and Central Region while being least prevalent in the West. 
+#Sulfur Dioxide concentrations have been decreasing throughout the country outside of the Southwest
+#in the past several years.
+#Sulfur is most prevalent in the Southwest and Central Region while being least prevalent in the West. 
 p41<-airquality_centralcarbonmonoxide%>% 
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -568,7 +574,10 @@ p48 <- airquality_Westcarbonmonoxide%>%
   ggtitle("CO West")
 
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
-#Carbon monoxide concentration decreases in every location except the Northwest where it increases. Carbon monoxide is most prevalent in the Northwest right now but it used to be very prevalent in the Central and Western area. 
+
+#Carbon monoxide concentration decreases in every location except the Northwest where it increases. 
+#Carbon monoxide is most prevalent in the Northwest right now but it used to be very prevalent in the Central and Western area. 
+
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
 airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
@@ -655,7 +664,9 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   ggtitle("PM10 NRP")
 
 grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
+
 #In the majority of areas with the exception of the Rockies and Plains, the concentration of PM10 has been decreasing for many years. 
+
 airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
 airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
 airquality_NortheastPM25<-read.csv("data/PM25Northeast.csv", header=T)
@@ -742,7 +753,9 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
 
 grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
 ```
-#The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. The places where the data varies significantly are the West, Southwest, and the Rockies. 
+#The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. 
+The places where the data varies significantly are the West, Southwest, and the Rockies. 
+
 Climate Alliance
 ---
 \frametitle{Linear Regression}
