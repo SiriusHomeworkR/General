@@ -829,7 +829,7 @@ Anova(fit.lm)
 
 We remove the variables that are the least relevant to see what factors remain.
 \tiny
-``` {r anova1, results = FALSE}
+``` {r anova1, include = FALSE}
 fit.lm <- update(fit.lm, .~. -PctEmpMining)
 Anova(fit.lm)
 fit.lm <- update(fit.lm, .~. -ForeignBornCaribPct)
@@ -872,17 +872,13 @@ fit.lm <- update(fit.lm, .~. -NetMigrationRate0010)
 Anova(fit.lm)
 fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
 Anova(fit.lm)
-fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
-Anova(fit.lm)
-
-
 ```
 
 
-
-
-
-
+```{r final model}
+fit.final <- update(fit.lm, .~. -NaturalChangeRate0010)
+Anova(fit.lm)
+```
 
 
 ---
@@ -893,7 +889,7 @@ Anova(fit.lm)
 ``` {r finalFit, size = "tiny"}
 
 temp <- summary(fit.final)$coefficients[, c("Estimate")]
-non_states <- summary(fit.final)$coefficients[50:length(temp),]
+non_states <- summary(fit.final)$coefficients[50:length(temp)]
 
 non_states
 
