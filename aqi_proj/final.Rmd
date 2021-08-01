@@ -256,8 +256,8 @@ airquality_PM25%>%
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
 ```
-#Displays the graphs of the pollutants over the span of 40 years. As shown in the graphs, the concentrations of each pollutant have decreased since the 1980s due to effective environmnetal regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the p[ollutant. 
-```{r pollutants, eval = F}
+#Displays the graphs of the pollutants over the span of 40 years. As shown in the graphs, the concentrations of each pollutant have decreased since the 1980s due to effective environmnetal regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the pollutant.
+```{r pollutants}
 #EDA 
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
@@ -270,7 +270,7 @@ airquality_Westozone<-read.csv("data/OzoneWest.csv", header=T)
 airquality_NRPozone<-read.csv("data/OzoneNorthernRockies.csv", header=T)
 ```
 
-```{r Regional Ozone, eval = F}
+```{r Regional Ozone}
 p1<-airquality_centralozone%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -348,7 +348,7 @@ grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side b
 
 Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
 
-```{r Regional Nitrogen Di oxide, eval = F}
+```{r Regional Nitrogen Dioxide}
 #EDA
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
@@ -359,7 +359,7 @@ airquality_Southwestnitrogen<-read.csv("data/Nitrogen_DioxideSouthwest.csv", hea
 airquality_Westnitrogen<-read.csv("data/Nitrogen_DioxideWest.csv", header=T)
 airquality_NRPnitrogen<-read.csv("data/Nitrogen_DioxideNorthernRockies.csv", header=T)
 ```
-```{r Regional Nitrogen Di oxide, eval = F}
+```{r Regional Nitrogen Dioxide}
 p11<-airquality_centralnitrogen%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -431,7 +431,7 @@ The northern rockies and plains not withstanding, NO2 seems to be declining thro
 However, this is because No2 is generally very low in that region. 
 The areas where NO2 is naturally very high is in the very urban areas most notably the Northeast and California.
 
-```{r Regional Sulphur Di oxide, eval = F} 
+```{r Regional Sulphur Dioxide} 
 #EDA
 airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
 airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
@@ -443,7 +443,7 @@ airquality_Westsulfurdioxide<-read.csv("data/Sulfur_DioxideWest.csv", header=T)
 airquality_NRPsulfurdioxide<-read.csv("data/Sulfur_DioxideNorthernRockies.csv", header=T)
 ```
 
-```{r Regional Sulphur Di oxide} 
+```{r Regional Sulphur Dioxide} 
 p21<-airquality_centralsulfurdioxide%>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -516,7 +516,7 @@ Sulfur Dioxide concentrations have been decreasing throughout the country outsid
 Sulfur is most prevalent in the Southwest and Central Region while being least prevalent in the West.
 
 
-```{r Regional Carbon Monoxide, eval = F} 
+```{r Regional Carbon Monoxide} 
 #EDA
 airquality_centralcarbonmonoxide<-read.csv("data/Carbon_MonoxideCentral.csv", header=T)
 airquality_UpperMidwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideUpperMidwest.csv", header=T)
@@ -635,7 +635,7 @@ p53 <- airquality_NortheastPM10%>%
   ggtitle("PM10 NE")
 
 p54 <- airquality_NorthwestPM10%>%
-  ggplot(aes(x=Year )) +
+  ggplot(aes(x=Year)) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
   geom_line(aes(y = Mean)) +
   ylab("PM10") + 
