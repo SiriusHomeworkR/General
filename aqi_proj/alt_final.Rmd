@@ -1,0 +1,501 @@
+---
+title: "Environmental Legislation and its Effects on Air Quality"
+author:
+- Adithya Ayanam
+- Alexander Chen
+- Andrew Oliver
+- Kamron Ramelmeier
+- Sahej Singh
+- Raymond Xu
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    number_sections: yes
+  pdf_document:
+    toc_depth: '4'
+    number_sections: yes
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.width=8, fig.height=4,
+                      warning = F, width = 60)
+options(scipen = 0, digits = 3)
+
+if(!require('pacman')) install.packages('pacman')
+
+pacman::p_load(Rcpp, geofacet, tidyverse, dplyr, ggplot2, data.table, lubridate, plotROC, usmap, glmnet, 
+               plotly, haven, magrittr, Stat2Data, skimr, GGally, rvest, gridExtra, scales, usdata, party, car, randomForest)
+```
+
+## Introduction
+
+The goal of this study is to examine the impact of certain variables on the climate 
+by examining the AQI of counties across the United States of America using data collected
+by the EPA.
+
+There are two smaller sub studies in this presentation: One examining the effects of
+the Climate Alliance legislative program, and another examining the correlation between
+aspects of counties and the air quality.
+
+
+
+## Reading the Data and EDA
+
+To begin we read the data in from the EPA datasets.
+
+\tiny
+``` {r readin, results = F, results = 'hide'}
+data2020 <- fread("data/annual_aqi_by_county_2020.csv", stringsAsFactors = TRUE)
+data2019 <- fread("data/annual_aqi_by_county_2019.csv", stringsAsFactors = TRUE)
+data2018 <- fread("data/annual_aqi_by_county_2018.csv", stringsAsFactors = TRUE)
+data2017 <- fread("data/annual_aqi_by_county_2017.csv", stringsAsFactors = TRUE)
+data2016 <- fread("data/annual_aqi_by_county_2016.csv", stringsAsFactors = TRUE)
+data2015 <- fread("data/annual_aqi_by_county_2015.csv", stringsAsFactors = TRUE)
+data2014 <- fread("data/annual_aqi_by_county_2014.csv", stringsAsFactors = TRUE)
+data2013 <- fread("data/annual_aqi_by_county_2013.csv", stringsAsFactors = TRUE)
+data2012 <- fread("data/annual_aqi_by_county_2012.csv", stringsAsFactors = TRUE)
+data2011 <- fread("data/annual_aqi_by_county_2011.csv", stringsAsFactors = TRUE)
+data2010 <- fread("data/annual_aqi_by_county_2010.csv", stringsAsFactors = TRUE)
+
+raw_data <- rbind(data2020, data2019, data2018, data2017, data2016,
+                  data2015, data2014, data2013, data2012, data2011, data2010)
+
+raw_data <- raw_data %>% rename(
+  num.days = `Days with AQI`,
+  good.days = `Good Days`,
+  mod.days = `Moderate Days`,
+  sens.group.days = `Unhealthy for Sensitive Groups Days`,
+  unhlthy.days = `Unhealthy Days`,
+  very.unhlthy.days = `Very Unhealthy Days`,
+  haz.days = `Hazardous Days`,
+  max.aqi = `Max AQI`,
+  med.aqi = `Median AQI`,
+  state = State
+)
+
+raw_data <- raw_data[raw_data$state != "Country Of Mexico",]
+raw_data <- raw_data[raw_data$state != "Puerto Rico",]
+raw_data <- raw_data[raw_data$state != "Virgin Islands",]
+raw_data <- raw_data[raw_data$state != "District Of Columbia",]
+raw_data <- droplevels(raw_data)
+
+
+
+raw_data <- raw_data %>%
+  mutate(good.pct = good.days/num.days*100,
+         mod.pct = mod.days/num.days*100,
+         sens.group.pct = sens.group.days/num.days*100,
+         unhlthy.pct = unhlthy.days/num.days*100,
+         very.unhlthy.pct = very.unhlthy.days/num.days*100,
+         haz.pct = haz.days/num.days*100)
+
+mean.state.df <- raw_data %>% group_by(state, Year) %>% summarize(mean.state = mean(med.aqi),
+                                                                  peak.state = max(max.aqi))
+
+mean.state.df <- mean.state.df %>% group_by(state) %>%
+  mutate(delta.aqi.state = mean.state - lag(mean.state))
+
+mean.state.df$is.climate.alli <- "no"
+
+mean.state.df[mean.state.df$state %in% c("California", "Colorado", "Connecticut", "Delaware",
+                               "Hawaii", "Illinois", "Louisiana", "Maine", "Maryland",
+                               "Massachucets", "Michigan", "Minnesota", "Nevada",
+                               "New Jersey", "New Mexico", "New York", "North Carolina",
+                               "Oregon", "Pennsylvania", "Rhode Island",
+                               "Vermont", "Virginia", "Washington", "Wisconsin"
+), c("is.climate.alli")] <- "yes"
+
+mean.state.df$is.climate.alli.early <- "no"
+
+mean.state.df[mean.state.df$state %in% c("California", "Colorado", "Connecticut", "Delaware",
+                               "Hawaii", "Louisiana",
+                               "Massachucets","Minnesota",
+                               "New York",
+                               "Oregon", "Rhode Island",
+                               "Vermont", "Virginia", "Washington", "Wisconsin"
+), c("is.climate.alli.early")] <- "yes"
+
+mean.state.df$is.climate.alli <- as.factor(mean.state.df$is.climate.alli)
+
+mean.state.df <- mean.state.df %>% mutate(log.aqi = log(mean.state),
+                                      log.delta = log(delta.aqi.state))
+
+
+raw_data <- merge(raw_data, mean.state.df, by=c("state", "Year"))
+
+subbed_data <- raw_data %>% select(state, Year, County, num.days, max.aqi, med.aqi,
+                                   good.pct, mod.pct, sens.group.pct, unhlthy.pct,
+                                   very.unhlthy.pct, haz.pct, mean.state, is.climate.alli, delta.aqi.state)
+
+
+summary(lm(data = subbed_data, med.aqi ~ Year))
+
+
+
+```
+
+To get a sense of the AQI of US states over the ten year period, we plot a heatmap
+by time.
+
+```{r heatmap}
+codes <- as.data.frame(cbind(state.abb, state.name)) %>% rename("state" = state.name)
+mean.state.df <- merge(mean.state.df, codes, by = "state")
+
+max(mean.state.df$mean.state)
+
+usAqi.plot <- plot_geo(mean.state.df,
+                  locationmode = 'USA-states',
+                  frame = ~Year) %>% add_trace(locations = ~state.abb,
+                                               z = ~mean.state,
+                                               color = ~mean.state,
+                                               colorscale = 'brwnyl',
+                                               zmin = 0, 
+                                               zmax = 100) %>%
+  layout(geo = list(scope = 'usa'),
+         title = "[2010:2020] Avg Air Quality Index by State") %>%
+  config(displayModeBar = F)
+usAqi.plot
+```
+
+---
+
+A more accurate graphical representation by state can be obtained by plotting the AQI by year
+over several graphs of state.
+
+``` {r facetAqi, fig.height = 8}
+raw_data %>%
+  ggplot(aes(x = Year, y = mean.state, group=state,color = state)) +
+  geom_line() +
+  facet_wrap(~state) +
+  theme_bw() +
+  theme(legend.position = 0) +
+  ggtitle("`State`vs`Avg AQI")
+```
+
+The 6 most dangerous pollutants are ozone, nitrogen dioxide, sulfur dioxide, lead, carbon monoxide, and particulate matter.
+```{r pollutants}
+#EDA 
+airquality_ozone<- read.csv("data/OzoneNational.csv", header=T)
+airquality_nitrogen<- read.csv("data/Nitrogen_DioxideNational.csv", header=T)
+airquality_sulfur<-read.csv("data/Sulfur_DioxideNational.csv", header=T)
+airquality_lead<-read.csv("data/LeadNational.csv", header=T)
+airquality_carbon<-read.csv("data/Carbon_MonoxideNational.csv", header=T)
+airquality_PM10<-read.csv("data/PM10National.csv", header=T)
+airquality_PM25<-read.csv("data/PM25National.csv", header=T)
+```
+```{r Nitrogen Di Oxide National}
+airquality_nitrogen %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Nitrogen") +
+  xlab("Year") +
+  ggtitle("Nitrogen Concentration by year")
+```
+```{r Ozone National}
+airquality_ozone %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") +
+  xlab("Year") +
+  ggtitle("Ozone Concentration by year")
+```
+```{r Sulphur di oxide National}
+airquality_sulfur %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Sulfur Dioxide") +
+  xlab("Year") +
+  ggtitle("Sulfur Dioxide Concentration by year")
+```
+```{r Lead National}
+airquality_lead %>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Lead") +
+  xlab("Year") +
+  ggtitle("Lead Concentration by year")
+```
+```{r Carbon Monoxide National}
+airquality_carbon%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Carbon Monoxide") +
+  xlab("Year") +
+  ggtitle("Carbon Monoxide Concentration by year")
+```
+```{r PM_10 National}
+airquality_PM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("Particulate Matter 10 Concentration by year")
+```
+```{r PM_25 National}
+airquality_PM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("Particulate Matter 25 Concentration by year")
+```
+These are the graphs of the pollutants over year. As shown in the graphs, the concentrations of each pollutant have decreased due to effective environmental regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the p[pollutant. 
+
+
+The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. 
+
+Much of this improvement can be attributed to the Clean Air Act and its amendments in
+1977 and 1990. 
+
+The 2011 reduction in lead concentration might be a result of changes to the Safe
+Drinking Water Act.
+
+
+## Climate Alliance
+
+The Climate Alliance is a bipartisan group of governors who aim to reduce their emissions.
+Formed in response to the US withdrawal from the Paris Accord, it acts on the state level.
+
+To determine the effectiveness of the Climate Alliance, we look if there is a significant
+difference in their rate of change of AQI within Climate Alliance states. A significant difference would indicate that the Climate Alliance was effective
+in improving the AQI of its. states. We look at data from 2019 (so thus the change in AQI
+from 2018 to 2019) to observe the effect after the formation.
+
+``` {r CA Linear Regression}
+mean.state.df$is.climate.alli <- as.factor(mean.state.df$is.climate.alli)
+
+summary(lm(data = mean.state.df %>% filter(Year == 2019), delta.aqi.state ~ is.climate.alli))
+```
+
+While on average Climate Alliance states do improve faster, the difference is not significant at a 
+0.05 level. Despite this, there is a notable change in the average rate of change.
+
+It is possible that the data we are using also might be obscuring some of the effects as 
+not all states joined in 2017. The last state to join, Montana, joined in mid 2019. States 
+like those make the impact of the Climate Alliance hard to see.
+
+To be more precise, we look at only states who joined within the first month.
+
+``` {r CA Linear Regression Early}
+mean.state.df$is.climate.alli <- as.factor(mean.state.df$is.climate.alli.early)
+
+summary(lm(data = mean.state.df %>% filter(Year == 2019), delta.aqi.state ~ is.climate.alli.early))
+```
+The difference here is larger and more significant but is still insignificant at the 0.05 level.
+
+While our study is does not conclude that the Climate Alliance is definitely improving the air
+quality of its member states, its members are improving slightly faster on average at a 75% confidence level.
+
+## County Level Effects on AQI
+
+Using the data found by the USDA’s Economic Research Service, we look for predictors in counties to determine air quality and find correlations.
+
+This begins by merging the 2019 AQI with the latest USDA ERS data. We use 2019 data to avoid skewing due to the 2020 West Coast fires.
+
+To begin the analysis, we start by merging county data with AQI data. We start by
+merging all three sets of ERS county data, and then we merge by county and state.  
+
+Break the cleaned and merged dataset into X and Y for use with cv.glmnet. We use
+set.seed(1) for consistency.
+
+
+``` {r cleanmerge}
+county_data_jobs <- fread("data/Release23_June2021/Jobs.csv")
+county_data_people <- fread("data/Release23_June2021/People.csv")
+county_data_income <- fread("data/Release23_June2021/Income.csv")
+
+
+county_data_master <- merge(county_data_jobs, county_data_people, by = c("County", "FIPS", "State"))
+county_data_master <- merge(county_data_master, county_data_income, by = c("County", "FIPS", "State"))
+county_data_master$State <- abbr2state(county_data_master$State)
+county_data_master <- county_data_master %>% rename(state = State)
+
+dated_subbed_data <- subbed_data[subbed_data$Year == 2019,] %>% select(state, Year, County, med.aqi, delta.aqi.state)
+
+master_data <- merge(county_data_master, dated_subbed_data, by = c("County", "state"))
+
+glmnet_data <- master_data %>% select(-County, -FIPS) %>% drop_na()
+
+hist(glmnet_data$med.aqi)
+```
+
+\tiny
+``` {r glmnet}
+
+set.seed(1)
+X <- model.matrix(delta.aqi.state~.-state, glmnet_data)[,-1]
+y <- glmnet_data$delta.aqi.state
+
+
+fit.cv <- cv.glmnet(X, y, alpha = 1, nfolds = 10)
+
+coeffs <- coef(fit.cv)
+nonzeros <- rownames(as.matrix(coeffs[which(coeffs != 0), 0]))
+non_state_intercept_coef <- nonzeros[2:length(nonzeros)]
+
+select_cols <- c("med.aqi", non_state_intercept_coef)
+lm_cols <- glmnet_data %>% select(select_cols)
+
+fit.lm <- lm(data = lm_cols, med.aqi ~ .)
+
+Anova(fit.lm)
+
+```
+
+
+
+
+We remove the variables that are the least relevant to see what factors remain.
+\tiny
+``` {r anova1, include = FALSE}
+fit.lm <- update(fit.lm, .~. -PctEmpMining)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -ForeignBornCaribPct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -Ed3SomeCollegePct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpTrans)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -AsianNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpManufacturing)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -LandAreaSQMiles2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -UnempRate2012)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PopChangeRate1819)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -UnempRate2020)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -MultipleRacePopChangeRate0010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpAgriculture)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -Immigration_Rate_2000_2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -ForeignBornEuropePct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpChange1920)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -MultipleRacePct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -Net_International_Migration_Rate_2010_2019)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -Deep_Pov_All)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -PctEmpConstruction)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NetMigrationRate0010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NaturalChangeRate0010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NaturalChangeRate1010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NaturalChangeRate1019)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -ForeignBornMexPct)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -BlackNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -NativeAmericanNonHispanicPct2010)
+Anova(fit.lm)
+fit.lm <- update(fit.lm, .~. -ForeignBornAfricaNum)
+Anova(fit.lm)
+```
+
+
+```{r assign final}
+fit.final <- fit.lm
+```
+
+
+
+
+
+\tiny
+``` {r finalFit, size = "tiny"}
+
+summary(fit.final)
+
+```
+
+From the final model, we see that most of the impact on AQI is geographical. For example, 
+the increase from ForeignBornMexNum could signal that states closer to
+the Mexican border tend to have worse AQIs due to their location. However, the
+most clear predictors are the states themselves.
+
+The assumptions for linearity appear to hold up until about 1 standard deviation below
+the mean.
+
+``` {r plots, fig.show="hold", out.width="50%"}
+plot(fit.final, 1)
+plot(fit.final, 2)
+```
+
+
+```{r CA Random Forest, eval = F}
+set.seed(467)
+ind <- sample(2, nrow(lm_cols), replace = T, prob = c(0.7, 0.3))
+train <- lm_cols[ind==1,]
+test <- lm_cols[ind==2,]
+
+library(randomForest)
+set.seed(200)
+rf.fit <- randomForest(med.aqi~., data = train, ntree = 500)
+
+plot(rf.fit, col="red", pch=16, type="p", 
+     main="default plot, ")
+
+rf.error.p <- 1:19
+for (i in 1:19)
+{
+  rf.fit <- randomForest(med.aqi~., train, mtry=i, ntree=500)
+  rf.error.p[i] <- rf.fit$mse[500]
+}
+
+plot(1:19, rf.error.p, pch=16,
+     main = "Testing Errors: ntree = 500",
+     xlab="mtry",
+     ylab="OOB MSE of mtry")
+lines(1:19, rf.error.p)
+
+set.seed(250)
+rf.fit <- randomForest(med.aqi~., train, mtry=2, ntree=500)
+rf.fit.pred <- predict(rf.fit, train)
+MSE_test2 <- mean((train$med.aqi - rf.fit.pred)^2)
+MSE_test3 <- mean((test$med.aqi - rf.fit.pred)^2)
+
+rf.fit$importance
+attributes(rf.fit)
+
+varImpPlot(rf.fit, sort=TRUE, n.var=min(30, nrow(rf.fit$importance)))
+
+plot(rf.fit)
+```
+
+
+
+
+
+## Conclusion
+
+The overall objective of this study was to use the AQI of counties across the USA to determine the impact of variables on the climate. Using data collected by the EPA, we were able to focus on the effect of the Climate Alliance on curbing the deterioration of the AQI across the nation, as well as the correlation between aspects of counties and their air quality.
+
+From this study, we were able to conclude that the Climate Alliance has not had much of an effect yet on the AQI of member states, but do have better AQIs on average compared to other states. We were also able to see that most of the impact on the AQI is geographical based on the significant variables of the model. 
+
