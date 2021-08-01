@@ -189,7 +189,7 @@ airquality_carbon<-read.csv("data/Carbon_MonoxideNational.csv", header=T)
 airquality_PM10<-read.csv("data/PM10National.csv", header=T)
 airquality_PM25<-read.csv("data/PM25National.csv", header=T)
 ```
-```{r Nitrogen Di Oxide National}
+```{r Nitrogen Dioxide National}
 airquality_nitrogen %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -207,7 +207,7 @@ airquality_ozone %>%
   xlab("Year") +
   ggtitle("Ozone Concentration by year")
 ```
-```{r Sulphur di oxide National}
+```{r Sulphur dioxide National}
 airquality_sulfur %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
