@@ -189,7 +189,7 @@ airquality_carbon<-read.csv("data/Carbon_MonoxideNational.csv", header=T)
 airquality_PM10<-read.csv("data/PM10National.csv", header=T)
 airquality_PM25<-read.csv("data/PM25National.csv", header=T)
 ```
-```{r Nitrogen Di Oxide National}
+```{r Nitrogen Dioxide National}
 airquality_nitrogen %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -207,7 +207,7 @@ airquality_ozone %>%
   xlab("Year") +
   ggtitle("Ozone Concentration by year")
 ```
-```{r Sulphur di oxide National}
+```{r Sulphur dioxide National}
 airquality_sulfur %>%
   ggplot(aes(x=Year )) +
   geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
@@ -252,7 +252,7 @@ airquality_PM25%>%
   xlab("Year") +
   ggtitle("Particulate Matter 25 Concentration by year")
 ```
-These are the graphs of the pollutants over year. As shown in the graphs, the concentrations of each pollutant have decreased due to effective environmental regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the p[pollutant. 
+These are the graphs of the pollutants over year. As shown in the graphs, the concentrations of each pollutant have decreased due to effective environmental regulation. The graphs show the 10th percentile, 90th percentile, and the mean concentrations of the pollutant
 
 
 The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. 
@@ -262,7 +262,476 @@ Much of this improvement can be attributed to the Clean Air Act and its amendmen
 
 The 2011 reduction in lead concentration might be a result of changes to the Safe
 Drinking Water Act.
+```{r pollutants}
+#EDA 
+airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
+airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
+airquality_Northeastozone<-read.csv("data/OzoneNortheast.csv", header=T)
+airquality_Northwestozone<-read.csv("data/OzoneNorthwest.csv", header=T)
+airquality_Southozone<-read.csv("data/OzoneSouth.csv", header=T)
+airquality_Southeastozone<-read.csv("data/OzoneSoutheast.csv", header=T)
+airquality_Southwestozone<-read.csv("data/OzoneSouthwest.csv", header=T)
+airquality_Westozone<-read.csv("data/OzoneWest.csv", header=T)
+airquality_NRPozone<-read.csv("data/OzoneNorthernRockies.csv", header=T)
+```
 
+```{r Regional Ozone}
+p1<-airquality_centralozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone Central")
+p2 <- airquality_UpperMidwestozone%>% #upper midwest
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone MW")
+p3 <- airquality_Northeastozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone NE")
+p4 <- airquality_Northwestozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone NW")
+p5 <- airquality_Southozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone South")
+p6 <- airquality_Southeastozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone SE")
+p7 <- airquality_Southwestozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone SW")
+p8 <- airquality_Westozone%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone West")
+p9 <- airquality_NRPozone%>% #Northern Rockies and Plains
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("Ozone") + 
+  xlab("Year") +
+  ggtitle("Ozone NRP") #North Rockie and Plains
+grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
+```
+
+#Here we display the concentration of ozone trend in each region. The ozone levels have been decreasing in the past 20 years due to earlier effective environmental regulation. 
+#The Western States have the most ozone due to oil and gas extraction and are also known for having the most amount of sunlight. 
+
+```{r Regional Nitrogen Dioxide}
+#EDA
+airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
+airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
+airquality_Northeastnitrogen<-read.csv("data/Nitrogen_DioxideNortheast.csv", header=T)
+airquality_Southnitrogen<-read.csv("data/Nitrogen_DioxideSouth.csv", header=T)
+airquality_Southeastnitrogen<-read.csv("data/Nitrogen_DioxideSoutheast.csv", header=T)
+airquality_Southwestnitrogen<-read.csv("data/Nitrogen_DioxideSouthwest.csv", header=T)
+airquality_Westnitrogen<-read.csv("data/Nitrogen_DioxideWest.csv", header=T)
+airquality_NRPnitrogen<-read.csv("data/Nitrogen_DioxideNorthernRockies.csv", header=T)
+```
+```{r Regional Nitrogen Dioxide}
+p11<-airquality_centralnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 Central")
+p12 <- airquality_UpperMidwestnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 MW")
+p13 <- airquality_Northeastnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 NE")
+p14 <- airquality_Southnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 South")
+p15 <- airquality_Southeastnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 SE")
+p16 <- airquality_Southwestnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 SW")
+p17 <- airquality_Westnitrogen%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 West")
+p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("NO2") + 
+  xlab("Year") +
+  ggtitle("NO2 NRP")
+grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
+```
+
+#The northern rockies and plains not withstanding, NO2 seems to be declining throughout every region.
+#However, this is because No2 is generally very low in that region. 
+#The areas where NO2 is naturally very high are the urban areas which is prevalent in the Northeast and California.
+
+```{r Regional Sulphur Dioxide} 
+#EDA
+airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
+airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
+airquality_Northeastsulfurdioxide<-read.csv("data/Sulfur_DioxideNortheast.csv", header=T)
+airquality_Southsulfurdioxide<-read.csv("data/Sulfur_DioxideSouth.csv", header=T)
+airquality_Southeastsulfurdioxide<-read.csv("data/Sulfur_DioxideSoutheast.csv", header=T)
+airquality_Southwestsulfurdioxide<-read.csv("data/Sulfur_DioxideSouthwest.csv", header=T)
+airquality_Westsulfurdioxide<-read.csv("data/Sulfur_DioxideWest.csv", header=T)
+airquality_NRPsulfurdioxide<-read.csv("data/Sulfur_DioxideNorthernRockies.csv", header=T)
+```
+
+```{r Regional Sulphur Dioxide} 
+p21<-airquality_centralsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 Central")
+p22 <- airquality_UpperMidwestsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 MW")
+p23 <- airquality_Northeastsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 NE")
+p24 <- airquality_Southsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 South")
+p25 <- airquality_Southeastsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 SE")
+p26 <- airquality_Southwestsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 SW")
+p27 <- airquality_Westsulfurdioxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 West")
+p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("SO2") + 
+  xlab("Year") +
+  ggtitle("SO2 NRP")
+grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
+```
+
+#Like the other two pollutants, the concentration of sulfur dioxide has also decreased remarkably. 
+#Sulfur Dioxide concentrations have been decreasing throughout the country outside of the Southwest in the past several years.
+#Sulfur Dioxide is most prevalent in the Southwest and Central Region while being least prevalent in the West.
+
+
+```{r Regional Carbon Monoxide} 
+#EDA
+airquality_centralcarbonmonoxide<-read.csv("data/Carbon_MonoxideCentral.csv", header=T)
+airquality_UpperMidwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideUpperMidwest.csv", header=T)
+airquality_Northeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideNortheast.csv", header=T)
+airquality_Northwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideNorthwest.csv", header=T)
+airquality_Southcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouth.csv", header=T)
+airquality_Southeastcarbonmonoxide<-read.csv("data/Carbon_MonoxideSoutheast.csv", header=T)
+airquality_Southwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideSouthwest.csv", header=T)
+airquality_Westcarbonmonoxide<-read.csv("data/Carbon_MonoxideWest.csv", header=T)
+```
+ ```{r Regional Carbon Monoxide} 
+p41<-airquality_centralcarbonmonoxide%>% 
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO Central")
+p42 <- airquality_UpperMidwestcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO MW") #Midwest
+p43 <- airquality_Northeastcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO NE")
+p44 <- airquality_Northwestcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO NW")
+p45 <- airquality_Southcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO South")
+p46 <- airquality_Southeastcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO SE")
+p47 <- airquality_Southwestcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO SW")
+p48 <- airquality_Westcarbonmonoxide%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("CO") + 
+  xlab("Year") +
+  ggtitle("CO West")
+grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
+```
+#Carbon monoxide concentration decreases in every location except the Northwest where it increases. 
+#Carbon monoxide is most prevalent in the Northwest right now but it used to be very prevalent in the Central and Western area. 
+
+ ```{r Regional PM10} 
+ #EDA
+airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
+airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
+airquality_NortheastPM10<-read.csv("data/PM10Northeast.csv", header=T)
+airquality_NorthwestPM10<-read.csv("data/PM10Northwest.csv", header=T)
+airquality_SouthPM10<-read.csv("data/PM10South.csv", header=T)
+airquality_SoutheastPM10<-read.csv("data/PM10Southeast.csv", header=T)
+airquality_SouthwestPM10<-read.csv("data/PM10Southwest.csv", header=T)
+airquality_WestPM10<-read.csv("data/PM10West.csv", header=T)
+airquality_NRPPM10<-read.csv("data/PM10NorthernRockies.csv", header=T)
+```
+```{r Regional PM10}
+p51<-airquality_centralPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 Central")
+p52 <- airquality_UpperMidwestPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 MW")
+p53 <- airquality_NortheastPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 NE")
+p54 <- airquality_NorthwestPM10%>%
+  ggplot(aes(x=Year)) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 NW")
+p55 <- airquality_SouthPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 South")
+p56 <- airquality_SoutheastPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 SE")
+p57 <- airquality_SouthwestPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 SW")
+p58 <- airquality_WestPM10%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 West")
+p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey60") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM10") + 
+  xlab("Year") +
+  ggtitle("PM10 NRP")
+grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
+```
+
+#In the majority of areas with the exception of the Rockies and Plains, the concentration of PM10 has been decreasing for many years.
+
+```{r Regional PM25} 
+ #EDA
+airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
+airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
+airquality_NortheastPM25<-read.csv("data/PM25Northeast.csv", header=T)
+airquality_NorthwestPM25<-read.csv("data/PM25Northwest.csv", header=T)
+airquality_SouthPM25<-read.csv("data/PM25South.csv", header=T)
+airquality_SoutheastPM25<-read.csv("data/PM25Southeast.csv", header=T)
+airquality_SouthwestPM25<-read.csv("data/PM25Southwest.csv", header=T)
+airquality_WestPM25<-read.csv("data/PM25West.csv", header=T)
+airquality_NRPPM25<-read.csv("data/PM25NorthernRockies.csv", header=T)
+```
+```{r Regional PM25} 
+p61<-airquality_centralPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 Central")
+p62 <- airquality_UpperMidwestPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 MW")
+p63 <- airquality_NortheastPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 NE")
+p64 <- airquality_NorthwestPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 NW")
+p65 <- airquality_SouthPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 South")
+p66 <- airquality_SoutheastPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 SE")
+p67 <- airquality_SouthwestPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 SW")
+p68 <- airquality_WestPM25%>%
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 West")
+p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
+  ggplot(aes(x=Year )) +
+  geom_ribbon(aes(ymin = X10th.Percentile, ymax = X90th.Percentile), fill = "grey70") +
+  geom_line(aes(y = Mean)) +
+  ylab("PM25") + 
+  xlab("Year") +
+  ggtitle("PM25 NRP")
+grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
+```
+
+#The plots show that the concentrations have gradually decreased over time for this pollutant or in a few cases have remained the same. 
+#The places where the data varies significantly are the West, Southwest, and the Rockies. 
 
 ## Climate Alliance
 
