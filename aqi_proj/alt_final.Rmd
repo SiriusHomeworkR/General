@@ -311,6 +311,8 @@ merging all three sets of ERS county data, and then we merge by county and state
 Break the cleaned and merged dataset into X and Y for use with cv.glmnet. We use
 set.seed(1) for consistency.
 
+Looking at the histogram shows that the county AQI data appears to be normal.
+
 
 ``` {r cleanmerge}
 county_data_jobs <- fread("data/Release23_June2021/Jobs.csv")
@@ -422,18 +424,11 @@ Anova(fit.lm)
 
 ```{r assign final}
 fit.final <- fit.lm
+summary(fit.lm)
 ```
 
 
 
-
-
-\tiny
-``` {r finalFit, size = "tiny"}
-
-summary(fit.final)
-
-```
 
 From the final model, we see that most of the impact on AQI is geographical. For example, 
 the increase from ForeignBornMexNum could signal that states closer to
