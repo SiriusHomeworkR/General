@@ -266,7 +266,7 @@ Drinking Water Act.
 Regional Graphs
 #EDA
 #Here are the graphs of the 6 most dangerous pollutants' levels over the past 20 years. 
- ``` {r Region}
+``` {r Region}
 airquality_centralozone<-read.csv("data/OzoneCentral.csv", header=T)
 airquality_UpperMidwestozone<-read.csv("data/OzoneUpperMidwest.csv", header=T)
 airquality_Northeastozone<-read.csv("data/OzoneNortheast.csv", header=T)
@@ -598,8 +598,9 @@ p48 <- airquality_Westcarbonmonoxide%>%
   ggtitle("CO West")
 
 grid.arrange(p41, p42, p43,p44,p45,p46,p47,p48, ncol=3)# facet the two plots  side by side
-In every region except the Northwest, carbon monoxide has been decreasing over the past 20 years with the South and the Southwest having a marked decline in average concentration of CO. The regions with the most Carbon monoxide are areas with higher latitude and higher altitude. 
 ```
+In every region except the Northwest, carbon monoxide has been decreasing over the past 20 years with the South and the Southwest having a marked decline in average concentration of CO. The regions with the most Carbon monoxide are areas with higher latitude and higher altitude. 
+
 ```{r Regionwise PM10 }
 airquality_centralPM10<-read.csv("data/PM10Central.csv", header=T)
 airquality_UpperMidwestPM10<-read.csv("data/PM10UpperMidwest.csv", header=T)
@@ -689,7 +690,8 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
 grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
 # Average PM10 concentration has significantly decreased in the West, increased in the Northwest, and did not change much in the rest of the regions. 
 
-```{r Regionwise PM25}
+```
+``` {r Regionwise PM25}
 airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
 airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
 airquality_NortheastPM25<-read.csv("data/PM25Northeast.csv", header=T)
