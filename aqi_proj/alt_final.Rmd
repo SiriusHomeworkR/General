@@ -1008,3 +1008,6 @@ The overall objective of this study was to use the AQI of counties across the US
 
 From this study, we were able to conclude that the Climate Alliance has not had much of an effect yet on the AQI of member states, but do have better AQIs on average compared to other states. We were also able to see that most of the impact on the AQI is geographical based on the significant variables of the model. 
 
+Bibliography
+https://www.epa.gov/air-trends
+
