@@ -351,8 +351,9 @@ p1<-airquality_centralozone%>%
   ggtitle("Ozone NRP") #North Rockie and Plains
  
 grid.arrange(p1, p2, p3,p4,p5,p6,p7,p8,p9,  ncol=3)# facet the two plots  side by side
-# The average levels of ozone has decreased visibly in most places except the Western part of the United States, which includes the Southwest, the West, and the Northern Rockies and Plains where the ozone levels are basically the same. The Western states receive plenty of sunlight and the cities with the most amount of sunlight come from the West. This plays a major role in the high levels of ozone. Also Trans Pacific Pollution plays a major role in the level of ozone. 
+
 ```
+# The average levels of ozone has decreased visibly in most places except the Western part of the United States, which includes the Southwest, the West, and the Northern Rockies and Plains where the ozone levels are basically the same. The Western states receive plenty of sunlight and the cities with the most amount of sunlight come from the West. This plays a major role in the high levels of ozone. Also Trans Pacific Pollution plays a major role in the level of ozone. 
 ```{r Region wise Nitrogen Di oxide }
 airquality_centralnitrogen<-read.csv("data/Nitrogen_DioxideCentral.csv", header=T)
 airquality_UpperMidwestnitrogen<-read.csv("data/Nitrogen_DioxideUpperMidwest.csv", header=T)
@@ -435,9 +436,9 @@ p18 <- airquality_NRPnitrogen%>% #Northern Rockies and Plains
 
 grid.arrange(p11, p12, p13,p14,p15,p16,p17,p18,  ncol=3)# facet the two plots  side by side
 
-# The average levels of nitrogen dioxide have been decreasing over the past 20 years throughout the US. Due to the rural nature, the Northern Rockies and Plains had the least amount of nitrogen dioxide while regions that contained more urban areas such as the Central Region, which contained Chicago and the Northeast region, which contained New York had more nitrogen dioxide to begin with. Places that encompassed a wide range of rural and urban locations had very extreme values for the 10th and the 90th percentile relative to the mean and places such as Northern Rockies and Plains which was generally rural throughout had a 10th and 90th percentile that were not far away from the mean. 
-```
 
+```
+# The average levels of nitrogen dioxide have been decreasing over the past 20 years throughout the US. Due to the rural nature, the Northern Rockies and Plains had the least amount of nitrogen dioxide while regions that contained more urban areas such as the Central Region, which contained Chicago and the Northeast region, which contained New York had more nitrogen dioxide to begin with. Places that encompassed a wide range of rural and urban locations had very extreme values for the 10th and the 90th percentile relative to the mean and places such as Northern Rockies and Plains which was generally rural throughout had a 10th and 90th percentile that were not far away from the mean. 
 ```{r Regionwise Sulphurdioxide}
 airquality_centralsulfurdioxide<-read.csv("data/Sulfur_DioxideCentral.csv", header=T)
 airquality_UpperMidwestsulfurdioxide<-read.csv("data/Sulfur_DioxideUpperMidwest.csv", header=T)
@@ -521,8 +522,9 @@ p28 <- airquality_NRPsulfurdioxide%>% #Northern Rockies and Plains
   ggtitle("SO2 NRP")
 
 grid.arrange(p21, p22, p23,p24,p25,p26,p27,p28,  ncol=3)# facet the two plots  side by side
-#Throughout the country the average concentration of SO2 has decreased substantially over the past 20 years with the Central Region's average concentration of SO2 decreasing the most. Due to coal fired powerplants, the Central Region had the highest concentration of SO2 when the data collection started and over the past 20 years, due to regulations and technologies that promoted cleaner burning, the SO2 concentrations have declined sharply in that region.  
+
 ```
+#Throughout the country the average concentration of SO2 has decreased substantially over the past 20 years with the Central Region's average concentration of SO2 decreasing the most. Due to coal fired powerplants, the Central Region had the highest concentration of SO2 when the data collection started and over the past 20 years, due to regulations and technologies that promoted cleaner burning, the SO2 concentrations have declined sharply in that region.  
 ```{r Regionwise CO}
 airquality_centralcarbonmonoxide<-read.csv("data/Carbon_MonoxideCentral.csv", header=T)
 airquality_UpperMidwestcarbonmonoxide<-read.csv("data/Carbon_MonoxideUpperMidwest.csv", header=T)
@@ -689,9 +691,10 @@ p59 <- airquality_NRPPM10%>% #Northern Rockies and Plains
   ggtitle("PM10 NRP")
 
 grid.arrange(p51, p52, p53,p54,p55,p56,p57,p58,p59, ncol=3)# facet the two plots  side by side
-# Average PM10 concentration has significantly decreased in the West, increased in the Northwest, and did not change much in the rest of the regions. 
+
 
 ```
+# Average PM10 concentration has significantly decreased in the West, increased in the Northwest, and did not change much in the rest of the regions. 
 ``` {r Regionwise PM25}
 airquality_centralPM25<-read.csv("data/PM25Central.csv", header=T)
 airquality_UpperMidwestPM25<-read.csv("data/PM25UpperMidwest.csv", header=T)
@@ -778,8 +781,10 @@ p69 <- airquality_NRPPM25%>% #Northern Rockies and Plains
   ggtitle("PM25 NRP")
 
 grid.arrange(p61, p62, p63,p64,p65,p66,p67,p68,p69, ncol=3)# facet the two plots  side by side
-#In every region except the Western regions of the US, Particulate matter has declined which significant decline in average concentration of PM 25 in the central region. The Northwest has had an increase in Particulate Matter concentration and the West and the Southwest a regions have not have their average concentrations change much and in the past few years, due to wild fires, particulate matter has actually increased in the West and the Southwest. 
+
 ```
+#In every region except the Western regions of the US, Particulate matter has declined which significant decline in average concentration of PM 25 in the central region. The Northwest has had an increase in Particulate Matter concentration and the West and the Southwest a regions have not have their average concentrations change much and in the past few years, due to wild fires, particulate matter has actually increased in the West and the Southwest. 
+
 
 ## Climate Alliance
 
